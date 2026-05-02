@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aviator Gaming Terminal</title>
+    <title>Aviator Crash Terminal</title>
 
     <style>
         :root { 
             --aviator-bg: #000000;
             --main-panel-bg: #141516;
-            --control-panel-bg: #1b1d20;
+            --control-panel-bg: #181a1d;
             --accent-green: #28a745;
             --bet-green: #12cf5c;
             --betika-dark: #101112;
@@ -30,152 +30,156 @@
             box-sizing: border-box;
         }
 
-        /* Fixed Top Header */
+        /* Redesigned Premium Header without Back Button */
         .top-header-navbar {
-            background: #181a1d;
+            background: #111315;
             border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
-            height: 56px; z-index: 2000;
+            height: 60px; z-index: 2000;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 12px; box-sizing: border-box;
+            padding: 0 16px; box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .header-left { display: flex; align-items: center; gap: 8px; }
-        .exit-btn {
-            background: #23262b; color: #fff; border: none; border-radius: 8px;
-            padding: 6px 12px; font-weight: 700; font-size: 12px; cursor: pointer;
-            text-transform: uppercase; display: flex; align-items: center;
-        }
-
+        .header-left { display: flex; align-items: center; }
         .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-main-text { font-weight: 900; font-size: 18px; color: var(--aviator-red); letter-spacing: -0.5px; text-transform: uppercase; }
+        .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
         
-        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
         .user-balance-pill { 
-            display: flex; align-items: center; background: rgba(0,0,0,0.4); 
-            border: 1px solid var(--betika-border); padding: 5px 12px; 
-            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c; 
+            display: flex; align-items: center; background: rgba(0,0,0,0.5); 
+            border: 1px solid var(--betika-border); padding: 6px 14px; 
+            border-radius: 20px; font-size: 14px; font-weight: 800; color: #12cf5c;
+            box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
         }
-        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 5px; text-transform: uppercase; }
         
         .deposit-header-btn { 
             background: #12cf5c; color: #fff; border: none; 
-            padding: 7px 14px; border-radius: 18px; font-weight: 800; 
-            font-size: 12px; cursor: pointer; text-transform: uppercase; 
+            padding: 8px 18px; border-radius: 20px; font-weight: 800; 
+            font-size: 12px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
+            transition: transform 0.1s ease;
         }
+        .deposit-header-btn:active { transform: scale(0.96); }
 
         /* Main Game Content Area */
         .gameplay-layout-container {
-            max-width: 800px; margin: 68px auto 24px;
+            max-width: 800px; margin: 76px auto 24px;
             padding: 0 12px; box-sizing: border-box;
-            display: flex; flex-direction: column; gap: 12px;
+            display: flex; flex-direction: column; gap: 14px;
         }
 
-        /* Visual Board styling matched to screen 2 and 3 */
+        /* Visual Board styling matched exactly */
         .aviator-flight-panel {
-            background: #101112; border: 1px solid var(--betika-border);
-            border-radius: 12px; padding: 8px; position: relative; overflow: hidden;
+            background: #151719; border: 1px solid var(--betika-border);
+            border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         }
         .canvas-container {
-            background: #000000; border-radius: 10px; border: 1px solid rgba(255,255,255,0.01);
-            position: relative; overflow: hidden; height: 210px; width: 100%;
+            background: #000000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.015);
+            position: relative; overflow: hidden; height: 230px; width: 100%;
         }
         .game-canvas { width: 100%; height: 100%; display: block; }
         
-        /* Top small multipliers history bar */
+        /* Small multipliers history bar */
         .history-pills-row {
-            display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px;
+            display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px;
             scrollbar-width: none; font-size: 11px; font-weight: 700;
         }
         .history-pills-row::-webkit-scrollbar { display: none; }
-        .history-pill { background: #1c1d21; color: #34b3ff; padding: 3px 10px; border-radius: 12px; flex-shrink: 0; }
-        .history-pill.high { color: #9457cd; }
+        .history-pill { background: #1c1d21; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .history-pill.high { color: #c05df1; }
 
         .flight-counter { 
-            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); 
+            position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
             text-align: center; pointer-events: none; width: 100%; z-index: 10;
         }
-        .live-mult { font-size: 52px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.9); }
-        .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; }
+        .live-mult { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
+        .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
 
         /* Betting Controls Area */
         .betting-console-board {
-            display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%;
+            display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
         }
         @media(min-width: 600px) {
             .betting-console-board { grid-template-columns: 1fr 1fr; }
         }
 
         .control-dashboard-panel {
-            background: #181a1d; border: 1px solid var(--betika-border);
-            border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+            background: var(--control-panel-bg); border: 1px solid var(--betika-border);
+            border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
         }
         
         .dashboard-category-tabs { 
-            display: flex; background: #101112; border-radius: 20px; padding: 2px;
+            display: flex; background: #101112; border-radius: 20px; padding: 3px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .dashboard-tab { flex: 1; padding: 6px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 18px; text-transform: uppercase; }
+        .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
         .dashboard-tab.active { background: #2c3035; color: #fff; }
 
-        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.1fr; gap: 8px; align-items: center; }
+        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
         .wager-box { 
             background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 14px; padding: 6px 12px; display: flex; flex-direction: column; justify-content: center; height: 58px; box-sizing: border-box;
+            border-radius: 16px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
         }
         
         /* Adjustment +/- Stepper style */
         .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
-        .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 18px; cursor: pointer; padding: 0 4px; font-weight: bold; }
-        .wager-input { background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 800; outline: none; width: 60px; text-align: center; }
+        .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 6px; font-weight: bold; outline: none; }
+        .wager-input { background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 800; outline: none; width: 66px; text-align: center; }
 
         .bet-btn { 
-            border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; 
+            border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; 
             text-transform: uppercase; border: none; transition: all 0.1s ease; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 58px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 62px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .bet-btn:active { transform: scale(0.98); }
-        .bet-btn.place { background: var(--bet-green); color: #fff; }
-        .bet-btn.cash { background: #ea580c; color: #fff; }
-        .bet-btn:disabled { background: #23262b; color: #525861; cursor: not-allowed; }
+        .bet-btn:active { transform: scale(0.97); }
+        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2); }
+        .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
+        .bet-btn:disabled { background: #212429; color: #525861; cursor: not-allowed; box-shadow: none; }
 
-        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; }
-        .quick-amt-chip:active { background: #2c2f34; color: #fff; }
+        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; transition: background 0.15s ease; }
+        .quick-amt-chip:active { background: #2c3035; color: #fff; }
 
-        /* Independent Floating AI Prediction Tool */
+        /* Glassmorphic Floating AI Target Tool */
         .floating-ai-assistant {
-            position: fixed; bottom: 20px; right: 20px;
-            background: linear-gradient(135deg, #7c3aed, #4f46e5);
-            color: #fff; border-radius: 50%; width: 56px; height: 56px;
+            position: fixed; bottom: 24px; right: 24px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
+            backdrop-filter: blur(8px); color: #fff; border-radius: 50%; width: 62px; height: 62px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); z-index: 3000;
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4); z-index: 3000;
             cursor: pointer; transition: transform 0.2s;
-            border: 2px solid #a78bfa; text-align: center;
+            border: 2px solid rgba(167, 139, 250, 0.5); text-align: center;
         }
         .floating-ai-assistant:active { transform: scale(0.92); }
-        .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1px; opacity: 0.9; }
+        .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Inline Static Modal Dialogs */
+        /* Overlay Popups */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); 
-            backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
+            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
         }
         .form-modal-card { 
             background: #181a1d; border: 1px solid var(--betika-border); 
-            width: 100%; max-width: 340px; padding: 20px; border-radius: 16px; box-sizing: border-box; 
+            width: 100%; max-width: 350px; padding: 22px; border-radius: 18px; box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
-        .form-input-group { text-align: left; margin-bottom: 12px; }
+        .form-input-group { text-align: left; margin-bottom: 14px; }
         .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
         .form-input-control { 
-            width: 100%; padding: 11px; background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; color: #fff; 
+            width: 100%; padding: 12px; background: #101112; border: 1px solid var(--betika-border); 
+            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #fff; 
         }
         .form-submit-btn { 
-            width: 100%; padding: 12px; background: var(--bet-green); color: #fff; 
-            border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; 
-            text-transform: uppercase; margin-top: 6px; 
+            width: 100%; padding: 14px; background: var(--bet-green); color: #fff; 
+            border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; 
+            text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2);
         }
+        .form-submit-btn:active { transform: scale(0.98); }
 
         .hidden { display: none !important; }
     </style>
@@ -184,7 +188,6 @@
 
     <div class="top-header-navbar">
         <div class="header-left">
-            <button class="exit-btn" onclick="window.location.reload()">✕ Back</button>
             <div class="game-brand-labels">
                 <span class="brand-main-text">Aviator</span>
             </div>
@@ -210,7 +213,7 @@
 
         <div class="aviator-flight-panel">
             <div class="canvas-container">
-                <canvas id="liveGameCanvas" class="game-canvas" width="540" height="210"></canvas>
+                <canvas id="liveGameCanvas" class="game-canvas" width="540" height="230"></canvas>
                 <div class="flight-counter">
                     <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
                     <div id="liveFlightStatusText" class="live-status">Loading Systems...</div>
@@ -271,7 +274,7 @@
         </div>
     </div>
 
-    <div id="aiOrb" class="floating-ai-assistant" onclick="alert('System targets optimized for the next flight!')">
+    <div id="aiOrb" class="floating-ai-assistant">
         <div class="floating-ai-label">AI Signal</div>
         <div id="aiDirectPrediction" class="floating-ai-value">---</div>
     </div>
@@ -284,7 +287,7 @@
                 <input type="number" id="depositAmountInput" class="form-input-control" value="500">
             </div>
             <button onclick="applyManualDeposit()" class="form-submit-btn">Credit Account</button>
-            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;" onclick="closeModal('depositModal')">Dismiss</p>
+            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('depositModal')">Dismiss</p>
         </div>
     </div>
 
@@ -294,8 +297,7 @@
 
         let gameStatus = "waiting"; 
         let currentMultiplier = 1.00;
-        let crashCeiling = 2.45;
-        let previousTarget = 1.00;
+        let crashCeiling = 2.15;
 
         let activePanelBets = { 1: 0, 2: 0 };
         let cashoutStates = { 1: false, 2: false };
@@ -361,7 +363,7 @@
                     // Jet Pointer
                     ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
-                    ctx.arc(endX, endY, 5, 0, Math.PI * 2);
+                    ctx.arc(endX, endY, 6, 0, Math.PI * 2);
                     ctx.fill();
                 }
                 requestAnimationFrame(drawFrame);
@@ -375,10 +377,9 @@
             cashoutStates = { 1: false, 2: false };
 
             // Pure random generation for testing purposes
-            previousTarget = crashCeiling;
-            crashCeiling = parseFloat((1.00 + Math.random() * 4.95).toFixed(2));
+            crashCeiling = parseFloat((1.05 + Math.random() * 3.95).toFixed(2));
 
-            // Floating indicator shows upcoming threshold
+            // Floating indicator updates directly with prediction
             document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
@@ -466,7 +467,7 @@
                 pastLine.removeChild(pastLine.lastChild);
             }
 
-            // Disable ongoing betting panels
+            // Reset the betting panels
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
                 btn.disabled = true;
