@@ -543,7 +543,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_Nwm6t6KrBd3DX6in8F2ICw_y6Xu_Aq8";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let clientUserBalance = 3000.00;
+        let clientUserBalance = 0.00;
         let authenticatedUser = null;
         let currentAuthMode = 'signin';
         let currentFundsMode = 'deposit';
@@ -567,12 +567,27 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
-        window.onload = () => {
-            evaluateLocalUserSession();
+        window.onload = async () => {
+            await evaluateLocalUserSession();
+            await processIncomingReturnParameters();
             initializeCanvasFlight();
             triggerGameLoopEngine();
             startFakePlayersSync();
         };
+
+        async function processIncomingReturnParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const amtParam = urlParams.get('amount');
+            if (status === 'success' && amtParam && authenticatedUser) {
+                const verifiedAmt = parseFloat(amtParam);
+                if (!isNaN(verifiedAmt) && verifiedAmt > 0) {
+                    await updateDatabaseBalance(clientUserBalance + verifiedAmt);
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    alert(`System Alert: Your deposit of KES ${verifiedAmt.toLocaleString()} has been added to your profile balance.`);
+                }
+            }
+        }
 
         function startFakePlayersSync() {
             function updateCounter() {
@@ -617,6 +632,15 @@
                 clientUserBalance = parseFloat(data.balance || 0);
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
+            } else if (error) {
+                const { error: insertError } = await supabaseClient
+                    .from('profiles')
+                    .insert([{ id: authenticatedUser.id, balance: 0.00 }]);
+                if (!insertError) {
+                    clientUserBalance = 0.00;
+                    updateVisualUIBalance();
+                    updateAuthVisualDisplay(true);
+                }
             }
         }
 
