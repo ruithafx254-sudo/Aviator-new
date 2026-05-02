@@ -560,7 +560,6 @@
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs.getContext('2d');
 
-        // Fake Players Assets/Avatars exactly like the screenshots
         const mockupAvatars = [
             'https://randomuser.me/api/portraits/thumb/women/33.jpg',
             'https://randomuser.me/api/portraits/thumb/men/44.jpg',
@@ -755,7 +754,7 @@
 
                 ctx.clearRect(0, 0, width, height);
 
-                // Aesthetic radar-like background lines
+                // Aesthetic radar background lines
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < width; x += 40) {
@@ -769,11 +768,11 @@
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
-                    // Dynamic coordinates along a parabolic trajectory
+                    // Parabolic trajectory coords
                     let endX = width * progress * 0.88 + (width * 0.05);
                     let endY = height - (height * 0.76 * Math.pow(progress, 1.45)) - (height * 0.06);
 
-                    // Multi-layer glowing vapor/flight trail
+                    // Light-weight glowing vapor/flight trail
                     ctx.save();
                     let flightPathGradient = ctx.createLinearGradient(0, height, endX, endY);
                     flightPathGradient.addColorStop(0, "rgba(217, 29, 56, 0.0)");
@@ -781,7 +780,7 @@
                     flightPathGradient.addColorStop(1, "rgba(217, 29, 56, 0.7)");
 
                     ctx.strokeStyle = flightPathGradient;
-                    ctx.lineWidth = 4.5;
+                    ctx.lineWidth = 4;
                     ctx.lineCap = "round";
                     ctx.lineJoin = "round";
                     ctx.beginPath();
@@ -790,23 +789,23 @@
                     ctx.stroke();
                     ctx.restore();
 
-                    // Generate high-density thrust smoke/vapor
-                    if (Math.random() < 0.85) {
+                    // Thrust smoke vapor
+                    if (Math.random() < 0.7) {
                         smokeParticles.push({
                             x: endX, y: endY,
-                            size: 1.5 + Math.random() * 4,
-                            alpha: 0.95,
-                            vx: -1.4 - Math.random() * 1.8,
-                            vy: 0.4 - Math.random() * 0.8
+                            size: 1 + Math.random() * 3,
+                            alpha: 0.8,
+                            vx: -1.2 - Math.random() * 1.5,
+                            vy: 0.3 - Math.random() * 0.6
                         });
                     }
 
-                    // Physics update & rendering of particles
+                    // Physics updates & visual tracking of smoke
                     for (let i = smokeParticles.length - 1; i >= 0; i--) {
                         let p = smokeParticles[i];
                         p.x += p.vx;
                         p.y += p.vy;
-                        p.alpha -= 0.022;
+                        p.alpha -= 0.03;
 
                         if (p.alpha <= 0) {
                             smokeParticles.splice(i, 1);
@@ -815,16 +814,15 @@
 
                         let pGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
                         pGrad.addColorStop(0, `rgba(217, 29, 56, ${p.alpha})`);
-                        pGrad.addColorStop(0.6, `rgba(234, 88, 12, ${p.alpha * 0.4})`);
                         pGrad.addColorStop(1, "rgba(0,0,0,0)");
 
                         ctx.fillStyle = pGrad;
                         ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+                        ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
-                    // Compute smooth angle of ascent (tangent of the flight curve)
+                    // Compute clean angle of ascent
                     let nextProg = Math.min(progress + 0.005, 1.0);
                     let nextY = height - (height * 0.76 * Math.pow(nextProg, 1.45)) - (height * 0.06);
                     let tiltAngle = Math.atan2(nextY - endY, (width * nextProg * 0.88 + (width * 0.05)) - endX);
@@ -833,62 +831,23 @@
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    // Dynamic Engine Afterburner Glow
-                    let afterburner = ctx.createRadialGradient(-16, 0, 1, -16, 0, 16);
-                    afterburner.addColorStop(0, "rgba(255, 235, 59, 0.9)");
-                    afterburner.addColorStop(0.4, "rgba(234, 88, 12, 0.7)");
-                    afterburner.addColorStop(1, "rgba(217, 29, 56, 0)");
-                    ctx.fillStyle = afterburner;
-                    ctx.beginPath(); ctx.arc(-15, 0, 15, 0, Math.PI * 2); ctx.fill();
-
-                    // Aircraft structural silhouettes
+                    // Simplified dynamic Jet Silhouette
                     ctx.fillStyle = "#ffffff";
+                    ctx.strokeStyle = "var(--aviator-red)";
+                    ctx.lineWidth = 2;
                     ctx.beginPath();
-                    ctx.moveTo(-16, -1);
-                    ctx.lineTo(2, -2);
-                    ctx.quadraticCurveTo(10, -2, 18, 0); // Nose point
-                    ctx.quadraticCurveTo(10, 2, 2, 2);
-                    ctx.lineTo(-16, 1);
+                    ctx.moveTo(-12, -4);
+                    ctx.lineTo(8, 0); // Pointy Nose
+                    ctx.lineTo(-12, 4);
+                    ctx.lineTo(-6, 0);
                     ctx.closePath();
                     ctx.fill();
+                    ctx.stroke();
 
-                    // Main wings
-                    ctx.fillStyle = "var(--aviator-red)";
+                    // Elegant tail thruster glow point
+                    ctx.fillStyle = "#00d2ff";
                     ctx.beginPath();
-                    ctx.moveTo(-2, -1.5);
-                    ctx.lineTo(-13, -15);
-                    ctx.lineTo(-1, -15);
-                    ctx.lineTo(8, -1.5);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    // Wing shadows/Under-layer
-                    ctx.fillStyle = "#a81329";
-                    ctx.beginPath();
-                    ctx.moveTo(-2, 1.5);
-                    ctx.lineTo(-13, 14);
-                    ctx.lineTo(-1, 14);
-                    ctx.lineTo(8, 1.5);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    // Tail section
-                    ctx.fillStyle = "var(--aviator-red)";
-                    ctx.beginPath();
-                    ctx.moveTo(-11, -1.5);
-                    ctx.lineTo(-18, -8);
-                    ctx.lineTo(-13, -8);
-                    ctx.lineTo(-7, -1.5);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.fillStyle = "#a81329";
-                    ctx.beginPath();
-                    ctx.moveTo(-11, 1.5);
-                    ctx.lineTo(-18, 7);
-                    ctx.lineTo(-13, 7);
-                    ctx.lineTo(-7, 1.5);
-                    ctx.closePath();
+                    ctx.arc(-8, 0, 3, 0, Math.PI * 2);
                     ctx.fill();
 
                     ctx.restore();
@@ -905,7 +864,11 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            crashCeiling = parseFloat((1.05 + Math.random() * 3.95).toFixed(2));
+            // Varied multiplier logic - dynamically reaches up to 5000x
+            const houseEdge = 0.02; 
+            const r = Math.random();
+            const rawCrash = (1 - houseEdge) / (1 - r);
+            crashCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
 
             document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
@@ -957,7 +920,9 @@
             function fly() {
                 if (gameStatus !== "flying") return;
                 let elapsed = (performance.now() - launchTimeMillis) / 1000;
-                currentMultiplier = parseFloat(Math.pow(1.085, elapsed * 1.8).toFixed(2));
+                
+                // Exponential curve that smoothly launches past 20x up to high limits
+                currentMultiplier = parseFloat(Math.pow(1.092, elapsed * 1.95).toFixed(2));
 
                 if (currentMultiplier >= crashCeiling) {
                     triggerCrashEvent();
@@ -978,7 +943,7 @@
                             }
                         }
                     }
-                    setTimeout(fly, 75);
+                    setTimeout(fly, 68);
                 }
             }
             fly();
