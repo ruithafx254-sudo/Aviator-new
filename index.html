@@ -44,23 +44,26 @@
         .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
         .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
         
-        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--betika-border); padding: 6px 14px; 
-            border-radius: 20px; font-size: 14px; font-weight: 800; color: #12cf5c;
+            border: 1px solid var(--betika-border); padding: 6px 12px; 
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c;
             box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
         }
-        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 5px; text-transform: uppercase; }
+        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
         
-        .deposit-header-btn { 
-            background: #12cf5c; color: #fff; border: none; 
-            padding: 8px 18px; border-radius: 20px; font-weight: 800; 
-            font-size: 12px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
+        .action-header-btn { 
+            background: #1c1d21; color: #fff; border: 1px solid var(--betika-border);
+            padding: 8px 14px; border-radius: 20px; font-weight: 800; 
+            font-size: 11px; cursor: pointer; text-transform: uppercase;
             transition: transform 0.1s ease;
         }
-        .deposit-header-btn:active { transform: scale(0.96); }
+        .action-header-btn.deposit {
+            background: #12cf5c; border: none;
+            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
+        }
+        .action-header-btn:active { transform: scale(0.96); }
 
         /* Main Game Content Area */
         .gameplay-layout-container {
@@ -144,7 +147,37 @@
         .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; transition: background 0.15s ease; }
         .quick-amt-chip:active { background: #2c3035; color: #fff; }
 
-        /* Glassmorphic Floating AI Target Tool */
+        /* Auto Controls Section */
+        .auto-controls-section {
+            background: #101112; border: 1px solid var(--betika-border);
+            border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+            animation: slideDown 0.2s ease-out; margin-top: 2px;
+        }
+        .auto-switch-row { display: flex; justify-content: space-between; align-items: center; }
+        .auto-switch-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
+        
+        /* Premium Custom Checkbox Toggle */
+        .switch-input-wrapper { position: relative; width: 44px; height: 22px; }
+        .switch-input-wrapper input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2c3035; border-radius: 34px; transition: .3s;
+        }
+        .toggle-slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white; border-radius: 50%; transition: .3s;
+        }
+        input:checked + .toggle-slider { background-color: var(--bet-green); }
+        input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+        .auto-input-box {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #181a1d; border: 1px solid var(--betika-border);
+            padding: 6px 12px; border-radius: 10px;
+        }
+        .auto-input-field { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; width: 60px; outline: none; text-align: right; }
+
+        /* Floating AI Target Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
@@ -158,7 +191,7 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Overlay Popups */
+        /* Sliding Modals */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
             backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
@@ -167,6 +200,7 @@
             background: #181a1d; border: 1px solid var(--betika-border); 
             width: 100%; max-width: 350px; padding: 22px; border-radius: 18px; box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: slideDown 0.2s ease-out;
         }
         .form-input-group { text-align: left; margin-bottom: 14px; }
         .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
@@ -178,8 +212,15 @@
             width: 100%; padding: 14px; background: var(--bet-green); color: #fff; 
             border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; 
             text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2);
+            transition: transform 0.1s ease;
         }
+        .form-submit-btn.withdraw-btn { background: #0284c7; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); }
         .form-submit-btn:active { transform: scale(0.98); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .hidden { display: none !important; }
     </style>
@@ -196,7 +237,8 @@
             <div class="user-balance-pill">
                 <div id="balanceDisplay">3,000.00</div><span>KES</span>
             </div>
-            <button onclick="openModal('depositModal')" class="deposit-header-btn">Deposit</button>
+            <button onclick="openModal('withdrawModal')" class="action-header-btn">Withdraw</button>
+            <button onclick="openModal('depositModal')" class="action-header-btn deposit">Deposit</button>
         </div>
     </div>
 
@@ -224,8 +266,8 @@
         <div class="betting-console-board">
             <div class="control-dashboard-panel">
                 <div class="dashboard-category-tabs">
-                    <div class="dashboard-tab active">Bet</div>
-                    <div class="dashboard-tab">Auto</div>
+                    <div id="tabBet1" class="dashboard-tab active" onclick="switchBetCategory(1, 'bet')">Bet</div>
+                    <div id="tabAuto1" class="dashboard-tab" onclick="switchBetCategory(1, 'auto')">Auto</div>
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
@@ -239,18 +281,31 @@
                         <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
                     </button>
                 </div>
-                <div class="quick-amounts-grid">
+                <div class="quick-amounts-grid" id="quickGrid1">
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 100)">100</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 200)">200</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 500)">500</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 10000)">10,000</div>
                 </div>
+                <div id="autoControls1" class="auto-controls-section hidden">
+                    <div class="auto-switch-row">
+                        <span class="auto-switch-label">Auto Cash Out</span>
+                        <label class="switch-input-wrapper">
+                            <input type="checkbox" id="autoCashoutToggle1">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="auto-input-box">
+                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
+                        <input type="number" step="0.01" id="autoCashoutTarget1" class="auto-input-field" value="2.00">
+                    </div>
+                </div>
             </div>
 
             <div class="control-dashboard-panel">
                 <div class="dashboard-category-tabs">
-                    <div class="dashboard-tab active">Bet</div>
-                    <div class="dashboard-tab">Auto</div>
+                    <div id="tabBet2" class="dashboard-tab active" onclick="switchBetCategory(2, 'bet')">Bet</div>
+                    <div id="tabAuto2" class="dashboard-tab" onclick="switchBetCategory(2, 'auto')">Auto</div>
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
@@ -264,11 +319,24 @@
                         <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
                     </button>
                 </div>
-                <div class="quick-amounts-grid">
+                <div class="quick-amounts-grid" id="quickGrid2">
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 100)">100</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 200)">200</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 500)">500</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 10000)">10,000</div>
+                </div>
+                <div id="autoControls2" class="auto-controls-section hidden">
+                    <div class="auto-switch-row">
+                        <span class="auto-switch-label">Auto Cash Out</span>
+                        <label class="switch-input-wrapper">
+                            <input type="checkbox" id="autoCashoutToggle2">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="auto-input-box">
+                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
+                        <input type="number" step="0.01" id="autoCashoutTarget2" class="auto-input-field" value="2.00">
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,18 +349,38 @@
 
     <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
-            <h3 style="margin-top: 0; font-size: 16px; text-align: center;">Recharge Account</h3>
+            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color:#12cf5c;">M-Pesa Deposit</h3>
+            <div class="form-input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="depPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
+            </div>
             <div class="form-input-group">
                 <label>Amount (KES)</label>
-                <input type="number" id="depositAmountInput" class="form-input-control" value="500">
+                <input type="number" id="depAmount" class="form-input-control" value="100" min="10" required>
             </div>
-            <button onclick="applyManualDeposit()" class="form-submit-btn">Credit Account</button>
+            <button onclick="executePayheroDeposit()" class="form-submit-btn">Deposit via M-Pesa</button>
             <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('depositModal')">Dismiss</p>
         </div>
     </div>
 
+    <div id="withdrawModal" class="overlay-screen">
+        <div class="form-modal-card">
+            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color: #0284c7;">M-Pesa Withdrawal</h3>
+            <div class="form-input-group">
+                <label>M-Pesa Phone Number</label>
+                <input type="tel" id="wdPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
+            </div>
+            <div class="form-input-group">
+                <label>Amount (KES)</label>
+                <input type="number" id="wdAmount" class="form-input-control" placeholder="Minimum 100" min="100" required>
+            </div>
+            <button onclick="executeWithdrawal()" class="form-submit-btn withdraw-btn">Request Withdrawal</button>
+            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('withdrawModal')">Dismiss</p>
+        </div>
+    </div>
+
     <script>
-        // Memory-Based Storage
+        // Memory-Based LocalStorage
         let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
 
         let gameStatus = "waiting"; 
@@ -317,7 +405,21 @@
             localStorage.setItem('terminal_balance', clientUserBalance.toString());
         }
 
-        // Stepper adjusters
+        // Betting & Auto Tabs Handlers
+        function switchBetCategory(panel, category) {
+            const isBet = category === 'bet';
+            document.getElementById(`tabBet${panel}`).className = `dashboard-tab ${isBet ? 'active' : ''}`;
+            document.getElementById(`tabAuto${panel}`).className = `dashboard-tab ${!isBet ? 'active' : ''}`;
+            
+            if (isBet) {
+                document.getElementById(`autoControls${panel}`).classList.add('hidden');
+                document.getElementById(`quickGrid${panel}`).classList.remove('hidden');
+            } else {
+                document.getElementById(`autoControls${panel}`).classList.remove('hidden');
+                document.getElementById(`quickGrid${panel}`).classList.add('hidden');
+            }
+        }
+
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
@@ -335,7 +437,6 @@
             function drawFrame() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
                 
-                // Flight Canvas Background Lines
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < cvs.width; x += 40) {
@@ -349,7 +450,6 @@
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
-                    // Smooth Vector Trail mapping
                     ctx.strokeStyle = "var(--aviator-red)";
                     ctx.lineWidth = 4;
                     ctx.beginPath();
@@ -360,7 +460,6 @@
                     ctx.quadraticCurveTo(cvs.width * progress * 0.5, cvs.height, endX, endY);
                     ctx.stroke();
 
-                    // Jet Pointer
                     ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
                     ctx.arc(endX, endY, 6, 0, Math.PI * 2);
@@ -376,10 +475,8 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            // Pure random generation for testing purposes
             crashCeiling = parseFloat((1.05 + Math.random() * 3.95).toFixed(2));
 
-            // Floating indicator updates directly with prediction
             document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
@@ -438,10 +535,19 @@
                     document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2) + "x";
                     
                     for (let i = 1; i <= 2; i++) {
+                        // Regular interactive cashout tracking
                         if (activePanelBets[i] > 0 && !cashoutStates[i]) {
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
                             btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
+
+                            // Execute Auto cashout check if toggled
+                            const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
+                            const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
+                            
+                            if (isAutoCheck && currentMultiplier >= targetVal) {
+                                executeCashOut(i);
+                            }
                         }
                     }
                     setTimeout(fly, 75);
@@ -456,7 +562,6 @@
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
             document.getElementById('liveFlightStatusText').innerText = `${crashCeiling.toFixed(2)}x`;
 
-            // Append multiplier history bar
             const pastLine = document.getElementById('historyPills');
             const item = document.createElement('div');
             item.className = `history-pill ${crashCeiling >= 2.0 ? 'high' : ''}`;
@@ -467,7 +572,6 @@
                 pastLine.removeChild(pastLine.lastChild);
             }
 
-            // Reset the betting panels
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
                 btn.disabled = true;
@@ -493,26 +597,53 @@
                 btn.disabled = true;
                 btn.innerHTML = `<span>Locked...</span>`;
             } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
-                cashoutStates[panel] = true;
-                const netReturns = activePanelBets[panel] * currentMultiplier;
-                clientUserBalance += netReturns;
-                updateVisualUIBalance();
-
-                activePanelBets[panel] = 0;
-                btn.disabled = true;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Cashed Out</span>`;
-                alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
+                executeCashOut(panel);
             }
         }
 
-        function applyManualDeposit() {
-            let amount = parseFloat(document.getElementById('depositAmountInput').value) || 0;
-            if (amount <= 0) return alert("Enter a valid deposit amount.");
-            clientUserBalance += amount;
+        function executeCashOut(panel) {
+            cashoutStates[panel] = true;
+            const netReturns = activePanelBets[panel] * currentMultiplier;
+            clientUserBalance += netReturns;
             updateVisualUIBalance();
+
+            activePanelBets[panel] = 0;
+            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
+            btn.disabled = true;
+            btn.className = "bet-btn place";
+            btn.innerHTML = `<span>Cashed Out</span>`;
+            alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
+        }
+
+        // M-Pesa Embedded Payments Handlers
+        function executePayheroDeposit() {
+            let phone = document.getElementById('depPhone').value;
+            let amount = parseFloat(document.getElementById('depAmount').value) || 0;
+            if (!phone) return alert("Please input your M-Pesa number.");
+            if (amount < 10) return alert("Deposit minimum limit is KES 10.");
+
             closeModal('depositModal');
-            alert(`Balance successfully loaded with KES ${amount.toLocaleString()}`);
+            alert(`STK Push request initialized via Payhero to ${phone}. Completing simulation credit...`);
+            
+            // Simulating a dynamic direct deposit processing link
+            setTimeout(() => {
+                clientUserBalance += amount;
+                updateVisualUIBalance();
+                alert(`Account successfully recharged with KES ${amount.toLocaleString()}`);
+            }, 1500);
+        }
+
+        function executeWithdrawal() {
+            let phone = document.getElementById('wdPhone').value;
+            let amount = parseFloat(document.getElementById('wdAmount').value) || 0;
+            if (!phone) return alert("Enter valid withdrawal phone number.");
+            if (amount < 100) return alert("Withdrawal minimum limit is KES 100.");
+            if (amount > clientUserBalance) return alert("Insufficient funds available to cash out.");
+
+            clientUserBalance -= amount;
+            updateVisualUIBalance();
+            closeModal('withdrawModal');
+            alert(`Withdrawal initialized for KES ${amount.toLocaleString()} directly to your phone.`);
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
