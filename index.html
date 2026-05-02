@@ -253,18 +253,8 @@
             border: 1px solid rgba(226, 232, 240, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.01); margin-bottom: 12px;
         }
         
-        .badge-container { display: block; text-align: center; max-width: 100%; margin: 12px auto 4px auto; box-sizing: border-box; overflow: hidden; }
+        .badge-container { display: block; text-align: center; max-width: 100%; margin: 12px auto 4px auto; box-sizing: border-box; overflow: hidden; border-top: 1px dashed var(--border); padding-top: 14px; }
         .badge-img { width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
-
-        /* Invoice Ledger System Styles */
-        .invoice-ledger { border-top: 1px dashed var(--border); margin-top: 14px; padding-top: 14px; text-align: left; }
-        .invoice-title { font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .invoice-list { display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; scrollbar-width: none; }
-        .invoice-list::-webkit-scrollbar { display: none; }
-        .invoice-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid rgba(226, 232, 240, 1); padding: 8px 12px; border-radius: 10px; font-size: 12px; }
-        .invoice-ref { font-weight: 700; color: var(--text-main); font-family: monospace; }
-        .invoice-val { font-weight: 800; color: var(--yes-blue); }
-        .invoice-val.out { color: var(--no-red); }
 
         .modal-dismiss-btn { text-align: center; margin-top: 14px; cursor: pointer; color: var(--text-sub); font-size: 13px; font-weight: 700; text-transform: uppercase; }
 
@@ -429,7 +419,7 @@
                 </div>
                 <div class="form-input-group" style="margin-bottom:4px;">
                     <label id="amtLabel">Amount (Ksh)</label>
-                    <input type="text" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
+                    <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
                 </div>
                 <div class="chip-grid">
                     <div class="amt-chip" onclick="setAmt(100)">100</div>
@@ -451,13 +441,6 @@
                 </a>
             </span>
 
-            <div class="invoice-ledger">
-                <div class="invoice-title">Local Invoice Log</div>
-                <div id="invoiceLog" class="invoice-list">
-                    <p style="color:var(--text-sub); font-size:12px; margin:0; text-align:center;">No recent transactions generated.</p>
-                </div>
-            </div>
-
             <p class="modal-dismiss-btn" onclick="closeModal('depositModal')">Cancel</p>
         </div>
     </div>
@@ -467,7 +450,6 @@
         let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
         let currentFundsMode = 'deposit';
         const LIPWA_LINK = "https://lipwa.link/8367";
-        let savedInvoices = JSON.parse(localStorage.getItem('user_invoices') || '[]');
 
         let gameStatus = "waiting"; 
         let currentMultiplier = 1.00;
@@ -484,7 +466,6 @@
             updateVisualUIBalance();
             initializeCanvasFlight();
             triggerGameLoopEngine();
-            renderInvoiceLedger();
         };
 
         function updateVisualUIBalance() {
@@ -700,7 +681,7 @@
             alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
-        // Extracted Methods from Polymarkets Africa
+        // Funds System Methods
         function setFundsMode(mode) {
             currentFundsMode = mode;
             document.getElementById('depAmt').value = "100.00";
@@ -742,7 +723,6 @@
 
                 clientUserBalance -= amt;
                 updateVisualUIBalance();
-                saveInvoiceRecord(invoiceRef, -amt);
                 closeModal('depositModal');
                 alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} has been generated.`);
             } else {
@@ -750,7 +730,6 @@
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
 
-                saveInvoiceRecord(invoiceRef, amt);
                 closeModal('depositModal');
 
                 const currentUrl = window.location.origin + window.location.pathname;
@@ -758,33 +737,6 @@
                 
                 window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
             }
-        }
-
-        function saveInvoiceRecord(ref, value) {
-            savedInvoices.unshift({ ref, value, date: new Date().toLocaleTimeString() });
-            if (savedInvoices.length > 5) savedInvoices.pop();
-            localStorage.setItem('user_invoices', JSON.stringify(savedInvoices));
-            renderInvoiceLedger();
-        }
-
-        function renderInvoiceLedger() {
-            const container = document.getElementById('invoiceLog');
-            if (savedInvoices.length === 0) {
-                container.innerHTML = `<p style="color:var(--text-sub); font-size:12px; margin:0; text-align:center;">No recent transactions generated.</p>`;
-                return;
-            }
-
-            container.innerHTML = savedInvoices.map(inv => `
-                <div class="invoice-item">
-                    <div>
-                        <div class="invoice-ref">${inv.ref}</div>
-                        <div style="font-size:10px; color:var(--text-sub);">${inv.date}</div>
-                    </div>
-                    <div class="invoice-val ${inv.value < 0 ? 'out' : ''}">
-                        ${inv.value < 0 ? '-' : '+'} Ksh ${Math.abs(inv.value).toLocaleString()}
-                    </div>
-                </div>
-            `).join('');
         }
 
         function openModalWithMode(id, mode) {
