@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aviator Africa | Terminal</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root { 
+            --accent: #2ebd85; 
+            --border: #cbd5e1; 
+            --text-main: #0f172a; 
+            --text-sub: #64748b;
+            --yes-blue: #096cfb; 
+            --yes-bg: #eff6ff; 
+            --no-red: #df1c41; 
+            --no-bg: #fff1f2;
+            --tech-bg: #0f172a;
+            --aviator-red: #e11d48;
+        }
+        
+        body { background: #f8fafc; color: var(--text-main); margin: 0; padding-top: 80px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+
+        .header-stack { position: fixed; top: 0; left: 0; right: 0; background: #fff; z-index: 2000; border-bottom: 1px solid var(--border); }
+        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 70px; }
+        .logo-wrap { display: flex; flex-direction: column; line-height: 1; }
+        .logo-main { font-weight: 900; font-size: 20px; letter-spacing: -0.6px; color: #0f172a; text-transform: uppercase; }
+        .logo-sub { font-size: 11px; font-weight: 700; color: var(--aviator-red); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+        
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .wallet-pill { display: flex; align-items: center; background: #f1f5f9; border: 1px solid var(--border); padding: 6px 6px 6px 12px; border-radius: 14px; gap: 8px; font-size: 14px; font-weight: 800; }
+        .btn-deposit { background: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-deposit:active { opacity: 0.8; }
+        
+        .user-id { width: 36px; height: 36px; background: var(--tech-bg); color: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .person-icon { width: 18px; height: 18px; fill: currentColor; }
+
+        #dashboard { max-width: 660px; margin: auto; padding: 12px; box-sizing: border-box; }
+        
+        /* Prediction & Game Section */
+        .predictor-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; text-align: center; box-shadow: 0 3px 12px rgba(0,0,0,0.02); }
+        .pred-header { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); margin-bottom: 4px; letter-spacing: 0.5px; }
+        .pred-val { font-size: 34px; font-weight: 900; color: var(--aviator-red); }
+
+        .game-card { background: #111827; border-radius: 18px; padding: 16px; margin-bottom: 12px; position: relative; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .screen-canvas { width: 100%; height: 210px; background: #0b0f19; border-radius: 12px; display: block; border: 1px solid #1f2937; }
+        
+        .flight-counter { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -65%); text-align: center; pointer-events: none; }
+        .live-mult { font-size: 46px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 2px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .live-status { font-size: 11px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
+
+        .game-controls { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-top: 14px; }
+        .bet-input-wrap { background: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; }
+        .bet-input-wrap label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
+        .bet-input-tech { background: transparent; border: none; color: #fff; font-size: 22px; font-weight: 800; outline: none; width: 100%; }
+
+        .action-btn { border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; transition: 0.1s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn.bet { background: #10b981; color: #fff; }
+        .action-btn.cash { background: #e11d48; color: #fff; }
+        .action-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+
+        .section-nav { display: flex; gap: 8px; margin-bottom: 12px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+        .section-tab { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-sub); }
+        .section-tab.active { background: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+        .history-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .hist-meta { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+        .hist-title { font-size: 14.5px; font-weight: 700; color: #0f172a; }
+        .hist-stats { display: flex; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 8px; font-size: 13.5px; font-weight: 700; }
+        .status-badge { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; }
+
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; }
+        
+        .modal { background: #fff; width: 100%; max-width: 420px; padding: 22px 26px; border-radius: 24px; text-align: center; box-sizing: border-box; max-height: 98vh; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .auth-nav { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
+        .auth-tab { flex: 1; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-sub); text-align: center; }
+        .auth-tab.active { background: #fff; color: #000; }
+        
+        .input-group { position: relative; margin-bottom: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+        .input-tech { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #0f172a; }
+        .input-tech:focus { border-color: var(--yes-blue); background: #fff; }
+        
+        .btn-tech { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 15px; text-transform: uppercase; margin-top: 8px; }
+        .btn-tech:active { opacity: 0.8; }
+        
+        .chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+        .amt-chip { border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: #fff; text-align: center; transition: 0.15s; }
+        .amt-chip:active { background: #f1f5f9; transform: scale(0.96); }
+        
+        .funds-card-container { background: #fafcff; padding: 16px; border-radius: 18px; border: 1px solid rgba(226, 232, 240, 1); margin-bottom: 12px; }
+        
+        .badge-container { display: block; text-align: center; max-width: 100%; margin: 12px auto 4px auto; box-sizing: border-box; overflow: hidden; }
+        .badge-img { width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="headerStack" class="header-stack">
+        <div class="top-nav">
+            <div class="logo-wrap">
+                <div class="logo-main">Aviator</div>
+                <div class="logo-sub">Africa</div>
+            </div>
+            <div class="nav-right">
+                <button id="signBtn" class="btn-deposit" style="background:#f1f5f9; color:#000;" onclick="openModal('authModal')">Sign In</button>
+                <div id="userIcon" class="user-id hidden" onclick="logout()">
+                    <svg class="person-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div class="wallet-pill">
+                    Ksh <span id="balance">0.00</span>
+                    <button onclick="openModal('depositModal')" class="btn-deposit">Funds</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        
+        <div class="predictor-box">
+            <div class="pred-header">AI Live Predictor</div>
+            <div id="predValue" class="pred-val">Waiting</div>
+        </div>
+
+        <div class="game-card">
+            <canvas id="screen" class="screen-canvas" width="600" height="210"></canvas>
+            <div class="flight-counter">
+                <div id="liveMultiplier" class="live-mult">1.00x</div>
+                <div id="liveStatus" class="live-status">Ready to Launch</div>
+            </div>
+
+            <div class="game-controls">
+                <div class="bet-input-wrap">
+                    <label>Amount (Ksh)</label>
+                    <input type="number" id="wagerInput" class="bet-input-tech" value="100" min="10">
+                </div>
+                <button id="gameActionBtn" onclick="handlePrimaryAction()" class="action-btn bet" disabled>
+                    <span>Place Bet</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section-nav">
+            <div id="tabFeed" class="section-tab active" onclick="switchMainTab('feed')">Live Feed</div>
+            <div id="tabHist" class="section-tab" onclick="switchMainTab('history')">My History</div>
+        </div>
+
+        <div id="mainFeedView">
+            <div style="background:#fff; padding:12px; border-radius:12px; border:1px solid var(--border); font-size:13px;">
+                <p style="margin:0 0 8px 0; font-weight:800; text-transform:uppercase; color:var(--text-sub); font-size:11px;">Recent High Multipliers</p>
+                <div id="pastSpikes" style="display:flex; flex-wrap:wrap; gap:6px;">
+                    <span class="status-badge" style="background:#ffe4e6; color:#e11d48;">3.45x</span>
+                    <span class="status-badge" style="background:#ffe4e6; color:#e11d48;">5.10x</span>
+                    <span class="status-badge" style="background:#ffe4e6; color:#e11d48;">1.84x</span>
+                    <span class="status-badge" style="background:#ffe4e6; color:#e11d48;">12.21x</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="mainHistoryView" class="hidden">
+            <div id="histFeed">
+                <p style="text-align:center; color:var(--text-sub); font-size: 15px;">No game wagers submitted yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="authModal" class="overlay">
+        <div class="modal">
+            <div class="auth-nav">
+                <div id="tabIn" class="auth-tab active" onclick="setAuth('in')">Sign In</div>
+                <div id="tabUp" class="auth-tab" onclick="setAuth('up')">Sign Up</div>
+            </div>
+            <h2 id="aTitle" style="margin:0; font-size: 18px; font-weight: 800;">Terminal Access</h2>
+            <p id="aDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 16px 0;">Sign in to your account</p>
+            
+            <div id="upFields" class="hidden">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="aName" class="input-tech" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Country</label>
+                    <select id="aCountry" class="input-tech">
+                        <option value="Kenya" selected>Kenya</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="aEmail" class="input-tech" placeholder="example@gmail.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="aPass" class="input-tech" placeholder="••••••••">
+            </div>
+
+            <button onclick="doAuth()" class="btn-tech">Access Account</button>
+            <p style="margin-top:12px; cursor:pointer; color:var(--text-sub); font-size:13px;" onclick="closeModal('authModal')">Cancel</p>
+        </div>
+    </div>
+
+    <div id="depositModal" class="overlay">
+        <div class="modal">
+            <div class="auth-nav">
+                <div id="tabDeposit" class="auth-tab active" onclick="setFundsMode('deposit')">Deposit</div>
+                <div id="tabWithdraw" class="auth-tab" onclick="setFundsMode('withdraw')">Withdraw</div>
+            </div>
+            
+            <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800;">Fund Balance</h2>
+            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Pay Hero Checkout via Lipwa</p>
+            
+            <div class="funds-card-container">
+                <div id="depositFormFields">
+                    <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" id="depName" class="input-tech" placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="depPhone" class="input-tech" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div id="withdrawalFields" class="hidden">
+                    <div class="input-group">
+                        <label>M-Pesa Name</label>
+                        <input type="text" id="withName" class="input-tech" placeholder="e.g. John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="withPhone" class="input-tech" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom:4px;">
+                    <label id="amtLabel">Amount (Ksh)</label>
+                    <input type="text" id="depAmt" class="input-tech" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
+                </div>
+                <div class="chip-grid">
+                    <div class="amt-chip" onclick="setAmt(50)">50</div>
+                    <div class="amt-chip" onclick="setAmt(100)">100</div>
+                    <div class="amt-chip" onclick="setAmt(500)">500</div>
+                    <div class="amt-chip" onclick="setAmt(1000)">1k</div>
+                </div>
+            </div>
+            
+            <button id="fundsSubmit" onclick="handleFundsAction()" class="btn-tech" style="background:var(--yes-blue);">Confirm Action</button>
+            
+            <span class="badge-container">
+                <a href="https://intasend.com/security" target="_blank">
+                    <img src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-light.png" class="badge-img" alt="IntaSend Secure Payments">
+                </a>
+            </span>
+
+            <p style="margin-top:8px; cursor:pointer; color:var(--text-sub); font-size:13px;" onclick="closeModal('depositModal')">Cancel</p>
+        </div>
+    </div>
+
+    <script>
+        const SB_URL = "https://hwxnfzuwaeseszgsjeny.supabase.co";
+        const SB_KEY = "sb_publishable_C_fx8fnHQ9c1x_ZkWIG-gQ_2l2Mt-NL";
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+        let userProfile = null;
+        let activeTab = 'in';
+        let currentFundsMode = 'deposit';
+        const LIPWA_LINK = "https://lipwa.link/8367";
+
+        // Global state mechanics
+        let gameStatus = "waiting"; // waiting, soaring, crashed
+        let multiplier = 1.00;
+        let crashMultiplier = 2.45; 
+        let activeWager = 0;
+        let hasCashedOut = false;
+        let gameLoopAnim = null;
+        let loopStartTime = 0;
+
+        window.onload = async () => {
+            await syncSupabaseState();
+            await checkPaymentCallback();
+            initScreenLoop();
+            startNewRound();
+        };
+
+        const cvs = document.getElementById('screen');
+        const ctx = cvs.getContext('2d');
+
+        // Loop animation system
+        function initScreenLoop() {
+            function draw() {
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                
+                // Draw decorative background grid
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+                ctx.lineWidth = 1;
+                for (let x = 0; x < cvs.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
+                }
+                for (let y = 0; y < cvs.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvs.width, y); ctx.stroke();
+                }
+
+                if (gameStatus === "soaring") {
+                    let progress = (multiplier - 1) / (crashMultiplier - 1 || 1);
+                    progress = Math.min(progress, 1.0);
+
+                    // Dynamic graph curve
+                    ctx.strokeStyle = "rgba(225, 29, 72, 0.85)";
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(0, cvs.height);
+                    
+                    let curveEndX = cvs.width * progress;
+                    let curveEndY = cvs.height - (cvs.height * 0.75 * Math.pow(progress, 1.4));
+                    
+                    ctx.quadraticCurveTo(cvs.width * progress * 0.45, cvs.height, curveEndX, curveEndY);
+                    ctx.stroke();
+
+                    // Rocket Plane graphic icon
+                    ctx.fillStyle = "#fff";
+                    ctx.beginPath();
+                    ctx.arc(curveEndX, curveEndY, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Flame visual trail
+                    ctx.fillStyle = "#f59e0b";
+                    ctx.beginPath();
+                    ctx.arc(curveEndX - 10, curveEndY + 4, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Starts automated local loop
+        function startNewRound() {
+            gameStatus = "waiting";
+            multiplier = 1.00;
+            hasCashedOut = false;
+
+            // Secure local seed generation (AI Predictor pulls directly)
+            const seedBasis = Math.random();
+            if (seedBasis < 0.25) {
+                crashMultiplier = parseFloat((1 + Math.random() * 0.5).toFixed(2));
+            } else if (seedBasis < 0.75) {
+                crashMultiplier = parseFloat((1.5 + Math.random() * 2.5).toFixed(2));
+            } else {
+                crashMultiplier = parseFloat((4 + Math.random() * 8.5).toFixed(2));
+            }
+
+            document.getElementById('predValue').innerText = crashMultiplier.toFixed(2) + "x";
+            document.getElementById('liveMultiplier').innerText = "1.00x";
+            document.getElementById('liveMultiplier').style.color = "#fff";
+            document.getElementById('liveStatus').innerText = "Next flight loading...";
+
+            const actBtn = document.getElementById('gameActionBtn');
+            actBtn.disabled = !userProfile;
+            actBtn.className = "action-btn bet";
+            actBtn.innerHTML = `<span>Place Bet</span>`;
+
+            setTimeout(() => {
+                launchPlane();
+            }, 5500);
+        }
+
+        function launchPlane() {
+            gameStatus = "soaring";
+            loopStartTime = performance.now();
+            document.getElementById('liveStatus').innerText = "Plane is airborne";
+
+            const actBtn = document.getElementById('gameActionBtn');
+            if (activeWager > 0) {
+                actBtn.disabled = false;
+                actBtn.className = "action-btn cash";
+                actBtn.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">at 1.00x</span>`;
+            } else {
+                actBtn.disabled = true;
+            }
+
+            function scaleRate() {
+                if (gameStatus !== "soaring") return;
+
+                let elapsedTime = (performance.now() - loopStartTime) / 1000;
+                // Exponent growth equation matching official dynamics
+                multiplier = parseFloat(Math.pow(1.08, elapsedTime * 2).toFixed(2));
+
+                if (multiplier >= crashMultiplier) {
+                    crashPlane();
+                } else {
+                    document.getElementById('liveMultiplier').innerText = multiplier.toFixed(2) + "x";
+                    if (activeWager > 0 && !hasCashedOut) {
+                        const outAmt = (activeWager * multiplier).toFixed(2);
+                        actBtn.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">Ksh ${outAmt}</span>`;
+                    }
+                    setTimeout(scaleRate, 85);
+                }
+            }
+            scaleRate();
+        }
+
+        function crashPlane() {
+            gameStatus = "crashed";
+            document.getElementById('liveMultiplier').innerText = "FLEW AWAY!";
+            document.getElementById('liveMultiplier').style.color = "var(--aviator-red)";
+            document.getElementById('liveStatus').innerText = "Better luck next time";
+
+            const actBtn = document.getElementById('gameActionBtn');
+            actBtn.disabled = true;
+            actBtn.className = "action-btn bet";
+            actBtn.innerHTML = `<span>Crashed</span>`;
+
+            // Append live tracker
+            const trackFeed = document.getElementById('pastSpikes');
+            trackFeed.insertAdjacentHTML('afterbegin', `<span class="status-badge" style="background:#ffe4e6; color:#e11d48;">${crashMultiplier}x</span>`);
+
+            activeWager = 0;
+            setTimeout(() => {
+                startNewRound();
+            }, 4000);
+        }
+
+        async function handlePrimaryAction() {
+            if (!userProfile) return openModal('authModal');
+            const actBtn = document.getElementById('gameActionBtn');
+
+            if (gameStatus === "waiting") {
+                // Placing wager logic
+                const inputAmt = parseFloat(document.getElementById('wagerInput').value);
+                if (isNaN(inputAmt) || inputAmt < 10) return alert("The minimum prediction wager is Ksh 10.00.");
+
+                const curBal = parseFloat(userProfile.balance || 0);
+                if (inputAmt > curBal) return alert("Insufficient account balance.");
+
+                activeWager = inputAmt;
+                const newBal = (curBal - activeWager).toFixed(2);
+
+                await supabaseClient
+                    .from('profiles')
+                    .update({ balance: newBal })
+                    .eq('email', userProfile.email);
+
+                await syncSupabaseState();
+                actBtn.disabled = true;
+                actBtn.innerHTML = `<span>Bet Placed</span>`;
+                alert("Wager locked in. Waiting for liftoff!");
+
+            } else if (gameStatus === "soaring" && activeWager > 0 && !hasCashedOut) {
+                // Cashing out mid-air
+                hasCashedOut = true;
+                const cashOutMult = multiplier;
+                const winAmount = (activeWager * cashOutMult).toFixed(2);
+                
+                const curBal = parseFloat(userProfile.balance || 0);
+                const newBal = (curBal + parseFloat(winAmount)).toFixed(2);
+
+                const currentBets = userProfile.bets || [];
+                currentBets.unshift({
+                    id: 'av-' + Date.now(),
+                    q: `Aviator Crash @ ${cashOutMult}x`,
+                    side: 'Auto',
+                    mult: cashOutMult.toString(),
+                    stake: activeWager.toFixed(2),
+                    status: 'Won',
+                    date: new Date().toLocaleDateString()
+                });
+
+                await supabaseClient
+                    .from('profiles')
+                    .update({ balance: newBal, bets: currentBets })
+                    .eq('email', userProfile.email);
+
+                await syncSupabaseState();
+                activeWager = 0;
+                actBtn.disabled = true;
+                actBtn.className = "action-btn bet";
+                actBtn.innerHTML = `<span>Won</span>`;
+
+                alert(`Success! Cashed out at ${cashOutMult}x. Ksh ${parseFloat(winAmount).toLocaleString()} added.`);
+            }
+        }
+
+        async function syncSupabaseState() {
+            const savedEmail = localStorage.getItem('nx_user');
+            if (savedEmail) {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('email', savedEmail)
+                    .single();
+
+                if (!error && data) {
+                    userProfile = data;
+                    document.getElementById('signBtn').classList.add('hidden');
+                    document.getElementById('userIcon').classList.remove('hidden');
+                    
+                    const balance = parseFloat(userProfile.balance || 0).toFixed(2);
+                    document.getElementById('balance').innerText = parseFloat(balance).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    
+                    if (userProfile.name) {
+                        document.getElementById('depName').value = userProfile.name;
+                    }
+                    renderHistory();
+                    return;
+                }
+            }
+            document.getElementById('signBtn').classList.remove('hidden');
+            document.getElementById('userIcon').classList.add('hidden');
+            document.getElementById('balance').innerText = "0.00";
+        }
+
+        async function checkPaymentCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const amount = parseFloat(urlParams.get('amount'));
+            const userEmail = localStorage.getItem('nx_user');
+
+            if (status === 'success' && !isNaN(amount) && amount > 0 && userEmail) {
+                const txRef = urlParams.get('reference');
+                const processed = JSON.parse(localStorage.getItem('processed_tx') || '[]');
+
+                if (!processed.includes(txRef)) {
+                    const { data: profile } = await supabaseClient
+                        .from('profiles')
+                        .select('balance')
+                        .eq('email', userEmail)
+                        .single();
+
+                    if (profile) {
+                        const newBal = (parseFloat(profile.balance || 0) + amount).toFixed(2);
+                        
+                        await supabaseClient
+                            .from('profiles')
+                            .update({ balance: newBal })
+                            .eq('email', userEmail);
+
+                        processed.push(txRef);
+                        localStorage.setItem('processed_tx', JSON.stringify(processed));
+                        
+                        alert(`Deposit successful. Added Ksh ${amount.toLocaleString()}`);
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        await syncSupabaseState();
+                    }
+                }
+            }
+        }
+
+        function renderHistory() {
+            const hFeed = document.getElementById('histFeed');
+            hFeed.innerHTML = '';
+            const bets = userProfile?.bets || [];
+
+            if (bets.length === 0) {
+                hFeed.innerHTML = `<p style="text-align:center; color:var(--text-sub); font-size:15px;">No wagers submitted yet.</p>`;
+                return;
+            }
+
+            bets.forEach(b => {
+                const estRet = (parseFloat(b.stake) * parseFloat(b.mult)).toFixed(2);
+                hFeed.innerHTML += `
+                    <div class="history-card">
+                        <div class="hist-meta">
+                            <div>${b.date}</div>
+                            <div class="status-badge" style="background:#e0f2fe; color:#0369a1;">${b.status}</div>
+                        </div>
+                        <div class="hist-title">${b.q}</div>
+                        <div class="hist-stats">
+                            <div>Wager<br>Ksh ${parseFloat(b.stake).toLocaleString()}</div>
+                            <div>Status<br><span style="color:#10b981;">Cashed</span></div>
+                            <div style="text-align:right;">Payout<br>Ksh ${parseFloat(estRet).toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function setAuth(mode) {
+            activeTab = mode;
+            const up = document.getElementById('upFields');
+            if (mode === 'up') {
+                up.classList.remove('hidden');
+                document.getElementById('tabUp').classList.add('active');
+                document.getElementById('tabIn').classList.remove('active');
+            } else {
+                up.classList.add('hidden');
+                document.getElementById('tabIn').classList.add('active');
+                document.getElementById('tabUp').classList.remove('active');
+            }
+        }
+
+        async function doAuth() {
+            const email = document.getElementById('aEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('aPass').value.trim();
+
+            if (!email.includes('@')) return alert("Enter a valid email address.");
+            if (pass.length < 4) return alert("Enter password (at least 4 characters).");
+
+            if (activeTab === 'up') {
+                const name = document.getElementById('aName').value.trim();
+                const country = document.getElementById('aCountry').value;
+                if (!name) return alert("Please enter your full name.");
+
+                const { data: existingUser } = await supabaseClient
+                    .from('profiles')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+
+                if (existingUser) return alert("Account with this email already exists.");
+
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .insert([{ email, pass, name, country, balance: 0.00, bets: [] }]);
+
+                if (error) return alert("Authentication registration issue: " + error.message);
+                
+                localStorage.setItem('nx_user', email);
+                alert("Account registration successful!");
+                closeModal('authModal');
+                await syncSupabaseState();
+            } else {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('pass', pass)
+                    .single();
+
+                if (error || !data) return alert("Invalid credentials.");
+
+                localStorage.setItem('nx_user', data.email);
+                alert(`Welcome back ${data.name || data.email}`);
+                closeModal('authModal');
+                await syncSupabaseState();
+            }
+        }
+
+        function setFundsMode(mode) {
+            currentFundsMode = mode;
+            document.getElementById('depAmt').value = "100.00";
+            if (mode === 'withdraw') {
+                document.getElementById('tabWithdraw').classList.add('active');
+                document.getElementById('tabDeposit').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.remove('hidden');
+                document.getElementById('depositFormFields').classList.add('hidden');
+            } else {
+                document.getElementById('tabDeposit').classList.add('active');
+                document.getElementById('tabWithdraw').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.add('hidden');
+                document.getElementById('depositFormFields').classList.remove('hidden');
+            }
+        }
+
+        function setAmt(v) { document.getElementById('depAmt').value = parseFloat(v).toFixed(2); }
+
+        async function handleFundsAction() {
+            if (!userProfile) return openModal('authModal');
+            const amt = Number(document.getElementById('depAmt').value);
+            if (isNaN(amt) || amt < 10) return alert("Minimum transaction amount is Ksh 10.00.");
+
+            if (currentFundsMode === 'withdraw') {
+                const phone = document.getElementById('withPhone').value.trim();
+                const curBal = parseFloat(userProfile.balance || 0);
+                if (amt > curBal) return alert("Insufficient available balance.");
+
+                const newBal = (curBal - amt).toFixed(2);
+                await supabaseClient
+                    .from('profiles')
+                    .update({ balance: newBal })
+                    .eq('email', userProfile.email);
+
+                await syncSupabaseState();
+                closeModal('depositModal');
+                alert(`Withdrawal processed. Account balance is now Ksh ${newBal}.`);
+            } else {
+                const phone = document.getElementById('depPhone').value.trim();
+                const name = encodeURIComponent(document.getElementById('depName').value.trim());
+                if (!phone || !name) return alert("Please fill out your name and active phone number.");
+
+                const invoiceRef = "INV-" + Math.floor(Date.now() / 1000);
+                closeModal('depositModal');
+
+                const currentUrl = "https://polymarketsafrica.online/";
+                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
+                
+                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${name}&phone=${phone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
+            }
+        }
+
+        function switchMainTab(v) {
+            if (v === 'feed') {
+                document.getElementById('tabFeed').classList.add('active');
+                document.getElementById('tabHist').classList.remove('active');
+                document.getElementById('mainFeedView').classList.remove('hidden');
+                document.getElementById('mainHistoryView').classList.add('hidden');
+            } else {
+                document.getElementById('tabHist').classList.add('active');
+                document.getElementById('tabFeed').classList.remove('active');
+                document.getElementById('mainHistoryView').classList.remove('hidden');
+                document.getElementById('mainFeedView').classList.add('hidden');
+                renderHistory();
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function logout() { 
+            if(confirm("Sign out of the current terminal?")) {
+                localStorage.removeItem('nx_user');
+                location.reload(); 
+            }
+        }
+    </script>
+</body>
+</html>
