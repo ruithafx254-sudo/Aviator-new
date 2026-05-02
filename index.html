@@ -3,304 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Official Aviator Arena</title>
+    <title>Betika Aviator Portal</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        :root { 
-            --aviator-red: #dc2626;
-            --aviator-green: #22c55e;
-            --aviator-dark: #0f1115;
-            --panel-bg: #1b1d24;
-            --border-color: #2c2f36;
-            --text-color: #ffffff;
-            --text-muted: #9ca3af;
+        :root {
+            --b-dark: #101112;
+            --b-panel: #1c1d1f;
+            --b-panel-inner: #141516;
+            --b-border: #2c2d30;
+            --b-red: #cb0c2c;
+            --b-green: #10b981;
+            --text-main: #ffffff;
+            --text-dim: #9ba1a6;
         }
-        
-        body { 
-            background: var(--aviator-dark); 
-            color: var(--text-color); 
-            margin: 0; 
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--b-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Header - Authentic Betika Style */
-        .header-bar {
-            background: #141519;
-            border-bottom: 1px solid var(--border-color);
+        /* Top Navigation Header bar */
+        .top-navbar {
+            background: #000000;
+            border-bottom: 1px solid var(--b-border);
             height: 56px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; box-sizing: border-box;
+            padding: 0 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .exit-btn {
-            background: #2a2e38; color: #fff; border: none; border-radius: 8px;
-            padding: 8px 14px; font-weight: 700; font-size: 13px; cursor: pointer;
-            text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 6px;
-        }
-        .exit-btn:hover { background: #3f4554; }
-
-        .game-brand { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-text { font-weight: 900; font-size: 18px; color: var(--aviator-red); letter-spacing: 0.5px; }
-        .brand-detail { font-size: 10px; color: #fff; font-weight: 600; text-transform: uppercase; }
-
-        .header-right { display: flex; align-items: center; gap: 12px; }
-        .user-balance-box {
-            background: #000; border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 13px; color: var(--aviator-green);
-        }
-        .top-btn {
-            background: var(--aviator-green); color: #fff; border: none; padding: 8px 14px;
-            border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; text-transform: uppercase;
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        /* Main View Container */
-        .game-arena-container {
-            max-width: 800px; margin: 76px auto 20px;
-            padding: 0 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;
+        .exit-app-btn {
+            background: #252628;
+            color: var(--text-main);
+            border: 1px solid var(--b-border);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.15s ease;
+        }
+        .exit-app-btn:hover { background: #353638; }
+
+        .brand-labels {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .brand-title {
+            color: var(--b-red);
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 0.2px;
+        }
+        .brand-subtitle {
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Aviator Flight Panel */
-        .flight-terminal {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .canvas-wrapper {
-            background: #090a0c; border-radius: 12px; border: 1px solid rgba(255,255,255,0.01);
-            position: relative; overflow: hidden; height: 260px; width: 100%;
-        }
-        .game-canvas { width: 100%; height: 100%; display: block; }
-        
-        .flight-counter { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -65%); 
-            text-align: center; pointer-events: none; width: 100%; 
-        }
-        .live-mult { font-size: 64px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.9); }
-        .live-status { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
 
-        /* Real Gray Aviator Control Dashboard */
-        .betting-console {
-            background: #141519; border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        .balance-container {
+            background: #141516;
+            border: 1px solid var(--b-border);
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--b-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        .console-box { 
-            background: #1f222b; border: 1px solid var(--border-color); 
-            border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; 
-        }
-        .console-box label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-        .input-wager { background: transparent; border: none; color: #fff; font-size: 26px; font-weight: 900; outline: none; width: 100%; }
 
-        .btn-wager { 
-            border-radius: 14px; font-size: 18px; font-weight: 900; cursor: pointer; 
-            text-transform: uppercase; border: none; transition: background 0.1s ease; display: flex; 
-            flex-direction: column; align-items: center; justify-content: center; min-height: 64px;
+        .header-auth-btn {
+            background: var(--b-green);
+            color: #ffffff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
         }
-        .btn-wager:active { transform: scale(0.97); }
-        .btn-wager.place { background: var(--aviator-green); color: #fff; }
-        .btn-wager.cash { background: #ea580c; color: #fff; }
-        .btn-wager:disabled { background: #232731; color: #4b5563; cursor: not-allowed; }
+        .header-auth-btn:hover { opacity: 0.92; }
 
-        /* Floating AI Widget (Perfect for Mobile and Desktop) */
-        .ai-floating-btn {
-            position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px;
-            background: #7c3aed; color: #fff; border-radius: 50%; border: 3px solid #141519;
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 900; z-index: 2500; transition: transform 0.2s ease;
+        .header-profile-circle {
+            width: 32px;
+            height: 32px;
+            background: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            border: 2px solid var(--b-green);
         }
-        .ai-floating-btn:hover { transform: scale(1.08); }
-        .ai-floating-btn:active { transform: scale(0.94); }
 
-        /* Dynamic AI Overlay Module */
-        .ai-prediction-panel { 
-            display: none; position: fixed; inset: 0; background: rgba(9, 11, 15, 0.82); 
-            backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
+        /* Center Display Layout */
+        .gameplay-layout {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 16px auto;
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
-        .ai-card { 
-            background: #181a21; border: 1px solid var(--border-color); border-top: 5px solid #7c3aed;
-            width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; box-sizing: border-box; position: relative;
-        }
-        .close-x-btn {
-            position: absolute; top: 12px; right: 16px; background: transparent; border: none;
-            color: var(--text-muted); font-size: 24px; font-weight: 400; cursor: pointer; padding: 4px; line-height: 1;
-        }
-        .close-x-btn:hover { color: #fff; }
 
-        .ai-title { font-size: 11px; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
-        .ai-output-val { font-size: 52px; font-weight: 900; color: var(--aviator-green); line-height: 1; margin: 12px 0 6px 0; }
-        .ai-subtitle { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 0; }
+        /* Canvas Arena Panel */
+        .aviator-canvas-card {
+            background: var(--b-panel);
+            border: 1px solid var(--b-border);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            position: relative;
+        }
 
-        /* Generic Forms Overlays */
-        .overlay-window { 
-            display: none; position: fixed; inset: 0; background: rgba(9, 11, 15, 0.78); 
-            backdrop-filter: blur(8px); z-index: 4000; align-items: center; justify-content: center; padding: 16px; 
+        .canvas-viewport {
+            background: var(--b-panel-inner);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.02);
+            height: 240px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
-        .form-modal-box { 
-            background: #181a21; border: 1px solid var(--border-color); 
-            width: 100%; max-width: 380px; padding: 24px; border-radius: 18px; text-align: center; box-sizing: border-box; 
-        }
-        
-        .form-input-box { text-align: left; margin-bottom: 12px; }
-        .form-input-box label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-        .form-input-element { 
-            width: 100%; padding: 12px 14px; background: #0f1115; border: 1px solid var(--border-color); 
-            border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; color: #fff; 
-        }
-        .form-input-element:focus { border-color: var(--aviator-green); }
-        
-        .action-btn-main { 
-            width: 100%; padding: 14px; background: var(--aviator-green); color: #fff; 
-            border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; 
-            text-transform: uppercase; margin-top: 8px; transition: opacity 0.2s;
-        }
-        .action-btn-main:hover { opacity: 0.9; }
 
-        .tab-menu { display: flex; background: #262933; padding: 4px; border-radius: 10px; margin-bottom: 16px; }
-        .tab-btn { flex: 1; padding: 9px; font-size: 12px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-muted); text-align: center; }
-        .tab-btn.active { background: #181a21; color: #fff; }
+        .main-game-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
 
-        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0; }
-        .amount-chip { border: 1px solid var(--border-color); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #0f1115; text-align: center; }
-        .amount-chip:active { background: #1c1f26; }
+        .canvas-telemetry-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .multiplier-display {
+            font-size: 58px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+        }
+        .status-display {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 6px;
+        }
+
+        /* Bet Console Control Area */
+        .controls-card {
+            background: var(--b-panel);
+            border: 1px solid var(--b-border);
+            border-radius: 12px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .wager-box {
+            background: var(--b-panel-inner);
+            border: 1px solid var(--b-border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .wager-box label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .wager-input-field {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 900;
+            outline: none;
+            width: 100%;
+        }
+
+        .commit-bet-btn {
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease;
+        }
+        .commit-bet-btn:active { transform: scale(0.97); }
+        .commit-bet-btn.place { background: var(--b-green); color: #ffffff; }
+        .commit-bet-btn.cash { background: #ea580c; color: #ffffff; }
+        .commit-bet-btn:disabled { background: #232529; color: #50555c; cursor: not-allowed; }
+
+        /* Floating Interactive AI Prediction Button */
+        .floating-ai-button {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 58px;
+            height: 58px;
+            background: #7c3aed;
+            color: #ffffff;
+            border-radius: 50%;
+            border: 3px solid #101112;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.45);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 900;
+            z-index: 1500;
+            transition: transform 0.15s ease;
+        }
+        .floating-ai-button:hover { transform: scale(1.06); }
+        .floating-ai-button:active { transform: scale(0.95); }
+
+        /* Modal Overlays (Absolute isolation for clicks) */
+        .modal-mask {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+        }
+
+        .modal-container {
+            background: var(--b-panel);
+            border: 1px solid var(--b-border);
+            width: 100%;
+            max-width: 375px;
+            padding: 24px;
+            border-radius: 16px;
+            position: relative;
+            box-sizing: border-box;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close-icon {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 26px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close-icon:hover { color: #ffffff; }
+
+        /* Specific AI Results Panel formatting */
+        .ai-result-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #a78bfa;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .ai-result-value {
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--b-green);
+            line-height: 1;
+            margin: 12px 0 6px 0;
+        }
+        .ai-result-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        /* Dynamic forms styling */
+        .form-control-row {
+            text-align: left;
+            margin-bottom: 12px;
+        }
+        .form-control-row label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .form-control-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--b-panel-inner);
+            border: 1px solid var(--b-border);
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            color: #ffffff;
+        }
+        .form-control-input:focus { border-color: var(--b-green); }
+
+        .modal-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--b-green);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-top: 8px;
+            transition: opacity 0.15s ease;
+        }
+        .modal-submit-btn:hover { opacity: 0.92; }
+
+        .switch-tabs-menu {
+            display: flex;
+            background: #252628;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .switch-tab-btn {
+            flex: 1;
+            padding: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            border-radius: 6px;
+            color: var(--text-dim);
+            text-align: center;
+        }
+        .switch-tab-btn.active { background: var(--b-panel); color: #ffffff; }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 12px 0;
+        }
+        .preset-chip {
+            border: 1px solid var(--b-border);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            background: var(--b-panel-inner);
+            text-align: center;
+        }
+        .preset-chip:active { background: #2a2c30; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="header-bar">
-        <div class="header-left">
-            <button class="exit-btn" onclick="window.location.reload()">
+    <div class="top-navbar">
+        <div class="navbar-left">
+            <button class="exit-app-btn" onclick="window.location.reload()">
                 ✕ Exit
             </button>
-            <div class="game-brand">
-                <span class="brand-text">AVIATOR</span>
-                <span class="brand-detail">Gaming Terminal</span>
+            <div class="brand-labels">
+                <span class="brand-title">AVIATOR</span>
+                <span class="brand-subtitle">Virtual Suite</span>
             </div>
         </div>
-        <div class="header-right">
-            <div id="signBtn" class="top-btn" style="background:#2a2e38; color:#fff;" onclick="openModal('authModal')">Sign In</div>
-            <div id="profileBtn" class="top-btn hidden" style="border-radius:50%; width:34px; height:34px; padding:0; display:flex; align-items:center; justify-content:center; background:#fff; color:#000;" onclick="terminateSession()">U</div>
-            <div class="user-balance-box">
+        <div class="navbar-right">
+            <button id="authGlobalBtn" class="header-auth-btn" onclick="openModal('authPanelModal')">Sign In</button>
+            <div id="userProfileCircle" class="header-profile-circle hidden" onclick="triggerAccountLogout()">U</div>
+            <div class="balance-container">
                 Ksh <span id="balanceDisplay">0.00</span>
             </div>
-            <button onclick="openModal('fundsModal')" class="top-btn">Deposit</button>
+            <button onclick="openModal('fundsPanelModal')" class="header-auth-btn">Deposit</button>
         </div>
     </div>
 
-    <div class="game-arena-container">
-        <div class="flight-terminal">
-            <div class="canvas-wrapper">
-                <canvas id="liveGameCanvas" class="game-canvas" width="600" height="260"></canvas>
-                <div class="flight-counter">
-                    <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
-                    <div id="liveFlightStatusText" class="live-status">Waiting for system...</div>
+    <div class="gameplay-layout">
+        
+        <div class="aviator-canvas-card">
+            <div class="canvas-viewport">
+                <canvas id="liveGameCanvas" class="main-game-canvas" width="600" height="240"></canvas>
+                <div class="canvas-telemetry-layer">
+                    <div id="multiplierDisplayValue" class="multiplier-display">1.00x</div>
+                    <div id="flightStatusLabel" class="status-display">Waiting for connections...</div>
                 </div>
             </div>
         </div>
 
-        <div class="betting-console">
-            <div class="console-box">
-                <label>Bet Amount (Ksh)</label>
-                <input type="number" id="userWagerAmountInput" class="input-wager" value="100" min="10">
+        <div class="controls-card">
+            <div class="wager-box">
+                <label>Your Stake (Ksh)</label>
+                <input type="number" id="userWagerAmountInput" class="wager-input-field" value="100" min="10">
             </div>
-            <button id="liveWagerSubmitBtn" onclick="processActiveWager()" class="btn-wager place" disabled>
+            <button id="submitWagerActionBtn" onclick="submitWagerProcess()" class="commit-bet-btn place" disabled>
                 <span>Place Bet</span>
             </button>
         </div>
+
     </div>
 
-    <button class="ai-floating-btn" onclick="openModal('aiPredictionModal')">AI</button>
+    <button class="floating-ai-button" onclick="openModal('aiPredictionModal')">AI</button>
 
-    <div id="aiPredictionModal" class="ai-prediction-panel">
-        <div class="ai-card">
-            <button class="close-x-btn" onclick="closeModal('aiPredictionModal')">×</button>
-            <div class="ai-title">Next Launch Target</div>
-            <div id="sidebarPredictionValue" class="ai-output-val">2.50x</div>
-            <p id="sidebarPredictionClock" class="ai-subtitle">Calculated trajectory. Locked in precisely.</p>
+    <div id="aiPredictionModal" class="modal-mask">
+        <div class="modal-container" style="border-top: 4px solid #7c3aed;">
+            <button class="modal-close-icon" onclick="closeModal('aiPredictionModal')">✕</button>
+            <div class="ai-result-title">System Analysis Target</div>
+            <div id="sidebarPredictionValue" class="ai-result-value">2.45x</div>
+            <p id="sidebarPredictionClock" class="ai-result-desc">Locked flight telemetry exactly. Safe auto cashout ready.</p>
         </div>
     </div>
 
-    <div id="authModal" class="overlay-window">
-        <div class="form-modal-box">
-            <div class="tab-menu">
-                <div id="signInTabBtn" class="tab-btn active" onclick="toggleAuthTab('in')">Sign In</div>
-                <div id="signUpTabBtn" class="tab-btn" onclick="toggleAuthTab('up')">Sign Up</div>
+    <div id="authPanelModal" class="modal-mask">
+        <div class="modal-container">
+            <button class="modal-close-icon" onclick="closeModal('authPanelModal')">✕</button>
+            <div class="switch-tabs-menu">
+                <div id="signInTab" class="switch-tab-btn active" onclick="updateAuthTabs('in')">Sign In</div>
+                <div id="signUpTab" class="switch-tab-btn" onclick="updateAuthTabs('up')">Sign Up</div>
             </div>
             
             <h2 id="authActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Sign In</h2>
-            <p id="authActionDescText" style="color:var(--text-muted); font-size:13px; margin: 4px 0 14px 0;">Sign into your account terminal</p>
+            <p id="authActionDescText" style="color:var(--text-dim); font-size:13px; margin: 4px 0 16px 0;">Access your official terminal profile</p>
             
-            <div id="signUpFields" class="hidden">
-                <div class="form-input-box">
-                    <label>Full Name</label>
-                    <input type="text" id="authUserNameInput" class="form-input-element" placeholder="John Doe">
+            <div id="signUpExtras" class="hidden">
+                <div class="form-control-row">
+                    <label>Account Full Name</label>
+                    <input type="text" id="authUserNameInput" class="form-control-input" placeholder="John Doe">
                 </div>
             </div>
             
-            <div class="form-input-box">
-                <label>Email</label>
-                <input type="email" id="authUserEmailInput" class="form-input-element" placeholder="example@gmail.com">
+            <div class="form-control-row">
+                <label>Email Address</label>
+                <input type="email" id="authUserEmailInput" class="form-control-input" placeholder="example@gmail.com">
             </div>
-            <div class="form-input-box">
-                <label>Password</label>
-                <input type="password" id="authUserPasswordInput" class="form-input-element" placeholder="••••••••">
+            <div class="form-control-row">
+                <label>Secured Password</label>
+                <input type="password" id="authUserPasswordInput" class="form-control-input" placeholder="••••••••">
             </div>
 
-            <button onclick="submitSessionAuth()" class="action-btn-main">Submit</button>
-            <p style="margin-top:14px; cursor:pointer; color:var(--text-muted); font-size:13px;" onclick="closeModal('authModal')">Cancel</p>
+            <button onclick="commitAccountAuthentication()" class="modal-submit-btn">Continue</button>
         </div>
     </div>
 
-    <div id="fundsModal" class="overlay-window">
-        <div class="form-modal-box">
-            <div class="tab-menu">
-                <div id="depositTabBtn" class="tab-btn active" onclick="toggleFundsTab('deposit')">Deposit</div>
-                <div id="withdrawTabBtn" class="tab-btn" onclick="toggleFundsTab('withdraw')">Withdraw</div>
+    <div id="fundsPanelModal" class="modal-mask">
+        <div class="modal-container">
+            <button class="modal-close-icon" onclick="closeModal('fundsPanelModal')">✕</button>
+            <div class="switch-tabs-menu">
+                <div id="depositTab" class="switch-tab-btn active" onclick="updateFundsTabs('deposit')">Deposit</div>
+                <div id="withdrawTab" class="switch-tab-btn" onclick="updateFundsTabs('withdraw')">Withdraw</div>
             </div>
             
-            <h2 id="fundsActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Wallet Actions</h2>
-            <p id="fundsActionDescText" style="color:var(--text-muted); font-size:13px; margin: 4px 0 14px 0;">Send or receive funds via M-Pesa</p>
+            <h2 id="fundsActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Process Deposit</h2>
+            <p id="fundsActionDescText" style="color:var(--text-dim); font-size:13px; margin: 4px 0 16px 0;">Deposit instantly using M-Pesa</p>
             
             <div id="depositFormFields">
-                <div class="form-input-box">
-                    <label>M-Pesa Full Name</label>
-                    <input type="text" id="depositNameInput" class="form-input-element" placeholder="John Doe">
+                <div class="form-control-row">
+                    <label>Registered Legal Name</label>
+                    <input type="text" id="depositNameInput" class="form-control-input" placeholder="John Doe">
                 </div>
-                <div class="form-input-box">
-                    <label>M-Pesa Phone</label>
-                    <input type="tel" id="depositPhoneInput" class="form-input-element" placeholder="e.g. 0712345678">
+                <div class="form-control-row">
+                    <label>M-Pesa Phone Number</label>
+                    <input type="tel" id="depositPhoneInput" class="form-control-input" placeholder="e.g. 0712345678">
                 </div>
             </div>
+
             <div id="withdrawFormFields" class="hidden">
-                <div class="form-input-box">
-                    <label>Withdrawal Phone (M-Pesa)</label>
-                    <input type="tel" id="withdrawPhoneInput" class="form-input-element" placeholder="e.g. 0712345678">
+                <div class="form-control-row">
+                    <label>Receiving M-Pesa Phone</label>
+                    <input type="tel" id="withdrawPhoneInput" class="form-control-input" placeholder="e.g. 0712345678">
                 </div>
             </div>
-            <div class="form-input-box" style="margin-bottom:4px;">
-                <label>Amount (Ksh)</label>
-                <input type="text" id="fundsAmountInput" class="form-input-element" style="font-size:22px; font-weight:900; text-align:center; color:#fff;" value="100.00">
+
+            <div class="form-control-row" style="margin-bottom:4px;">
+                <label>Amount to Send (Ksh)</label>
+                <input type="text" id="fundsAmountInput" class="form-control-input" style="font-size:22px; font-weight:900; text-align:center; color:#ffffff;" value="100.00">
             </div>
-            <div class="quick-amounts-grid">
-                <div class="amount-chip" onclick="updateWagerAmount(50)">50</div>
-                <div class="amount-chip" onclick="updateWagerAmount(100)">100</div>
-                <div class="amount-chip" onclick="updateWagerAmount(500)">500</div>
-                <div class="amount-chip" onclick="updateWagerAmount(1000)">1k</div>
+
+            <div class="preset-grid">
+                <div class="preset-chip" onclick="applyPresetCashValue(50)">50</div>
+                <div class="preset-chip" onclick="applyPresetCashValue(100)">100</div>
+                <div class="preset-chip" onclick="applyPresetCashValue(500)">500</div>
+                <div class="preset-chip" onclick="applyPresetCashValue(1000)">1k</div>
             </div>
             
-            <button onclick="processTransaction()" class="action-btn-main">Process</button>
-            <p style="margin-top:14px; cursor:pointer; color:var(--text-muted); font-size:13px;" onclick="closeModal('fundsModal')">Cancel</p>
+            <button onclick="commitDirectTransaction()" class="modal-submit-btn">Process Transaction</button>
         </div>
     </div>
 
@@ -310,31 +564,32 @@
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
         const LIPWA_LINK = "https://lipwa.link/8367";
 
-        let activeAccountObject = null;
-        let activeAuthTab = 'in';
-        let activeFundsMode = 'deposit';
+        let activeAccountProfile = null;
+        let authTabMode = 'in';
+        let fundsTabMode = 'deposit';
 
-        let gameStatus = "waiting"; 
-        let currentLiveMultiplier = 1.00;
-        let activeCrashTarget = 2.45;
-        let localCommittedStake = 0;
-        let hasCompletedCashout = false;
-        let roundStartTimeMillis = 0;
+        let simulationState = "waiting"; 
+        let localMultiplierCounter = 1.00;
+        let localTargetBoundary = 2.45;
+        let currentLockedStake = 0;
+        let hasSuccessfullyCashedOut = false;
+        let simulationStartTime = 0;
 
         window.onload = async () => {
-            await synchronizeProfile();
-            await parseRedirectResponse();
-            initializeRenderingEngine();
-            commence20SecondScanCycle();
+            await reloadUserProfile();
+            await evaluateIncomingRedirect();
+            setupCanvasRendering();
+            runSystemAirborneCycles();
         };
 
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs.getContext('2d');
 
-        function initializeRenderingEngine() {
-            function drawCanvasFrame() {
+        function setupCanvasRendering() {
+            function drawSceneElements() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
                 
+                // Fine background styling grids
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < cvs.width; x += 40) {
@@ -344,308 +599,309 @@
                     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvs.width, y); ctx.stroke();
                 }
 
-                if (gameStatus === "soaring") {
-                    let progress = (currentLiveMultiplier - 1) / (activeCrashTarget - 1 || 1);
-                    progress = Math.min(progress, 1.0);
+                if (simulationState === "soaring") {
+                    let travelMetric = (localMultiplierCounter - 1) / (localTargetBoundary - 1 || 1);
+                    travelMetric = Math.min(travelMetric, 1.0);
 
-                    ctx.strokeStyle = "var(--aviator-red)";
+                    ctx.strokeStyle = "var(--b-red)";
                     ctx.lineWidth = 5;
                     ctx.beginPath();
                     ctx.moveTo(0, cvs.height);
                     
-                    let curX = cvs.width * progress;
-                    let curY = cvs.height - (cvs.height * 0.78 * Math.pow(progress, 1.35));
+                    let pX = cvs.width * travelMetric;
+                    let pY = cvs.height - (cvs.height * 0.78 * Math.pow(travelMetric, 1.35));
                     
-                    ctx.quadraticCurveTo(cvs.width * progress * 0.45, cvs.height, curX, curY);
+                    ctx.quadraticCurveTo(cvs.width * travelMetric * 0.45, cvs.height, pX, pY);
                     ctx.stroke();
 
                     ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
-                    ctx.arc(curX, curY, 6, 0, Math.PI * 2);
+                    ctx.arc(pX, pY, 6, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                requestAnimationFrame(drawCanvasFrame);
+                requestAnimationFrame(drawSceneElements);
             }
-            drawCanvasFrame();
+            drawSceneElements();
         }
 
-        function commence20SecondScanCycle() {
-            gameStatus = "waiting";
-            currentLiveMultiplier = 1.00;
-            hasCompletedCashout = false;
+        function runSystemAirborneCycles() {
+            simulationState = "waiting";
+            localMultiplierCounter = 1.00;
+            hasSuccessfullyCashedOut = false;
 
-            activeCrashTarget = parseFloat((2.0 + Math.random() * 5.65).toFixed(2));
+            localTargetBoundary = parseFloat((2.0 + Math.random() * 5.75).toFixed(2));
 
-            document.getElementById('sidebarPredictionValue').innerText = activeCrashTarget.toFixed(2) + "x";
-            document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
-            document.getElementById('liveDisplayMultiplier').style.color = "#fff";
+            document.getElementById('sidebarPredictionValue').innerText = localTargetBoundary.toFixed(2) + "x";
+            document.getElementById('multiplierDisplayValue').innerText = "1.00x";
+            document.getElementById('multiplierDisplayValue').style.color = "#ffffff";
 
-            let prepTimeRemaining = 20;
-            document.getElementById('liveFlightStatusText').innerText = `Launching In: ${prepTimeRemaining}s`;
-            document.getElementById('sidebarPredictionClock').innerText = `Locked trajectory for ${prepTimeRemaining}s. Target ready.`;
+            let cycleTimerSeconds = 20;
+            document.getElementById('flightStatusLabel').innerText = `Flight launching: ${cycleTimerSeconds}s`;
+            document.getElementById('sidebarPredictionClock').innerText = `Target locked. Launch processing in precisely ${cycleTimerSeconds}s.`;
 
-            const btn = document.getElementById('liveWagerSubmitBtn');
-            btn.disabled = !activeAccountObject;
-            btn.className = "btn-wager place";
+            const btn = document.getElementById('submitWagerActionBtn');
+            btn.disabled = !activeAccountProfile;
+            btn.className = "commit-bet-btn place";
             btn.innerHTML = `<span>Place Bet</span>`;
 
-            const clockTimer = setInterval(() => {
-                prepTimeRemaining--;
-                if (prepTimeRemaining > 0) {
-                    document.getElementById('liveFlightStatusText').innerText = `Launching In: ${prepTimeRemaining}s`;
-                    document.getElementById('sidebarPredictionClock').innerText = `Locked target at ${activeCrashTarget.toFixed(2)}x. Next launch in ${prepTimeRemaining}s.`;
+            const clockTracker = setInterval(() => {
+                cycleTimerSeconds--;
+                if (cycleTimerSeconds > 0) {
+                    document.getElementById('flightStatusLabel').innerText = `Flight launching: ${cycleTimerSeconds}s`;
+                    document.getElementById('sidebarPredictionClock').innerText = `Locked target at ${localTargetBoundary.toFixed(2)}x. Launch in ${cycleTimerSeconds}s.`;
                 } else {
-                    clearInterval(clockTimer);
-                    document.getElementById('sidebarPredictionClock').innerText = "Prediction active. Trajectory soaring.";
-                    executeActiveFlight();
+                    clearInterval(clockTracker);
+                    document.getElementById('sidebarPredictionClock').innerText = "Prediction signal active. Multiplier rising.";
+                    launchAirborneTelemetry();
                 }
             }, 1000);
         }
 
-        function executeActiveFlight() {
-            gameStatus = "soaring";
-            roundStartTimeMillis = performance.now();
-            document.getElementById('liveFlightStatusText').innerText = "In Flight";
+        function launchAirborneTelemetry() {
+            simulationState = "soaring";
+            simulationStartTime = performance.now();
+            document.getElementById('flightStatusLabel').innerText = "In Flight";
 
-            const btn = document.getElementById('liveWagerSubmitBtn');
-            if (localCommittedStake > 0) {
+            const btn = document.getElementById('submitWagerActionBtn');
+            if (currentLockedStake > 0) {
                 btn.disabled = false;
-                btn.className = "btn-wager cash";
+                btn.className = "commit-bet-btn cash";
                 btn.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">at 1.00x</span>`;
             } else {
                 btn.disabled = true;
             }
 
-            function scaleFlightProgress() {
-                if (gameStatus !== "soaring") return;
-                let elapsedSeconds = (performance.now() - roundStartTimeMillis) / 1000;
-                currentLiveMultiplier = parseFloat(Math.pow(1.085, elapsedSeconds * 2).toFixed(2));
+            function incrementMultiplierProgress() {
+                if (simulationState !== "soaring") return;
+                let runningTime = (performance.now() - simulationStartTime) / 1000;
+                localMultiplierCounter = parseFloat(Math.pow(1.085, runningTime * 2).toFixed(2));
 
-                if (currentLiveMultiplier >= activeCrashTarget) {
-                    triggerFlightCrashEvent();
+                if (localMultiplierCounter >= localTargetBoundary) {
+                    triggerSimulationCrash();
                 } else {
-                    document.getElementById('liveDisplayMultiplier').innerText = currentLiveMultiplier.toFixed(2) + "x";
-                    if (localCommittedStake > 0 && !hasCompletedCashout) {
-                        const calculatedPayout = (localCommittedStake * currentLiveMultiplier).toFixed(2);
-                        btn.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">Ksh ${calculatedPayout}</span>`;
+                    document.getElementById('multiplierDisplayValue').innerText = localMultiplierCounter.toFixed(2) + "x";
+                    if (currentLockedStake > 0 && !hasSuccessfullyCashedOut) {
+                        const payoutPreview = (currentLockedStake * localMultiplierCounter).toFixed(2);
+                        btn.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.85;">Ksh ${payoutPreview}</span>`;
                     }
-                    setTimeout(scaleFlightProgress, 85);
+                    setTimeout(incrementMultiplierProgress, 85);
                 }
             }
-            scaleFlightProgress();
+            incrementMultiplierProgress();
         }
 
-        function triggerFlightCrashEvent() {
-            gameStatus = "crashed";
-            document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
-            document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
-            document.getElementById('liveFlightStatusText').innerText = "Crashed";
+        function triggerSimulationCrash() {
+            simulationState = "crashed";
+            document.getElementById('multiplierDisplayValue').innerText = "FLEW AWAY!";
+            document.getElementById('multiplierDisplayValue').style.color = "var(--b-red)";
+            document.getElementById('flightStatusLabel').innerText = "Crashed";
 
-            const btn = document.getElementById('liveWagerSubmitBtn');
+            const btn = document.getElementById('submitWagerActionBtn');
             btn.disabled = true;
-            btn.className = "btn-wager place";
+            btn.className = "commit-bet-btn place";
             btn.innerHTML = `<span>Crashed</span>`;
 
-            localCommittedStake = 0;
+            currentLockedStake = 0;
             setTimeout(() => {
-                commence20SecondScanCycle();
+                runSystemAirborneCycles();
             }, 4000);
         }
 
-        async function processActiveWager() {
-            if (!activeAccountObject) return openModal('authModal');
-            const btn = document.getElementById('liveWagerSubmitBtn');
+        async function submitWagerProcess() {
+            if (!activeAccountProfile) return openModal('authPanelModal');
+            const btn = document.getElementById('submitWagerActionBtn');
 
-            if (gameStatus === "waiting") {
-                const stakeValue = parseFloat(document.getElementById('userWagerAmountInput').value);
-                if (isNaN(stakeValue) || stakeValue < 10) return alert("The minimum accepted wager value is Ksh 10.");
+            if (simulationState === "waiting") {
+                const stakeSelection = parseFloat(document.getElementById('userWagerAmountInput').value);
+                if (isNaN(stakeSelection) || stakeSelection < 10) return alert("Minimum wager is Ksh 10.");
 
-                const currentBalance = parseFloat(activeAccountObject.balance || 0);
-                if (stakeValue > currentBalance) return alert("Insufficient balance.");
+                const userBalanceAtBank = parseFloat(activeAccountProfile.balance || 0);
+                if (stakeSelection > userBalanceAtBank) return alert("Insufficient available funds.");
 
-                localCommittedStake = stakeValue;
-                const newProfileBalance = (currentBalance - localCommittedStake).toFixed(2);
+                currentLockedStake = stakeSelection;
+                const balanceAdjustmentValue = (userBalanceAtBank - currentLockedStake).toFixed(2);
 
-                await supabase.from('profiles').update({ balance: newProfileBalance }).eq('email', activeAccountObject.email);
-                await synchronizeProfile();
+                await supabase.from('profiles').update({ balance: balanceAdjustmentValue }).eq('email', activeAccountProfile.email);
+                await reloadUserProfile();
 
                 btn.disabled = true;
-                btn.innerHTML = `<span>Locked</span>`;
-                alert("Wager confirmed.");
+                btn.innerHTML = `<span>Set</span>`;
+                alert("Wager placed successfully. Good luck!");
 
-            } else if (gameStatus === "soaring" && localCommittedStake > 0 && !hasCompletedCashout) {
-                hasCompletedCashout = true;
-                const cashOutAtMultiplier = currentLiveMultiplier;
-                const balanceWinningsPayout = (localCommittedStake * cashOutAtMultiplier).toFixed(2);
+            } else if (simulationState === "soaring" && currentLockedStake > 0 && !hasSuccessfullyCashedOut) {
+                hasSuccessfullyCashedOut = true;
+                const multiplierPoint = localMultiplierCounter;
+                const calculatedWinnings = (currentLockedStake * multiplierPoint).toFixed(2);
                 
-                const profileBalanceNow = parseFloat(activeAccountObject.balance || 0);
-                const updatedAccountBalance = (profileBalanceNow + parseFloat(balanceWinningsPayout)).toFixed(2);
+                const currentDirectBalanceValue = parseFloat(activeAccountProfile.balance || 0);
+                const completeRestoredBalance = (currentDirectBalanceValue + parseFloat(calculatedWinnings)).toFixed(2);
 
-                await supabase.from('profiles').update({ balance: updatedAccountBalance }).eq('email', activeAccountObject.email);
-                await synchronizeProfile();
+                await supabase.from('profiles').update({ balance: completeRestoredBalance }).eq('email', activeAccountProfile.email);
+                await reloadUserProfile();
                 
-                localCommittedStake = 0;
+                currentLockedStake = 0;
                 btn.disabled = true;
-                btn.className = "btn-wager place";
+                btn.className = "commit-bet-btn place";
                 btn.innerHTML = `<span>Won</span>`;
 
-                alert(`Cashout successful at ${cashOutAtMultiplier}x! Added Ksh ${parseFloat(balanceWinningsPayout).toLocaleString()}`);
+                alert(`Auto Cash Out successful at ${multiplierPoint}x! Credited Ksh ${parseFloat(calculatedWinnings).toLocaleString()}`);
             }
         }
 
-        async function synchronizeProfile() {
-            const cachedUserEmail = localStorage.getItem('nx_user');
-            if (cachedUserEmail) {
-                const { data } = await supabase.from('profiles').select('*').eq('email', cachedUserEmail).single();
+        async function reloadUserProfile() {
+            const currentSessionKey = localStorage.getItem('nx_user');
+            if (currentSessionKey) {
+                const { data } = await supabase.from('profiles').select('*').eq('email', currentSessionKey).single();
                 if (data) {
-                    activeAccountObject = data;
-                    document.getElementById('signBtn').classList.add('hidden');
-                    document.getElementById('profileBtn').classList.remove('hidden');
-                    document.getElementById('balanceDisplay').innerText = parseFloat(activeAccountObject.balance || 0).toFixed(2);
-                    if (activeAccountObject.name) {
-                        document.getElementById('depositNameInput').value = activeAccountObject.name;
+                    activeAccountProfile = data;
+                    document.getElementById('authGlobalBtn').classList.add('hidden');
+                    document.getElementById('userProfileCircle').classList.remove('hidden');
+                    document.getElementById('balanceDisplay').innerText = parseFloat(activeAccountProfile.balance || 0).toFixed(2);
+                    if (activeAccountProfile.name) {
+                        document.getElementById('depositNameInput').value = activeAccountProfile.name;
                     }
                     return;
                 }
             }
-            document.getElementById('signBtn').classList.remove('hidden');
-            document.getElementById('profileBtn').classList.add('hidden');
+            document.getElementById('authGlobalBtn').classList.remove('hidden');
+            document.getElementById('userProfileCircle').classList.add('hidden');
             document.getElementById('balanceDisplay').innerText = "0.00";
         }
 
-        async function parseRedirectResponse() {
-            const parsedParameters = new URLSearchParams(window.location.search);
-            const txnStatus = parsedParameters.get('status');
-            const txnAmount = parseFloat(parsedParameters.get('amount'));
-            const userRefEmail = localStorage.getItem('nx_user');
+        async function evaluateIncomingRedirect() {
+            const params = new URLSearchParams(window.location.search);
+            const verifiedRedirectStatus = params.get('status');
+            const totalCashValue = parseFloat(params.get('amount'));
+            const sessionEmail = localStorage.getItem('nx_user');
 
-            if (txnStatus === 'success' && !isNaN(txnAmount) && txnAmount > 0 && userRefEmail) {
-                const uniqueIdRef = parsedParameters.get('reference');
-                const loadedTransactionsRegistry = JSON.parse(localStorage.getItem('added_tx') || '[]');
+            if (verifiedRedirectStatus === 'success' && !isNaN(totalCashValue) && totalCashValue > 0 && sessionEmail) {
+                const idCheck = params.get('reference');
+                const loggedTransactions = JSON.parse(localStorage.getItem('added_tx') || '[]');
 
-                if (!loadedTransactionsRegistry.includes(uniqueIdRef)) {
-                    const { data } = await supabase.from('profiles').select('balance').eq('email', userRefEmail).single();
+                if (!loggedTransactions.includes(idCheck)) {
+                    const { data } = await supabase.from('profiles').select('balance').eq('email', sessionEmail).single();
                     if (data) {
-                        const netCombinedBalanceValue = (parseFloat(data.balance || 0) + txnAmount).toFixed(2);
-                        await supabase.from('profiles').update({ balance: netCombinedBalanceValue }).eq('email', userRefEmail);
+                        const updatedValueTotal = (parseFloat(data.balance || 0) + totalCashValue).toFixed(2);
+                        await supabase.from('profiles').update({ balance: updatedValueTotal }).eq('email', sessionEmail);
 
-                        loadedTransactionsRegistry.push(uniqueIdRef);
-                        localStorage.setItem('added_tx', JSON.stringify(loadedTransactionsRegistry));
+                        loggedTransactions.push(idCheck);
+                        localStorage.setItem('added_tx', JSON.stringify(loggedTransactions));
                         
-                        alert(`Successfully deposited Ksh ${txnAmount.toLocaleString()}`);
+                        alert(`Successfully deposited Ksh ${totalCashValue.toLocaleString()}`);
                         window.history.replaceState({}, document.title, window.location.pathname);
-                        await synchronizeProfile();
+                        await reloadUserProfile();
                     }
                 }
             }
         }
 
-        function toggleAuthTab(state) {
-            activeAuthTab = state;
-            const signupBox = document.getElementById('signUpFields');
-            if (state === 'up') {
-                signupBox.classList.remove('hidden');
-                document.getElementById('signUpTabBtn').classList.add('active');
-                document.getElementById('signInTabBtn').classList.remove('active');
-                document.getElementById('authActionTitleText').innerText = "Sign Up";
-                document.getElementById('authActionDescText').innerText = "Create a betting account";
+        function updateAuthTabs(tabState) {
+            authTabMode = tabState;
+            const extraFields = document.getElementById('signUpExtras');
+            if (tabState === 'up') {
+                extraFields.classList.remove('hidden');
+                document.getElementById('signUpTab').classList.add('active');
+                document.getElementById('signInTab').classList.remove('active');
+                document.getElementById('authActionTitleText').innerText = "Register Profile";
+                document.getElementById('authActionDescText').innerText = "Join to deposit and place real bets";
             } else {
-                signupBox.classList.add('hidden');
-                document.getElementById('signInTabBtn').classList.add('active');
-                document.getElementById('signUpTabBtn').classList.remove('active');
+                extraFields.classList.add('hidden');
+                document.getElementById('signInTab').classList.add('active');
+                document.getElementById('signUpTab').classList.remove('active');
                 document.getElementById('authActionTitleText').innerText = "Sign In";
-                document.getElementById('authActionDescText').innerText = "Sign into your account terminal";
+                document.getElementById('authActionDescText').innerText = "Access your active account profile";
             }
         }
 
-        async function submitSessionAuth() {
-            const emailValue = document.getElementById('authUserEmailInput').value.trim().toLowerCase();
-            const passwordValue = document.getElementById('authUserPasswordInput').value.trim();
+        async function commitAccountAuthentication() {
+            const targetUserEmail = document.getElementById('authUserEmailInput').value.trim().toLowerCase();
+            const targetUserPass = document.getElementById('authUserPasswordInput').value.trim();
 
-            if (!emailValue.includes('@')) return alert("Enter a valid email address.");
-            if (passwordValue.length < 4) return alert("Your password must contain at least 4 characters.");
+            if (!targetUserEmail.includes('@')) return alert("Please enter a valid email.");
+            if (targetUserPass.length < 4) return alert("Passwords must contain at least 4 characters.");
 
-            if (activeAuthTab === 'up') {
-                const nameValue = document.getElementById('authUserNameInput').value.trim();
-                if (!nameValue) return alert("Full name is required.");
+            if (authTabMode === 'up') {
+                const profileNameInput = document.getElementById('authUserNameInput').value.trim();
+                if (!profileNameInput) return alert("Full name entry is required.");
 
-                const { data: duplicate } = await supabase.from('profiles').select('email').eq('email', emailValue).single();
-                if (duplicate) return alert("Account already exists with this email address.");
+                const { data: profileCheck } = await supabase.from('profiles').select('email').eq('email', targetUserEmail).single();
+                if (profileCheck) return alert("An account already exists with this email address.");
 
-                const { error } = await supabase.from('profiles').insert([{ email: emailValue, pass: passwordValue, name: nameValue, balance: 0.00 }]);
-                if (error) return alert("Registration Error: " + error.message);
+                const { error } = await supabase.from('profiles').insert([{ email: targetUserEmail, pass: targetUserPass, name: profileNameInput, balance: 0.00 }]);
+                if (error) return alert("An error occurred: " + error.message);
                 
-                localStorage.setItem('nx_user', emailValue);
-                alert("Success! Account created.");
-                closeModal('authModal');
-                await synchronizeProfile();
+                localStorage.setItem('nx_user', targetUserEmail);
+                alert("Sign up successful!");
+                closeModal('authPanelModal');
+                await reloadUserProfile();
             } else {
-                const { data, error } = await supabase.from('profiles').select('*').eq('email', emailValue).eq('pass', passwordValue).single();
+                const { data, error } = await supabase.from('profiles').select('*').eq('email', targetUserEmail).eq('pass', targetUserPass).single();
                 if (error || !data) return alert("Invalid email address or password.");
 
                 localStorage.setItem('nx_user', data.email);
-                alert(`Hello ${data.name || data.email}`);
-                closeModal('authModal');
-                await synchronizeProfile();
+                alert(`Welcome back ${data.name || data.email}`);
+                closeModal('authPanelModal');
+                await reloadUserProfile();
             }
         }
 
-        function toggleFundsTab(state) {
-            activeFundsMode = state;
-            if (state === 'withdraw') {
-                document.getElementById('withdrawTabBtn').classList.add('active');
-                document.getElementById('depositTabBtn').classList.remove('active');
+        function updateFundsTabs(fundsState) {
+            fundsTabMode = fundsState;
+            if (fundsState === 'withdraw') {
+                document.getElementById('withdrawTab').classList.add('active');
+                document.getElementById('depositTab').classList.remove('active');
                 document.getElementById('withdrawFormFields').classList.remove('hidden');
                 document.getElementById('depositFormFields').classList.add('hidden');
-                document.getElementById('fundsActionTitleText').innerText = "Withdraw Funds";
+                document.getElementById('fundsActionTitleText').innerText = "Withdraw Cash";
             } else {
-                document.getElementById('depositTabBtn').classList.add('active');
-                document.getElementById('withdrawTabBtn').classList.remove('active');
+                document.getElementById('depositTab').classList.add('active');
+                document.getElementById('withdrawTab').classList.remove('active');
                 document.getElementById('withdrawFormFields').classList.add('hidden');
                 document.getElementById('depositFormFields').classList.remove('hidden');
-                document.getElementById('fundsActionTitleText').innerText = "Deposit Funds";
+                document.getElementById('fundsActionTitleText').innerText = "Process Deposit";
             }
         }
 
-        function updateWagerAmount(amountValue) { 
-            document.getElementById('fundsAmountInput').value = parseFloat(amountValue).toFixed(2); 
+        function applyPresetCashValue(val) { 
+            document.getElementById('fundsAmountInput').value = parseFloat(val).toFixed(2); 
         }
 
-        async function processTransaction() {
-            if (!activeAccountObject) return openModal('authModal');
-            const totalAmountValue = Number(document.getElementById('fundsAmountInput').value);
-            if (isNaN(totalAmountValue) || totalAmountValue < 10) return alert("The minimum amount is Ksh 10.");
+        async function commitDirectTransaction() {
+            if (!activeAccountProfile) return openModal('authPanelModal');
+            const fundsEntryAmount = Number(document.getElementById('fundsAmountInput').value);
+            if (isNaN(fundsEntryAmount) || fundsEntryAmount < 10) return alert("The minimum amount is Ksh 10.");
 
-            if (activeFundsMode === 'withdraw') {
-                const userPhone = document.getElementById('withdrawPhoneInput').value.trim();
-                const walletBalance = parseFloat(activeAccountObject.balance || 0);
-                if (totalAmountValue > walletBalance) return alert("Insufficient available balance.");
+            if (fundsTabMode === 'withdraw') {
+                const userNumber = document.getElementById('withdrawPhoneInput').value.trim();
+                const runningBankTotal = parseFloat(activeAccountProfile.balance || 0);
+                if (fundsEntryAmount > runningBankTotal) return alert("Insufficient available balance.");
 
-                const remainingBalanceValue = (walletBalance - totalAmountValue).toFixed(2);
-                await supabase.from('profiles').update({ balance: remainingBalanceValue }).eq('email', activeAccountObject.email);
+                const revisedBalanceTotal = (runningBankTotal - fundsEntryAmount).toFixed(2);
+                await supabase.from('profiles').update({ balance: revisedBalanceTotal }).eq('email', activeAccountProfile.email);
 
-                await synchronizeProfile();
-                closeModal('fundsModal');
-                alert(`Withdrawal completed! Current Balance: Ksh ${remainingBalanceValue}`);
+                await reloadUserProfile();
+                closeModal('fundsPanelModal');
+                alert(`Withdrawal completed. Current Balance: Ksh ${revisedBalanceTotal}`);
             } else {
-                const userPhone = document.getElementById('depositPhoneInput').value.trim();
-                const userName = encodeURIComponent(document.getElementById('depositNameInput').value.trim());
-                if (!userPhone || !userName) return alert("Fill in both your name and M-Pesa registered phone.");
+                const userNumber = document.getElementById('depositPhoneInput').value.trim();
+                const realNameValue = encodeURIComponent(document.getElementById('depositNameInput').value.trim());
+                if (!userNumber || !realNameValue) return alert("Please fill in both name and M-Pesa phone number.");
 
-                const generatedInvoiceRef = "INV-" + Math.floor(Date.now() / 1000);
-                closeModal('fundsModal');
+                const generatedInvoiceID = "INV-" + Math.floor(Date.now() / 1000);
+                closeModal('fundsPanelModal');
 
                 const currentOriginUrl = "https://polymarketsafrica.online/";
-                const directRedirectUrl = encodeURIComponent(`${currentOriginUrl}?status=success&amount=${totalAmountValue}&reference=${generatedInvoiceRef}`);
+                const redirectAddress = encodeURIComponent(`${currentOriginUrl}?status=success&amount=${fundsEntryAmount}&reference=${generatedInvoiceID}`);
                 
-                window.location.href = `${LIPWA_LINK}?amount=${totalAmountValue}&name=${userName}&phone=${userPhone}&reference=${generatedInvoiceRef}&success_url=${directRedirectUrl}&callback=${directRedirectUrl}`;
+                window.location.href = `${LIPWA_LINK}?amount=${fundsEntryAmount}&name=${realNameValue}&phone=${userNumber}&reference=${generatedInvoiceID}&success_url=${redirectAddress}&callback=${redirectAddress}`;
             }
         }
 
-        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
-        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
-        function terminateSession() { 
-            if (confirm("Logout of terminal?")) {
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function triggerAccountLogout() { 
+            if (confirm("Sign out of the active terminal?")) {
                 localStorage.removeItem('nx_user');
                 location.reload(); 
             }
