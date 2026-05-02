@@ -3,651 +3,699 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aviator Crash Terminal</title>
+    <title>Polymarkets Africa | Terminal</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root { 
-            --aviator-bg: #000000;
-            --main-panel-bg: #141516;
-            --control-panel-bg: #181a1d;
-            --accent-green: #28a745;
-            --bet-green: #12cf5c;
-            --betika-dark: #101112;
-            --betika-border: #1f2226;
-            --text-primary: #ffffff;
-            --text-secondary: #9ea3a8;
-            --aviator-red: #d91d38;
+            --accent: #2ebd85; 
+            --border: #cbd5e1; 
+            --text-main: #0f172a; 
+            --text-sub: #64748b;
+            --yes-blue: #096cfb; 
+            --yes-bg: #eff6ff; 
+            --no-red: #df1c41; 
+            --no-bg: #fff1f2;
+            --tech-bg: #0f172a;
         }
         
-        body { 
-            background: var(--betika-dark); 
-            color: var(--text-primary); 
-            margin: 0; 
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased; 
-            box-sizing: border-box;
-        }
+        body { background: #f8fafc; color: var(--text-main); margin: 0; padding-top: 80px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
 
-        /* Redesigned Premium Header without Back Button */
-        .top-header-navbar {
-            background: #111315;
-            border-bottom: 1px solid var(--betika-border);
-            position: fixed; top: 0; left: 0; right: 0;
-            height: 60px; z-index: 2000;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-sizing: border-box;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .header-left { display: flex; align-items: center; }
-        .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
+        .header-stack { position: fixed; top: 0; left: 0; right: 0; background: #fff; z-index: 2000; border-bottom: 1px solid var(--border); }
+        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 70px; }
+        .logo-wrap { display: flex; flex-direction: column; line-height: 1; }
+        .logo-main { font-weight: 900; font-size: 20px; letter-spacing: -0.6px; color: #0f172a; text-transform: uppercase; }
+        .logo-sub { font-size: 11px; font-weight: 700; color: var(--yes-blue); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
         
-        .header-actions { display: flex; align-items: center; gap: 8px; }
-        .user-balance-pill { 
-            display: flex; align-items: center; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--betika-border); padding: 6px 12px; 
-            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c;
-            box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
-        }
-        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .wallet-pill { display: flex; align-items: center; background: #f1f5f9; border: 1px solid var(--border); padding: 6px 6px 6px 12px; border-radius: 14px; gap: 8px; font-size: 14px; font-weight: 800; }
+        .btn-deposit { background: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-deposit:active { opacity: 0.8; }
         
-        .action-header-btn { 
-            background: #1c1d21; color: #fff; border: 1px solid var(--betika-border);
-            padding: 8px 14px; border-radius: 20px; font-weight: 800; 
-            font-size: 11px; cursor: pointer; text-transform: uppercase;
-            transition: transform 0.1s ease;
-        }
-        .action-header-btn.deposit {
-            background: #12cf5c; border: none;
-            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
-        }
-        .action-header-btn:active { transform: scale(0.96); }
+        .user-id { width: 36px; height: 36px; background: var(--tech-bg); color: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .person-icon { width: 18px; height: 18px; fill: currentColor; }
 
-        /* Main Game Content Area */
-        .gameplay-layout-container {
-            max-width: 800px; margin: 76px auto 24px;
-            padding: 0 12px; box-sizing: border-box;
-            display: flex; flex-direction: column; gap: 14px;
-        }
-
-        /* Visual Board styling matched exactly */
-        .aviator-flight-panel {
-            background: #151719; border: 1px solid var(--betika-border);
-            border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-        .canvas-container {
-            background: #000000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.015);
-            position: relative; overflow: hidden; height: 230px; width: 100%;
-        }
-        .game-canvas { width: 100%; height: 100%; display: block; }
+        #dashboard { max-width: 660px; margin: auto; padding: 12px; box-sizing: border-box; }
         
-        /* Small multipliers history bar */
-        .history-pills-row {
-            display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px;
-            scrollbar-width: none; font-size: 11px; font-weight: 700;
-        }
-        .history-pills-row::-webkit-scrollbar { display: none; }
-        .history-pill { background: #1c1d21; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .history-pill.high { color: #c05df1; }
+        .section-nav { display: flex; gap: 8px; margin-bottom: 16px; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+        .section-tab { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-sub); transition: 0.2s; }
+        .section-tab.active { background: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-        .flight-counter { 
-            position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
-            text-align: center; pointer-events: none; width: 100%; z-index: 10;
-        }
-        .live-mult { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
-        .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
+        .market-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.03); }
+        .m-category { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); display: inline-block; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .m-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .m-title { font-size: 16px; font-weight: 700; line-height: 1.4; color: #0f172a; }
 
-        /* Betting Controls Area */
-        .betting-console-board {
-            display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
-        }
-        @media(min-width: 600px) {
-            .betting-console-board { grid-template-columns: 1fr 1fr; }
-        }
+        .btn-group { display: flex; gap: 10px; }
+        .trade-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid transparent; font-weight: 800; font-size: 14.5px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: 0.15s; }
+        .trade-btn:active { transform: scale(0.98); }
+        .trade-btn.yes { background: var(--yes-bg); color: var(--yes-blue); border-color: #bfdbfe; }
+        .trade-btn.no { background: var(--no-bg); color: var(--no-red); border-color: #fecdd3; }
 
-        .control-dashboard-panel {
-            background: var(--control-panel-bg); border: 1px solid var(--betika-border);
-            border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        }
+        .history-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .hist-meta { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+        .hist-title { font-size: 14.5px; font-weight: 700; color: #0f172a; }
+        .hist-stats { display: flex; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 8px; font-size: 13.5px; font-weight: 700; }
+        .status-badge { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; }
+
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; }
         
-        .dashboard-category-tabs { 
-            display: flex; background: #101112; border-radius: 20px; padding: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
-        .dashboard-tab.active { background: #2c3035; color: #fff; }
-
-        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
-        .wager-box { 
-            background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 16px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
-        }
+        .modal { background: #fff; width: 100%; max-width: 420px; padding: 22px 26px; border-radius: 24px; text-align: center; box-sizing: border-box; max-height: 98vh; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         
-        /* Adjustment +/- Stepper style */
-        .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
-        .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 6px; font-weight: bold; outline: none; }
-        .wager-input { background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 800; outline: none; width: 66px; text-align: center; }
-
-        .bet-btn { 
-            border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; 
-            text-transform: uppercase; border: none; transition: all 0.1s ease; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 62px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .bet-btn:active { transform: scale(0.97); }
-        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2); }
-        .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
-        .bet-btn:disabled { background: #212429; color: #525861; cursor: not-allowed; box-shadow: none; }
-
-        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; transition: background 0.15s ease; }
-        .quick-amt-chip:active { background: #2c3035; color: #fff; }
-
-        /* Auto Controls Section */
-        .auto-controls-section {
-            background: #101112; border: 1px solid var(--betika-border);
-            border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
-            animation: slideDown 0.2s ease-out; margin-top: 2px;
-        }
-        .auto-switch-row { display: flex; justify-content: space-between; align-items: center; }
-        .auto-switch-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
+        .auth-nav { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
+        .auth-tab { flex: 1; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-sub); text-align: center; }
+        .auth-tab.active { background: #fff; color: #000; }
         
-        /* Premium Custom Checkbox Toggle */
-        .switch-input-wrapper { position: relative; width: 44px; height: 22px; }
-        .switch-input-wrapper input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #2c3035; border-radius: 34px; transition: .3s;
-        }
-        .toggle-slider:before {
-            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
-            background-color: white; border-radius: 50%; transition: .3s;
-        }
-        input:checked + .toggle-slider { background-color: var(--bet-green); }
-        input:checked + .toggle-slider:before { transform: translateX(22px); }
-
-        .auto-input-box {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #181a1d; border: 1px solid var(--betika-border);
-            padding: 6px 12px; border-radius: 10px;
-        }
-        .auto-input-field { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; width: 60px; outline: none; text-align: right; }
-
-        /* Floating AI Target Tool */
-        .floating-ai-assistant {
-            position: fixed; bottom: 24px; right: 24px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
-            backdrop-filter: blur(8px); color: #fff; border-radius: 50%; width: 62px; height: 62px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4); z-index: 3000;
-            cursor: pointer; transition: transform 0.2s;
-            border: 2px solid rgba(167, 139, 250, 0.5); text-align: center;
-        }
-        .floating-ai-assistant:active { transform: scale(0.92); }
-        .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
-        .floating-ai-value { font-size: 13px; font-weight: 800; }
-
-        /* Sliding Modals */
-        .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
-            backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
-        }
-        .form-modal-card { 
-            background: #181a1d; border: 1px solid var(--betika-border); 
-            width: 100%; max-width: 350px; padding: 22px; border-radius: 18px; box-sizing: border-box;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: slideDown 0.2s ease-out;
-        }
-        .form-input-group { text-align: left; margin-bottom: 14px; }
-        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
-        .form-input-control { 
-            width: 100%; padding: 12px; background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #fff; 
-        }
-        .form-submit-btn { 
-            width: 100%; padding: 14px; background: var(--bet-green); color: #fff; 
-            border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; 
-            text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2);
-            transition: transform 0.1s ease;
-        }
-        .form-submit-btn.withdraw-btn { background: #0284c7; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); }
-        .form-submit-btn:active { transform: scale(0.98); }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        .input-group { position: relative; margin-bottom: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+        .input-tech { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #0f172a; }
+        .input-tech:focus { border-color: var(--yes-blue); background: #fff; }
+        
+        .btn-tech { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 15px; text-transform: uppercase; margin-top: 8px; }
+        .btn-tech:active { opacity: 0.8; }
+        
+        .chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+        .amt-chip { border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: #fff; text-align: center; transition: 0.15s; }
+        .amt-chip:active { background: #f1f5f9; transform: scale(0.96); }
+        
         .hidden { display: none !important; }
+
+        .funds-card-container {
+            background: #fafcff;
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(226, 232, 240, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            margin-bottom: 12px;
+        }
+        
+        .badge-container { 
+            display: block; 
+            text-align: center; 
+            max-width: 100%; 
+            margin: 12px auto 4px auto; 
+            box-sizing: border-box; 
+            overflow: hidden; 
+        }
+        .badge-img { width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
     </style>
 </head>
 <body>
 
-    <div class="top-header-navbar">
-        <div class="header-left">
-            <div class="game-brand-labels">
-                <span class="brand-main-text">Aviator</span>
+    <div id="headerStack" class="header-stack">
+        <div class="top-nav">
+            <div class="logo-wrap">
+                <div class="logo-main">Polymarkets</div>
+                <div class="logo-sub">Africa</div>
             </div>
-        </div>
-        <div class="header-actions">
-            <div class="user-balance-pill">
-                <div id="balanceDisplay">3,000.00</div><span>KES</span>
-            </div>
-            <button onclick="openModal('withdrawModal')" class="action-header-btn">Withdraw</button>
-            <button onclick="openModal('depositModal')" class="action-header-btn deposit">Deposit</button>
-        </div>
-    </div>
-
-    <div class="gameplay-layout-container">
-        <div class="history-pills-row" id="historyPills">
-            <div class="history-pill">1.85x</div>
-            <div class="history-pill high">3.90x</div>
-            <div class="history-pill">1.00x</div>
-            <div class="history-pill">1.92x</div>
-            <div class="history-pill">1.51x</div>
-            <div class="history-pill high">5.62x</div>
-            <div class="history-pill">1.18x</div>
-        </div>
-
-        <div class="aviator-flight-panel">
-            <div class="canvas-container">
-                <canvas id="liveGameCanvas" class="game-canvas" width="540" height="230"></canvas>
-                <div class="flight-counter">
-                    <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
-                    <div id="liveFlightStatusText" class="live-status">Loading Systems...</div>
+            <div class="nav-right">
+                <button id="signBtn" class="btn-deposit" style="background:#f1f5f9; color:#000;" onclick="openModal('authModal')">Sign In</button>
+                <div id="userIcon" class="user-id hidden" onclick="logout()">
+                    <svg class="person-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 </div>
-            </div>
-        </div>
-
-        <div class="betting-console-board">
-            <div class="control-dashboard-panel">
-                <div class="dashboard-category-tabs">
-                    <div id="tabBet1" class="dashboard-tab active" onclick="switchBetCategory(1, 'bet')">Bet</div>
-                    <div id="tabAuto1" class="dashboard-tab" onclick="switchBetCategory(1, 'auto')">Auto</div>
-                </div>
-                <div class="wager-entry-row">
-                    <div class="wager-box">
-                        <div class="stepper-wager-controls">
-                            <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
-                            <input type="number" id="wagerInput1" class="wager-input" value="10" min="10">
-                            <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
-                        </div>
-                    </div>
-                    <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
-                    </button>
-                </div>
-                <div class="quick-amounts-grid" id="quickGrid1">
-                    <div class="quick-amt-chip" onclick="setFixedWager(1, 100)">100</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(1, 200)">200</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(1, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(1, 10000)">10,000</div>
-                </div>
-                <div id="autoControls1" class="auto-controls-section hidden">
-                    <div class="auto-switch-row">
-                        <span class="auto-switch-label">Auto Cash Out</span>
-                        <label class="switch-input-wrapper">
-                            <input type="checkbox" id="autoCashoutToggle1">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="auto-input-box">
-                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
-                        <input type="number" step="0.01" id="autoCashoutTarget1" class="auto-input-field" value="2.00">
-                    </div>
-                </div>
-            </div>
-
-            <div class="control-dashboard-panel">
-                <div class="dashboard-category-tabs">
-                    <div id="tabBet2" class="dashboard-tab active" onclick="switchBetCategory(2, 'bet')">Bet</div>
-                    <div id="tabAuto2" class="dashboard-tab" onclick="switchBetCategory(2, 'auto')">Auto</div>
-                </div>
-                <div class="wager-entry-row">
-                    <div class="wager-box">
-                        <div class="stepper-wager-controls">
-                            <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
-                            <input type="number" id="wagerInput2" class="wager-input" value="10" min="10">
-                            <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
-                        </div>
-                    </div>
-                    <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
-                    </button>
-                </div>
-                <div class="quick-amounts-grid" id="quickGrid2">
-                    <div class="quick-amt-chip" onclick="setFixedWager(2, 100)">100</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(2, 200)">200</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(2, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(2, 10000)">10,000</div>
-                </div>
-                <div id="autoControls2" class="auto-controls-section hidden">
-                    <div class="auto-switch-row">
-                        <span class="auto-switch-label">Auto Cash Out</span>
-                        <label class="switch-input-wrapper">
-                            <input type="checkbox" id="autoCashoutToggle2">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="auto-input-box">
-                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
-                        <input type="number" step="0.01" id="autoCashoutTarget2" class="auto-input-field" value="2.00">
-                    </div>
+                <div class="wallet-pill">
+                    Ksh <span id="balance">0.00</span>
+                    <button onclick="openModal('depositModal')" class="btn-deposit">Funds</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="aiOrb" class="floating-ai-assistant">
-        <div class="floating-ai-label">AI Signal</div>
-        <div id="aiDirectPrediction" class="floating-ai-value">---</div>
-    </div>
+    <div id="dashboard">
+        <div class="section-nav">
+            <div id="tabFeed" class="section-tab active" onclick="switchMainTab('feed')">Active Markets</div>
+            <div id="tabHist" class="section-tab" onclick="switchMainTab('history')">My Bets</div>
+        </div>
 
-    <div id="depositModal" class="overlay-screen">
-        <div class="form-modal-card">
-            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color:#12cf5c;">M-Pesa Deposit</h3>
-            <div class="form-input-group">
-                <label>Phone Number</label>
-                <input type="tel" id="depPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
+        <div id="mainFeedView"><div id="feed"></div></div>
+        <div id="mainHistoryView" class="hidden">
+            <div id="histFeed" style="margin-top:4px;">
+                <p style="text-align:center; color:var(--text-sub); font-size: 15px;">No predictions submitted yet.</p>
             </div>
-            <div class="form-input-group">
-                <label>Amount (KES)</label>
-                <input type="number" id="depAmount" class="form-input-control" value="100" min="10" required>
-            </div>
-            <button onclick="executePayheroDeposit()" class="form-submit-btn">Deposit via M-Pesa</button>
-            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('depositModal')">Dismiss</p>
         </div>
     </div>
 
-    <div id="withdrawModal" class="overlay-screen">
-        <div class="form-modal-card">
-            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color: #0284c7;">M-Pesa Withdrawal</h3>
-            <div class="form-input-group">
-                <label>M-Pesa Phone Number</label>
-                <input type="tel" id="wdPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
+    <div id="authModal" class="overlay">
+        <div class="modal">
+            <div class="auth-nav">
+                <div id="tabIn" class="auth-tab active" onclick="setAuth('in')">Sign In</div>
+                <div id="tabUp" class="auth-tab" onclick="setAuth('up')">Sign Up</div>
             </div>
-            <div class="form-input-group">
-                <label>Amount (KES)</label>
-                <input type="number" id="wdAmount" class="form-input-control" placeholder="Minimum 100" min="100" required>
+            <h2 id="aTitle" style="margin:0; font-size: 18px; font-weight: 800;">Terminal Access</h2>
+            <p id="aDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 16px 0;">Sign in to your account</p>
+            
+            <div id="upFields" class="hidden">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="aName" class="input-tech" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Country</label>
+                    <select id="aCountry" class="input-tech">
+                        <option value="" disabled selected>Choose Country</option>
+                        <option value="Algeria">Algeria</option>
+                        <option value="Angola">Angola</option>
+                        <option value="Benin">Benin</option>
+                        <option value="Botswana">Botswana</option>
+                        <option value="Burkina Faso">Burkina Faso</option>
+                        <option value="Burundi">Burundi</option>
+                        <option value="Cabo Verde">Cabo Verde</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Central African Republic">Central African Republic</option>
+                        <option value="Chad">Chad</option>
+                        <option value="Comoros">Comoros</option>
+                        <option value="Democratic Republic of the Congo">DR Congo</option>
+                        <option value="Republic of the Congo">Republic of the Congo</option>
+                        <option value="Djibouti">Djibouti</option>
+                        <option value="Egypt">Egypt</option>
+                        <option value="Equatorial Guinea">Equatorial Guinea</option>
+                        <option value="Eritrea">Eritrea</option>
+                        <option value="Eswatini">Eswatini</option>
+                        <option value="Ethiopia">Ethiopia</option>
+                        <option value="Gabon">Gabon</option>
+                        <option value="Gambia">Gambia</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Guinea">Guinea</option>
+                        <option value="Guinea-Bissau">Guinea-Bissau</option>
+                        <option value="Ivory Coast">Ivory Coast</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="Lesotho">Lesotho</option>
+                        <option value="Liberia">Liberia</option>
+                        <option value="Libya">Libya</option>
+                        <option value="Madagascar">Madagascar</option>
+                        <option value="Malawi">Malawi</option>
+                        <option value="Mali">Mali</option>
+                        <option value="Mauritania">Mauritania</option>
+                        <option value="Mauritius">Mauritius</option>
+                        <option value="Morocco">Morocco</option>
+                        <option value="Mozambique">Mozambique</option>
+                        <option value="Namibia">Namibia</option>
+                        <option value="Niger">Niger</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="Rwanda">Rwanda</option>
+                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                        <option value="Senegal">Senegal</option>
+                        <option value="Seychelles">Seychelles</option>
+                        <option value="Sierra Leone">Sierra Leone</option>
+                        <option value="Somalia">Somalia</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="South Sudan">South Sudan</option>
+                        <option value="Sudan">Sudan</option>
+                        <option value="Tanzania">Tanzania</option>
+                        <option value="Togo">Togo</option>
+                        <option value="Tunisia">Tunisia</option>
+                        <option value="Uganda">Uganda</option>
+                        <option value="Zambia">Zambia</option>
+                        <option value="Zimbabwe">Zimbabwe</option>
+                    </select>
+                </div>
             </div>
-            <button onclick="executeWithdrawal()" class="form-submit-btn withdraw-btn">Request Withdrawal</button>
-            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('withdrawModal')">Dismiss</p>
+            
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="aEmail" class="input-tech" placeholder="example@gmail.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="aPass" class="input-tech" placeholder="••••••••">
+            </div>
+
+            <button onclick="doAuth()" class="btn-tech">Access Account</button>
+            <p style="margin-top:12px; cursor:pointer; color:var(--text-sub); font-size:13px;" onclick="closeModal('authModal')">Cancel</p>
+        </div>
+    </div>
+
+    <div id="depositModal" class="overlay">
+        <div class="modal">
+            <div class="auth-nav">
+                <div id="tabDeposit" class="auth-tab active" onclick="setFundsMode('deposit')">Deposit</div>
+                <div id="tabWithdraw" class="auth-tab" onclick="setFundsMode('withdraw')">Withdraw</div>
+            </div>
+            
+            <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800;">Fund Balance</h2>
+            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Checkout safely via Lipwa</p>
+            
+            <div class="funds-card-container">
+                <div id="depositFormFields">
+                    <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" id="depName" class="input-tech" placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="depPhone" class="input-tech" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div id="withdrawalFields" class="hidden">
+                    <div class="input-group">
+                        <label>M-Pesa Name</label>
+                        <input type="text" id="withName" class="input-tech" placeholder="e.g. John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="withPhone" class="input-tech" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom:4px;">
+                    <label id="amtLabel">Amount (Ksh)</label>
+                    <input type="text" id="depAmt" class="input-tech" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
+                </div>
+                <div class="chip-grid">
+                    <div class="amt-chip" onclick="setAmt(100)">100</div>
+                    <div class="amt-chip" onclick="setAmt(250)">250</div>
+                    <div class="amt-chip" onclick="setAmt(500)">500</div>
+                    <div class="amt-chip" onclick="setAmt(1000)">1k</div>
+                    <div class="amt-chip" onclick="setAmt(2000)">2k</div>
+                    <div class="amt-chip" onclick="setAmt(5000)">5k</div>
+                    <div class="amt-chip" onclick="setAmt(10000)">10k</div>
+                    <div class="amt-chip" onclick="setAmt(20000)">20k</div>
+                </div>
+            </div>
+            
+            <button id="fundsSubmit" onclick="handleFundsAction()" class="btn-tech" style="background:var(--yes-blue);">Confirm Action</button>
+            
+            <span class="badge-container">
+                <a href="https://intasend.com/security" target="_blank">
+                    <img src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-light.png" class="badge-img" alt="IntaSend Secure Payments">
+                </a>
+            </span>
+
+            <p style="margin-top:8px; cursor:pointer; color:var(--text-sub); font-size:13px;" onclick="closeModal('depositModal')">Cancel</p>
+        </div>
+    </div>
+
+    <div id="betSlipModal" class="overlay">
+        <div class="modal">
+            <h2 id="slipMarketTitle" style="text-align:left; font-size:18px; margin:0; font-weight:800;">Open Prediction</h2>
+            <p id="slipPickMeta" style="text-align:left; color:var(--text-sub); margin:6px 0 16px 0; font-size: 15px;">Pick: <span id="slipPickText">YES</span> @ <span id="slipMultText">2.1x</span></p>
+
+            <div style="background:#f8fafc; padding:16px; border-radius:16px; border:1px solid var(--border); margin-bottom:16px;">
+                <div class="input-group">
+                    <label>Amount (Min. Ksh 20)</label>
+                    <input type="text" id="betAmt" class="input-tech" style="font-size:24px; text-align:center; font-weight:800;" placeholder="0.00" value="100.00">
+                </div>
+            </div>
+
+            <button onclick="confirmWager()" class="btn-tech" style="background:var(--yes-blue);">Place Bet</button>
+            <p style="margin-top:12px; cursor:pointer; color:var(--text-sub); font-size:13px;" onclick="closeModal('betSlipModal')">Cancel</p>
         </div>
     </div>
 
     <script>
-        // Memory-Based LocalStorage
-        let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
+        const SB_URL = "https://hwxnfzuwaeseszgsjeny.supabase.co";
+        const SB_KEY = "sb_publishable_C_fx8fnHQ9c1x_ZkWIG-gQ_2l2Mt-NL";
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        let gameStatus = "waiting"; 
-        let currentMultiplier = 1.00;
-        let crashCeiling = 2.15;
+        let userProfile = null;
+        let activeTab = 'in';
+        let currentFundsMode = 'deposit';
+        let activeSelection = null; 
+        const LIPWA_LINK = "https://lipwa.link/8367";
 
-        let activePanelBets = { 1: 0, 2: 0 };
-        let cashoutStates = { 1: false, 2: false };
-        let launchTimeMillis = 0;
+        const markets = [];
+        let itemsRendered = 0;
+        const CHUNK_SIZE = 20;
 
-        const cvs = document.getElementById('liveGameCanvas');
-        const ctx = cvs.getContext('2d');
+        function generate1000Markets() {
+            const scenarios = [
+                { cat: "Politics", format: (v) => `Will the ${v} US Midterm elections result in a Senate majority flip?` },
+                { cat: "Politics", format: (v) => `Will Donald Trump be impeached again before the end of ${v}?` },
+                { cat: "Politics", format: (v) => `Will there be a complete US Federal Government shutdown lasting more than 5 days in Q${v}?` },
+                { cat: "Politics", format: (v) => `Will the US impose additional trade restrictions on chip exports to market ${v}?` },
+                
+                { cat: "Crypto", format: (v) => `Will Bitcoin cross $${v}0,000 before the close of this quarter?` },
+                { cat: "Crypto", format: (v) => `Will Ethereum's total market cap exceed $${v}00 Billion this month?` },
+                { cat: "Crypto", format: (v) => `Will Solana process a record high of ${v}0,000 transactions per second by June?` },
+                { cat: "Faith", format: (v) => `Will Jesus come back before June 8?` },
 
-        window.onload = () => {
-            updateVisualUIBalance();
-            initializeCanvasFlight();
-            triggerGameLoopEngine();
+                { cat: "Finance", format: (v) => `Will Crude Oil hit $${v}5 per barrel by the end of May?` },
+                { cat: "Finance", format: (v) => `Will the Federal Reserve cut key interest rates at the next FOMC meeting by ${v} basis points?` },
+                { cat: "Finance", format: (v) => `Will gold futures close above $${v},500 per ounce by Friday?` },
+                { cat: "Finance", format: (v) => `Will the inflation index increase by more than 1.${v}% in the upcoming monthly report?` },
+
+                { cat: "Sports", format: (v) => `Will Arsenal win the Premier League matchday ${v} with a clean sheet?` },
+                { cat: "Sports", format: (v) => `Will the Boston Celtics sweep their upcoming NBA playoff series game ${v}?` },
+                { cat: "Sports", format: (v) => `Will Real Madrid win their match by ${v} or more goals this weekend?` },
+                { cat: "Sports", format: (v) => `Will the upcoming F1 Grand Prix see ${v} or more DNFs?` },
+
+                { cat: "Science", format: (v) => `Will SpaceX successfully launch Starship flight test ${v} before month-end?` },
+                { cat: "Pop Culture", format: (v) => `Will the highest-grossing movie this weekend surpass $${v}0 Million at the box office?` },
+                { cat: "Science", format: (v) => `Will OpenAI announce GPT-${v} as their next flagship frontier model?` },
+                { cat: "Pop Culture", format: (v) => `Will the top trending hashtag on X/Twitter surpass ${v} Million posts today?` }
+            ];
+
+            for (let i = 1; i <= 1000; i++) {
+                const sIndex = i % scenarios.length;
+                const scenario = scenarios[sIndex];
+                
+                let valueVariant = (i % 8) + 1;
+                if (scenario.cat === "Crypto" && i > 100) valueVariant = (i % 25) + 10;
+                if (scenario.cat === "Finance" && i > 200) valueVariant = (i % 5) + 1;
+                
+                const uniqueQuestion = scenario.format(valueVariant);
+                
+                let randomBias = (i * 17) % 65 + 18;
+                let yesMult = (100 / randomBias).toFixed(2);
+                let noMult = (100 / (100 - randomBias)).toFixed(2);
+
+                if (sIndex === 7) {
+                    yesMult = "9.00";
+                    noMult = "3.00";
+                }
+
+                markets.push({
+                    id: `m-${i}`,
+                    q: uniqueQuestion,
+                    category: scenario.cat,
+                    yesMult: yesMult,
+                    noMult: noMult
+                });
+            }
+        }
+
+        window.onload = async () => {
+            generate1000Markets();
+            renderMore();
+            window.addEventListener('scroll', handleInfiniteScroll);
+            await checkPaymentCallback();
+            await syncSupabaseState();
         };
 
-        function updateVisualUIBalance() {
-            document.getElementById('balanceDisplay').innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            localStorage.setItem('terminal_balance', clientUserBalance.toString());
-        }
-
-        // Betting & Auto Tabs Handlers
-        function switchBetCategory(panel, category) {
-            const isBet = category === 'bet';
-            document.getElementById(`tabBet${panel}`).className = `dashboard-tab ${isBet ? 'active' : ''}`;
-            document.getElementById(`tabAuto${panel}`).className = `dashboard-tab ${!isBet ? 'active' : ''}`;
+        function renderMore() {
+            const f = document.getElementById('feed'); 
+            const end = Math.min(itemsRendered + CHUNK_SIZE, markets.length);
             
-            if (isBet) {
-                document.getElementById(`autoControls${panel}`).classList.add('hidden');
-                document.getElementById(`quickGrid${panel}`).classList.remove('hidden');
-            } else {
-                document.getElementById(`autoControls${panel}`).classList.remove('hidden');
-                document.getElementById(`quickGrid${panel}`).classList.add('hidden');
+            let chunkHtml = '';
+            for (let i = itemsRendered; i < end; i++) {
+                const m = markets[i];
+                chunkHtml += `
+                <div class="market-card">
+                    <div class="m-category">${m.category}</div>
+                    <div class="m-header">
+                        <div class="m-title">${m.q}</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="trade-btn yes" onclick="openSlip('${m.id}', 'YES', '${m.yesMult}')">
+                            <span>YES</span><span style="font-weight:700;">${m.yesMult}x</span>
+                        </button>
+                        <button class="trade-btn no" onclick="openSlip('${m.id}', 'NO', '${m.noMult}')">
+                            <span>NO</span><span style="font-weight:700;">${m.noMult}x</span>
+                        </button>
+                    </div>
+                </div>`;
+            }
+            f.insertAdjacentHTML('beforeend', chunkHtml);
+            itemsRendered = end;
+        }
+
+        function handleInfiniteScroll() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                if (itemsRendered < markets.length) {
+                    renderMore();
+                }
             }
         }
 
-        function adjustWager(panel, delta) {
-            const el = document.getElementById(`wagerInput${panel}`);
-            let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
-            el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
-        }
+        async function syncSupabaseState() {
+            const savedEmail = localStorage.getItem('nx_user');
+            if (savedEmail) {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('email', savedEmail)
+                    .single();
 
-        function setFixedWager(panel, value) {
-            const el = document.getElementById(`wagerInput${panel}`);
-            el.value = value;
-            document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
-        }
-
-        function initializeCanvasFlight() {
-            function drawFrame() {
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
-                
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
-                ctx.lineWidth = 1;
-                for (let x = 0; x < cvs.width; x += 40) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
-                }
-                for (let y = 0; y < cvs.height; y += 40) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvs.width, y); ctx.stroke();
-                }
-
-                if (gameStatus === "flying") {
-                    let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
-                    progress = Math.min(progress, 1.0);
-
-                    ctx.strokeStyle = "var(--aviator-red)";
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(0, cvs.height);
-                    let endX = cvs.width * progress;
-                    let endY = cvs.height - (cvs.height * 0.72 * Math.pow(progress, 1.35));
+                if (!error && data) {
+                    userProfile = data;
+                    document.getElementById('signBtn').classList.add('hidden');
+                    document.getElementById('userIcon').classList.remove('hidden');
                     
-                    ctx.quadraticCurveTo(cvs.width * progress * 0.5, cvs.height, endX, endY);
-                    ctx.stroke();
-
-                    ctx.fillStyle = "#ffffff";
-                    ctx.beginPath();
-                    ctx.arc(endX, endY, 6, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                requestAnimationFrame(drawFrame);
-            }
-            drawFrame();
-        }
-
-        function triggerGameLoopEngine() {
-            gameStatus = "waiting";
-            currentMultiplier = 1.00;
-            cashoutStates = { 1: false, 2: false };
-
-            crashCeiling = parseFloat((1.05 + Math.random() * 3.95).toFixed(2));
-
-            document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
-            document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
-            document.getElementById('liveDisplayMultiplier').style.color = "#fff";
-
-            let cycleTimer = 6;
-            document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
-
-            resetBetButtons();
-
-            const timerSub = setInterval(() => {
-                cycleTimer--;
-                if (cycleTimer > 0) {
-                    document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
-                } else {
-                    clearInterval(timerSub);
-                    startTakeoffPhase();
-                }
-            }, 1000);
-        }
-
-        function resetBetButtons() {
-            for (let i = 1; i <= 2; i++) {
-                const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 10;
-                btn.disabled = false;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
-                activePanelBets[i] = 0;
-            }
-        }
-
-        function startTakeoffPhase() {
-            gameStatus = "flying";
-            launchTimeMillis = performance.now();
-            document.getElementById('liveFlightStatusText').innerText = "Flying High";
-
-            for (let i = 1; i <= 2; i++) {
-                const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                if (activePanelBets[i] > 0) {
-                    btn.disabled = false;
-                    btn.className = "bet-btn cash";
-                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
-                } else {
-                    btn.disabled = true;
-                }
-            }
-
-            function fly() {
-                if (gameStatus !== "flying") return;
-                let elapsed = (performance.now() - launchTimeMillis) / 1000;
-                currentMultiplier = parseFloat(Math.pow(1.085, elapsed * 1.8).toFixed(2));
-
-                if (currentMultiplier >= crashCeiling) {
-                    triggerCrashEvent();
-                } else {
-                    document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2) + "x";
+                    const balance = parseFloat(userProfile.balance || 0).toFixed(2);
+                    document.getElementById('balance').innerText = parseFloat(balance).toLocaleString(undefined, {minimumFractionDigits: 2});
                     
-                    for (let i = 1; i <= 2; i++) {
-                        // Regular interactive cashout tracking
-                        if (activePanelBets[i] > 0 && !cashoutStates[i]) {
-                            const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                            const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
-                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
-
-                            // Execute Auto cashout check if toggled
-                            const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
-                            const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
-                            
-                            if (isAutoCheck && currentMultiplier >= targetVal) {
-                                executeCashOut(i);
-                            }
-                        }
+                    if (userProfile.name) {
+                        document.getElementById('depName').value = userProfile.name;
                     }
-                    setTimeout(fly, 75);
+                    renderHistory();
+                    return;
                 }
             }
-            fly();
+            document.getElementById('signBtn').classList.remove('hidden');
+            document.getElementById('userIcon').classList.add('hidden');
+            document.getElementById('balance').innerText = "0.00";
         }
 
-        function triggerCrashEvent() {
-            gameStatus = "crashed";
-            document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
-            document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
-            document.getElementById('liveFlightStatusText').innerText = `${crashCeiling.toFixed(2)}x`;
+        async function checkPaymentCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const amount = parseFloat(urlParams.get('amount'));
+            const userEmail = localStorage.getItem('nx_user');
 
-            const pastLine = document.getElementById('historyPills');
-            const item = document.createElement('div');
-            item.className = `history-pill ${crashCeiling >= 2.0 ? 'high' : ''}`;
-            item.innerText = crashCeiling.toFixed(2) + "x";
-            pastLine.prepend(item);
+            if (status === 'success' && !isNaN(amount) && amount > 0 && userEmail) {
+                const txRef = urlParams.get('reference');
+                const processed = JSON.parse(localStorage.getItem('processed_tx') || '[]');
 
-            if (pastLine.children.length > 8) {
-                pastLine.removeChild(pastLine.lastChild);
-            }
+                if (!processed.includes(txRef)) {
+                    const { data: profile } = await supabaseClient
+                        .from('profiles')
+                        .select('balance')
+                        .eq('email', userEmail)
+                        .single();
 
-            for (let i = 1; i <= 2; i++) {
-                const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                btn.disabled = true;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Crashed</span>`;
-            }
+                    if (profile) {
+                        const newBal = (parseFloat(profile.balance || 0) + amount).toFixed(2);
+                        
+                        await supabaseClient
+                            .from('profiles')
+                            .update({ balance: newBal })
+                            .eq('email', userEmail);
 
-            setTimeout(triggerGameLoopEngine, 3500);
-        }
-
-        function processWager(panel) {
-            const stakeValue = parseFloat(document.getElementById(`wagerInput${panel}`).value) || 0;
-            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-
-            if (gameStatus === "waiting") {
-                if (stakeValue > clientUserBalance) return alert("Insufficient account funds.");
-                if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
-
-                clientUserBalance -= stakeValue;
-                activePanelBets[panel] = stakeValue;
-                updateVisualUIBalance();
-
-                btn.disabled = true;
-                btn.innerHTML = `<span>Locked...</span>`;
-            } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
-                executeCashOut(panel);
+                        processed.push(txRef);
+                        localStorage.setItem('processed_tx', JSON.stringify(processed));
+                        
+                        alert(`Deposit credited! Ksh ${amount.toLocaleString()} added.`);
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                }
             }
         }
 
-        function executeCashOut(panel) {
-            cashoutStates[panel] = true;
-            const netReturns = activePanelBets[panel] * currentMultiplier;
-            clientUserBalance += netReturns;
-            updateVisualUIBalance();
-
-            activePanelBets[panel] = 0;
-            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-            btn.disabled = true;
-            btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Cashed Out</span>`;
-            alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
+        function openSlip(id, side, mult) {
+            if (!userProfile) return openModal('authModal');
+            const target = markets.find(m => m.id === id);
+            activeSelection = { id, q: target.q, side, mult };
+            document.getElementById('slipMarketTitle').innerText = target.q;
+            document.getElementById('slipPickText').innerText = side;
+            document.getElementById('slipPickText').style.color = side === 'YES' ? 'var(--yes-blue)' : 'var(--no-red)';
+            document.getElementById('slipMultText').innerText = mult + 'x';
+            document.getElementById('betAmt').value = "100.00";
+            openModal('betSlipModal');
         }
 
-        // M-Pesa Embedded Payments Handlers
-        function executePayheroDeposit() {
-            let phone = document.getElementById('depPhone').value;
-            let amount = parseFloat(document.getElementById('depAmount').value) || 0;
-            if (!phone) return alert("Please input your M-Pesa number.");
-            if (amount < 10) return alert("Deposit minimum limit is KES 10.");
+        async function confirmWager() {
+            const amt = Number(document.getElementById('betAmt').value);
+            if (isNaN(amt) || amt < 20) return alert("The minimum prediction is Ksh 20.00.");
 
-            closeModal('depositModal');
-            alert(`STK Push request initialized via Payhero to ${phone}. Completing simulation credit...`);
-            
-            // Simulating a dynamic direct deposit processing link
-            setTimeout(() => {
-                clientUserBalance += amount;
-                updateVisualUIBalance();
-                alert(`Account successfully recharged with KES ${amount.toLocaleString()}`);
-            }, 1500);
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('balance, bets')
+                .eq('email', userProfile.email)
+                .single();
+
+            const curBal = parseFloat(profile.balance || 0);
+            if (amt > curBal) return alert("Insufficient account balance.");
+
+            const newBal = (curBal - amt).toFixed(2);
+            const userBets = profile.bets || [];
+
+            userBets.unshift({
+                id: 'bet-' + Date.now(),
+                q: activeSelection.q,
+                side: activeSelection.side,
+                mult: activeSelection.mult,
+                stake: amt.toFixed(2),
+                status: 'Active',
+                date: new Date().toLocaleDateString()
+            });
+
+            await supabaseClient
+                .from('profiles')
+                .update({ balance: newBal, bets: userBets })
+                .eq('email', userProfile.email);
+
+            await syncSupabaseState();
+            closeModal('betSlipModal');
+            alert("Prediction posted successfully!");
+            switchMainTab('history');
         }
 
-        function executeWithdrawal() {
-            let phone = document.getElementById('wdPhone').value;
-            let amount = parseFloat(document.getElementById('wdAmount').value) || 0;
-            if (!phone) return alert("Enter valid withdrawal phone number.");
-            if (amount < 100) return alert("Withdrawal minimum limit is KES 100.");
-            if (amount > clientUserBalance) return alert("Insufficient funds available to cash out.");
+        function renderHistory() {
+            const hFeed = document.getElementById('histFeed');
+            hFeed.innerHTML = '';
+            const bets = userProfile?.bets || [];
 
-            clientUserBalance -= amount;
-            updateVisualUIBalance();
-            closeModal('withdrawModal');
-            alert(`Withdrawal initialized for KES ${amount.toLocaleString()} directly to your phone.`);
+            if (bets.length === 0) {
+                hFeed.innerHTML = `<p style="text-align:center; color:var(--text-sub); font-size:15px;">No predictions submitted yet.</p>`;
+                return;
+            }
+
+            bets.forEach(b => {
+                const estRet = (parseFloat(b.stake) * parseFloat(b.mult)).toFixed(2);
+                hFeed.innerHTML += `
+                    <div class="history-card">
+                        <div class="hist-meta">
+                            <div>${b.date}</div>
+                            <div class="status-badge">${b.status}</div>
+                        </div>
+                        <div class="hist-title">${b.q}</div>
+                        <div class="hist-stats">
+                            <div>Stake<br>Ksh ${parseFloat(b.stake).toLocaleString()}</div>
+                            <div>Side<br><span style="color:${b.side==='YES'?'var(--yes-blue)':'var(--no-red)'}">${b.side}</span></div>
+                            <div style="text-align:right;">Payout<br>Ksh ${parseFloat(estRet).toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function setAuth(mode) {
+            activeTab = mode;
+            const up = document.getElementById('upFields');
+            if (mode === 'up') {
+                up.classList.remove('hidden');
+                document.getElementById('tabUp').classList.add('active');
+                document.getElementById('tabIn').classList.remove('active');
+            } else {
+                up.classList.add('hidden');
+                document.getElementById('tabIn').classList.add('active');
+                document.getElementById('tabUp').classList.remove('active');
+            }
+        }
+
+        async function doAuth() {
+            const email = document.getElementById('aEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('aPass').value.trim();
+
+            if (!email.includes('@')) return alert("Enter a valid email address.");
+            if (pass.length < 4) return alert("Enter password (minimum 4 characters).");
+
+            if (activeTab === 'up') {
+                const name = document.getElementById('aName').value.trim();
+                const country = document.getElementById('aCountry').value;
+                if (!name) return alert("Your full name is required.");
+                if (!country) return alert("Please choose your country.");
+
+                const { data: existingUser } = await supabaseClient
+                    .from('profiles')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+
+                if (existingUser) return alert("An account with this email exists. Sign in instead.");
+
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .insert([{ email, pass, name, country, balance: 0.00, bets: [] }]);
+
+                if (error) return alert("Registration error: " + error.message);
+                
+                localStorage.setItem('nx_user', email);
+                alert("Account created successfully!");
+                closeModal('authModal');
+                await syncSupabaseState();
+            } else {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('pass', pass)
+                    .single();
+
+                if (error || !data) return alert("Invalid credentials.");
+
+                localStorage.setItem('nx_user', data.email);
+                alert(`Logged in as ${data.name || data.email}`);
+                closeModal('authModal');
+                await syncSupabaseState();
+            }
+        }
+
+        function setFundsMode(mode) {
+            currentFundsMode = mode;
+            document.getElementById('depAmt').value = "100.00";
+            if (mode === 'withdraw') {
+                document.getElementById('tabWithdraw').classList.add('active');
+                document.getElementById('tabDeposit').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.remove('hidden');
+                document.getElementById('depositFormFields').classList.add('hidden');
+            } else {
+                document.getElementById('tabDeposit').classList.add('active');
+                document.getElementById('tabWithdraw').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.add('hidden');
+                document.getElementById('depositFormFields').classList.remove('hidden');
+            }
+        }
+
+        function setAmt(v) { document.getElementById('depAmt').value = parseFloat(v).toFixed(2); }
+
+        async function handleFundsAction() {
+            const amt = Number(document.getElementById('depAmt').value);
+            if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
+
+            if (currentFundsMode === 'withdraw') {
+                const phone = document.getElementById('withPhone').value.trim();
+                const curBal = parseFloat(userProfile.balance || 0);
+                if (amt > curBal) return alert("Insufficient available balance.");
+
+                const newBal = (curBal - amt).toFixed(2);
+                await supabaseClient
+                    .from('profiles')
+                    .update({ balance: newBal })
+                    .eq('email', userProfile.email);
+
+                await syncSupabaseState();
+                closeModal('depositModal');
+                alert(`Withdrawal processing. Your new balance is Ksh ${newBal}.`);
+            } else {
+                const phone = document.getElementById('depPhone').value.trim();
+                const name = encodeURIComponent(document.getElementById('depName').value.trim());
+                if (!phone || !name) return alert("Please fill out your name and active phone number.");
+
+                const invoiceRef = "INV-" + Math.floor(Date.now() / 1000);
+                closeModal('depositModal');
+
+                const currentUrl = window.location.origin + window.location.pathname;
+                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
+                
+                // Lipwa redirection url
+                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${name}&phone=${phone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
+            }
+        }
+
+        function switchMainTab(v) {
+            if (v === 'feed') {
+                document.getElementById('tabFeed').classList.add('active');
+                document.getElementById('tabHist').classList.remove('active');
+                document.getElementById('mainFeedView').classList.remove('hidden');
+                document.getElementById('mainHistoryView').classList.add('hidden');
+            } else {
+                document.getElementById('tabHist').classList.add('active');
+                document.getElementById('tabFeed').classList.remove('active');
+                document.getElementById('mainHistoryView').classList.remove('hidden');
+                document.getElementById('mainFeedView').classList.add('hidden');
+                renderHistory();
+            }
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function logout() { 
+            if(confirm("Sign out of the current terminal?")) {
+                localStorage.removeItem('nx_user');
+                location.reload(); 
+            }
+        }
     </script>
 </body>
 </html>
