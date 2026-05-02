@@ -18,6 +18,17 @@
             --text-secondary: #9ea3a8;
             --aviator-red: #d91d38;
             --poly-blue: #2454ff;
+
+            /* Extracted from Polymarkets Africa */
+            --accent: #2ebd85; 
+            --border: #cbd5e1; 
+            --text-main: #0f172a; 
+            --text-sub: #64748b;
+            --yes-blue: #096cfb; 
+            --yes-bg: #eff6ff; 
+            --no-red: #df1c41; 
+            --no-bg: #fff1f2;
+            --tech-bg: #0f172a;
         }
         
         body { 
@@ -125,7 +136,7 @@
         .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
         .wager-box { 
             background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 16px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
+            border-radius: 166px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
         }
         
         /* Stepper style */
@@ -191,58 +202,76 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Sliding Polymarket Themed Modals */
+        /* Sliding Polymarket Themed Funds/Deposit Modal System */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
-            backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); 
+            backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
         }
         .form-modal-card { 
-            background: #151719; border: 1px solid #2454ff; 
-            width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; box-sizing: border-box;
-            box-shadow: 0 12px 40px rgba(36, 84, 255, 0.25);
-            animation: slideDown 0.2s ease-out; position: relative;
+            background: #fff; width: 100%; max-width: 420px; padding: 22px 26px; 
+            border-radius: 24px; text-align: center; box-sizing: border-box; 
+            max-height: 95vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            animation: slideDown 0.3s ease-out; border: 1px solid var(--border);
         }
 
-        /* Polymarket Themed Header Badges */
-        .modal-brand-badge {
-            display: inline-block; background: rgba(36, 84, 255, 0.15); color: #2454ff;
-            font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-            padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(36, 84, 255, 0.25);
+        .auth-nav { 
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; 
         }
-        .modal-title { margin: 0 0 8px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
-        .modal-subtitle { font-size: 12px; color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.4; }
-
-        .form-input-group { text-align: left; margin-bottom: 16px; }
-        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.4px; }
+        .auth-tab { 
+            flex: 1; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; 
+            border-radius: 8px; color: var(--text-sub); text-align: center; transition: 0.2s;
+        }
+        .auth-tab.active { 
+            background: #fff; color: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .form-input-group { position: relative; margin-bottom: 12px; text-align: left; }
+        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+        
         .form-input-control { 
-            width: 100%; padding: 14px; background: #101112; border: 1px solid var(--betika-border); 
-            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #fff; 
+            width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); 
+            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #0f172a; 
             transition: border-color 0.2s;
         }
-        .form-input-control:focus { border-color: var(--poly-blue); }
-
+        .form-input-control:focus { border-color: var(--yes-blue); background: #fff; }
+        
         .form-submit-btn { 
-            width: 100%; padding: 16px; background: var(--poly-blue); color: #fff; 
-            border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; 
-            text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 18px rgba(36, 84, 255, 0.35);
-            transition: transform 0.1s ease, background 0.15s;
+            width: 100%; padding: 16px; background: #000; color: #fff; border: none; 
+            border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 15px; 
+            text-transform: uppercase; margin-top: 8px; transition: 0.15s;
         }
-        .form-submit-btn:hover { background: #1a44d6; }
-        .form-submit-btn:active { transform: scale(0.98); }
+        .form-submit-btn:active { opacity: 0.85; transform: scale(0.99); }
+        
+        .chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+        .amt-chip { border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: #fff; text-align: center; color: var(--text-main); transition: 0.15s; }
+        .amt-chip:active { background: #f1f5f9; transform: scale(0.96); }
+        
+        .hidden { display: none !important; }
 
-        .modal-dismiss-btn {
-            text-align: center; font-size: 13px; font-weight: 700; color: var(--text-secondary); 
-            margin-bottom: 0; cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.5px;
-            transition: color 0.15s;
+        .funds-card-container {
+            background: #fafcff; padding: 16px; border-radius: 18px;
+            border: 1px solid rgba(226, 232, 240, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.01); margin-bottom: 12px;
         }
-        .modal-dismiss-btn:hover { color: #fff; }
+        
+        .badge-container { display: block; text-align: center; max-width: 100%; margin: 12px auto 4px auto; box-sizing: border-box; overflow: hidden; }
+        .badge-img { width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+        /* Invoice Ledger System Styles */
+        .invoice-ledger { border-top: 1px dashed var(--border); margin-top: 14px; padding-top: 14px; text-align: left; }
+        .invoice-title { font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .invoice-list { display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; scrollbar-width: none; }
+        .invoice-list::-webkit-scrollbar { display: none; }
+        .invoice-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid rgba(226, 232, 240, 1); padding: 8px 12px; border-radius: 10px; font-size: 12px; }
+        .invoice-ref { font-weight: 700; color: var(--text-main); font-family: monospace; }
+        .invoice-val { font-weight: 800; color: var(--yes-blue); }
+        .invoice-val.out { color: var(--no-red); }
+
+        .modal-dismiss-btn { text-align: center; margin-top: 14px; cursor: pointer; color: var(--text-sub); font-size: 13px; font-weight: 700; text-transform: uppercase; }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -257,8 +286,8 @@
             <div class="user-balance-pill">
                 <div id="balanceDisplay">3,000.00</div><span>KES</span>
             </div>
-            <button onclick="openModal('withdrawModal')" class="action-header-btn">Withdraw</button>
-            <button onclick="openModal('depositModal')" class="action-header-btn deposit">Deposit</button>
+            <button onclick="openModalWithMode('depositModal', 'withdraw')" class="action-header-btn">Withdraw</button>
+            <button onclick="openModalWithMode('depositModal', 'deposit')" class="action-header-btn deposit">Deposit</button>
         </div>
     </div>
 
@@ -305,7 +334,7 @@
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 100)">100</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 200)">200</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(1, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(1, 10000)">10,000</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(1, 1000)">1,000</div>
                 </div>
                 <div id="autoControls1" class="auto-controls-section hidden">
                     <div class="auto-switch-row">
@@ -343,7 +372,7 @@
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 100)">100</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 200)">200</div>
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="setFixedWager(2, 10000)">10,000</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(2, 1000)">1,000</div>
                 </div>
                 <div id="autoControls2" class="auto-controls-section hidden">
                     <div class="auto-switch-row">
@@ -369,39 +398,76 @@
 
     <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
-            <div class="modal-brand-badge">Polymarket Africa</div>
-            <h3 class="modal-title">Deposit Funds</h3>
-            <p class="modal-subtitle">Direct deposits are securely handled via our mobile payment channel.</p>
-            <div class="form-input-group">
-                <label>Amount (KES)</label>
-                <input type="number" id="depAmount" class="form-input-control" value="100" min="10" required>
+            <div class="auth-nav">
+                <div id="tabDeposit" class="auth-tab active" onclick="setFundsMode('deposit')">Deposit</div>
+                <div id="tabWithdraw" class="auth-tab" onclick="setFundsMode('withdraw')">Withdraw</div>
             </div>
-            <button onclick="executeLipwaDeposit()" class="form-submit-btn">Continue to Payment</button>
-            <p class="modal-dismiss-btn" onclick="closeModal('depositModal')">Cancel</p>
-        </div>
-    </div>
+            
+            <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Fund Balance</h2>
+            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Pay Hero Checkout via Lipwa</p>
+            
+            <div class="funds-card-container">
+                <div id="depositFormFields">
+                    <div class="form-input-group">
+                        <label>Your Name</label>
+                        <input type="text" id="depName" class="form-input-control" placeholder="John Doe">
+                    </div>
+                    <div class="form-input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="depPhone" class="form-input-control" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div id="withdrawalFields" class="hidden">
+                    <div class="form-input-group">
+                        <label>M-Pesa Name</label>
+                        <input type="text" id="withName" class="form-input-control" placeholder="e.g. John Doe">
+                    </div>
+                    <div class="form-input-group">
+                        <label>M-Pesa Number</label>
+                        <input type="tel" id="withPhone" class="form-input-control" placeholder="e.g. 0712345678">
+                    </div>
+                </div>
+                <div class="form-input-group" style="margin-bottom:4px;">
+                    <label id="amtLabel">Amount (Ksh)</label>
+                    <input type="text" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
+                </div>
+                <div class="chip-grid">
+                    <div class="amt-chip" onclick="setAmt(100)">100</div>
+                    <div class="amt-chip" onclick="setAmt(250)">250</div>
+                    <div class="amt-chip" onclick="setAmt(500)">500</div>
+                    <div class="amt-chip" onclick="setAmt(1000)">1k</div>
+                    <div class="amt-chip" onclick="setAmt(2000)">2k</div>
+                    <div class="amt-chip" onclick="setAmt(5000)">5k</div>
+                    <div class="amt-chip" onclick="setAmt(10000)">10k</div>
+                    <div class="amt-chip" onclick="setAmt(20000)">20k</div>
+                </div>
+            </div>
+            
+            <button id="fundsSubmit" onclick="handleFundsAction()" class="form-submit-btn" style="background:var(--yes-blue);">Confirm Action</button>
+            
+            <span class="badge-container">
+                <a href="https://intasend.com/security" target="_blank">
+                    <img src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-light.png" class="badge-img" alt="IntaSend Secure Payments">
+                </a>
+            </span>
 
-    <div id="withdrawModal" class="overlay-screen">
-        <div class="form-modal-card">
-            <div class="modal-brand-badge">Polymarket Africa</div>
-            <h3 class="modal-title">Withdraw Funds</h3>
-            <p class="modal-subtitle">Transfer winnings back to your mobile wallet quickly and securely.</p>
-            <div class="form-input-group">
-                <label>M-Pesa Phone Number</label>
-                <input type="tel" id="wdPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
+            <div class="invoice-ledger">
+                <div class="invoice-title">Local Invoice Log</div>
+                <div id="invoiceLog" class="invoice-list">
+                    <p style="color:var(--text-sub); font-size:12px; margin:0; text-align:center;">No recent transactions generated.</p>
+                </div>
             </div>
-            <div class="form-input-group">
-                <label>Amount (KES)</label>
-                <input type="number" id="wdAmount" class="form-input-control" placeholder="Minimum 100" min="100" required>
-            </div>
-            <button onclick="executeWithdrawal()" class="form-submit-btn">Request Payout</button>
-            <p class="modal-dismiss-btn" onclick="closeModal('withdrawModal')">Cancel</p>
+
+            <p class="modal-dismiss-btn" onclick="closeModal('depositModal')">Cancel</p>
         </div>
     </div>
 
     <script>
         // Memory-Based LocalStorage
         let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
+        let currentFundsMode = 'deposit';
+        const LIPWA_LINK = "https://lipwa.link/8367";
+        let savedInvoices = JSON.parse(localStorage.getItem('user_invoices') || '[]');
 
         let gameStatus = "waiting"; 
         let currentMultiplier = 1.00;
@@ -418,6 +484,7 @@
             updateVisualUIBalance();
             initializeCanvasFlight();
             triggerGameLoopEngine();
+            renderInvoiceLedger();
         };
 
         function updateVisualUIBalance() {
@@ -633,29 +700,98 @@
             alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
-        // Redirects directly to the Lipwa/Payhero link provided
-        function executeLipwaDeposit() {
-            let amount = parseFloat(document.getElementById('depAmount').value) || 0;
-            if (amount < 10) return alert("Deposit minimum limit is KES 10.");
+        // Extracted Methods from Polymarkets Africa
+        function setFundsMode(mode) {
+            currentFundsMode = mode;
+            document.getElementById('depAmt').value = "100.00";
+            const submitBtn = document.getElementById('fundsSubmit');
 
-            closeModal('depositModal');
-            window.location.href = "https://lipwa.link/8367";
+            if (mode === 'withdraw') {
+                document.getElementById('tabWithdraw').classList.add('active');
+                document.getElementById('tabDeposit').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.remove('hidden');
+                document.getElementById('depositFormFields').classList.add('hidden');
+                submitBtn.style.background = "var(--no-red)";
+                submitBtn.innerText = "Confirm Payout";
+            } else {
+                document.getElementById('tabDeposit').classList.add('active');
+                document.getElementById('tabWithdraw').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.add('hidden');
+                document.getElementById('depositFormFields').classList.remove('hidden');
+                submitBtn.style.background = "var(--yes-blue)";
+                submitBtn.innerText = "Confirm Action";
+            }
         }
 
-        function executeWithdrawal() {
-            let phone = document.getElementById('wdPhone').value;
-            let amount = parseFloat(document.getElementById('wdAmount').value) || 0;
-            if (!phone) return alert("Enter valid withdrawal phone number.");
-            if (amount < 100) return alert("Withdrawal minimum limit is KES 100.");
-            if (amount > clientUserBalance) return alert("Insufficient funds available to cash out.");
-
-            clientUserBalance -= amount;
-            updateVisualUIBalance();
-            closeModal('withdrawModal');
-            alert(`Withdrawal of KES ${amount.toLocaleString()} was successfully scheduled to your mobile number.`);
+        function setAmt(v) { 
+            document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function handleFundsAction() {
+            const amt = Number(document.getElementById('depAmt').value);
+            if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
+
+            const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
+
+            if (currentFundsMode === 'withdraw') {
+                const wPhone = document.getElementById('withPhone').value.trim();
+                const wName = document.getElementById('withName').value.trim();
+                if (!wPhone || !wName) return alert("Please fill in the withdrawal M-Pesa phone number and name.");
+
+                if (amt > clientUserBalance) return alert("Insufficient available balance.");
+
+                clientUserBalance -= amt;
+                updateVisualUIBalance();
+                saveInvoiceRecord(invoiceRef, -amt);
+                closeModal('depositModal');
+                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} has been generated.`);
+            } else {
+                const dPhone = document.getElementById('depPhone').value.trim();
+                const dName = document.getElementById('depName').value.trim();
+                if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
+
+                saveInvoiceRecord(invoiceRef, amt);
+                closeModal('depositModal');
+
+                const currentUrl = window.location.origin + window.location.pathname;
+                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
+                
+                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
+            }
+        }
+
+        function saveInvoiceRecord(ref, value) {
+            savedInvoices.unshift({ ref, value, date: new Date().toLocaleTimeString() });
+            if (savedInvoices.length > 5) savedInvoices.pop();
+            localStorage.setItem('user_invoices', JSON.stringify(savedInvoices));
+            renderInvoiceLedger();
+        }
+
+        function renderInvoiceLedger() {
+            const container = document.getElementById('invoiceLog');
+            if (savedInvoices.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-sub); font-size:12px; margin:0; text-align:center;">No recent transactions generated.</p>`;
+                return;
+            }
+
+            container.innerHTML = savedInvoices.map(inv => `
+                <div class="invoice-item">
+                    <div>
+                        <div class="invoice-ref">${inv.ref}</div>
+                        <div style="font-size:10px; color:var(--text-sub);">${inv.date}</div>
+                    </div>
+                    <div class="invoice-val ${inv.value < 0 ? 'out' : ''}">
+                        ${inv.value < 0 ? '-' : '+'} Ksh ${Math.abs(inv.value).toLocaleString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModalWithMode(id, mode) {
+            setFundsMode(mode);
+            document.getElementById(id).style.display = 'flex';
+        }
+
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
