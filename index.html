@@ -667,119 +667,159 @@
             document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
         }
 
-        // Aircraft Drawing Engine
+        // Advanced High-Fidelity Canvas Rendering System
         function initializeCanvasFlight() {
             let smokeParticles = [];
-
+            
             function drawFrame() {
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                // High DPI adjustment
+                const dpr = window.devicePixelRatio || 1;
+                const rect = cvs.getBoundingClientRect();
+                if (cvs.width !== rect.width * dpr || cvs.height !== rect.height * dpr) {
+                    cvs.width = rect.width * dpr;
+                    cvs.height = rect.height * dpr;
+                }
+                ctx.resetTransform();
+                ctx.scale(dpr, dpr);
 
-                // Grid background
+                const width = rect.width;
+                const height = rect.height;
+
+                ctx.clearRect(0, 0, width, height);
+
+                // Aesthetic radar-like background lines
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
-                for (let x = 0; x < cvs.width; x += 40) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
+                for (let x = 0; x < width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
                 }
-                for (let y = 0; y < cvs.height; y += 40) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvs.width, y); ctx.stroke();
+                for (let y = 0; y < height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
                 }
 
                 if (gameStatus === "flying") {
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
-                    // Flight Path
-                    ctx.strokeStyle = "rgba(217, 29, 56, 0.4)";
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(0, cvs.height);
-                    
-                    let endX = cvs.width * progress;
-                    let endY = cvs.height - (cvs.height * 0.72 * Math.pow(progress, 1.35));
-                    
-                    // Bezier flight arc
-                    ctx.quadraticCurveTo(cvs.width * progress * 0.5, cvs.height, endX, endY);
-                    ctx.stroke();
+                    // Dynamic coordinates along a parabolic trajectory
+                    let endX = width * progress * 0.88 + (width * 0.05);
+                    let endY = height - (height * 0.76 * Math.pow(progress, 1.45)) - (height * 0.06);
 
-                    // Generate dynamic particles
-                    if (Math.random() < 0.65) {
+                    // Multi-layer glowing vapor/flight trail
+                    ctx.save();
+                    let flightPathGradient = ctx.createLinearGradient(0, height, endX, endY);
+                    flightPathGradient.addColorStop(0, "rgba(217, 29, 56, 0.0)");
+                    flightPathGradient.addColorStop(0.5, "rgba(217, 29, 56, 0.15)");
+                    flightPathGradient.addColorStop(1, "rgba(217, 29, 56, 0.7)");
+
+                    ctx.strokeStyle = flightPathGradient;
+                    ctx.lineWidth = 4.5;
+                    ctx.lineCap = "round";
+                    ctx.lineJoin = "round";
+                    ctx.beginPath();
+                    ctx.moveTo(width * 0.05, height - (height * 0.06));
+                    ctx.quadraticCurveTo(width * progress * 0.45, height - (height * 0.06), endX, endY);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // Generate high-density thrust smoke/vapor
+                    if (Math.random() < 0.85) {
                         smokeParticles.push({
                             x: endX, y: endY,
-                            size: 2 + Math.random() * 5,
-                            alpha: 0.8,
-                            vx: -1 - Math.random() * 1.5,
-                            vy: 0.5 - Math.random()
+                            size: 1.5 + Math.random() * 4,
+                            alpha: 0.95,
+                            vx: -1.4 - Math.random() * 1.8,
+                            vy: 0.4 - Math.random() * 0.8
                         });
                     }
 
-                    // Render particles
+                    // Physics update & rendering of particles
                     for (let i = smokeParticles.length - 1; i >= 0; i--) {
                         let p = smokeParticles[i];
                         p.x += p.vx;
                         p.y += p.vy;
-                        p.alpha -= 0.025;
+                        p.alpha -= 0.022;
 
                         if (p.alpha <= 0) {
                             smokeParticles.splice(i, 1);
                             continue;
                         }
 
-                        ctx.fillStyle = `rgba(217, 29, 56, ${p.alpha})`;
+                        let pGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                        pGrad.addColorStop(0, `rgba(217, 29, 56, ${p.alpha})`);
+                        pGrad.addColorStop(0.6, `rgba(234, 88, 12, ${p.alpha * 0.4})`);
+                        pGrad.addColorStop(1, "rgba(0,0,0,0)");
+
+                        ctx.fillStyle = pGrad;
                         ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
-                    // Compute current tilt angle based on the arc's progression
-                    let nextProg = progress + 0.01;
-                    let nextY = cvs.height - (cvs.height * 0.72 * Math.pow(nextProg, 1.35));
-                    let tiltAngle = Math.atan2(nextY - endY, (cvs.width * nextProg) - endX);
+                    // Compute smooth angle of ascent (tangent of the flight curve)
+                    let nextProg = Math.min(progress + 0.005, 1.0);
+                    let nextY = height - (height * 0.76 * Math.pow(nextProg, 1.45)) - (height * 0.06);
+                    let tiltAngle = Math.atan2(nextY - endY, (width * nextProg * 0.88 + (width * 0.05)) - endX);
 
-                    // Draw Realistic Vector Aircraft
                     ctx.save();
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    // Airplane red body glow
-                    ctx.fillStyle = "rgba(217, 29, 56, 0.25)";
-                    ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.fill();
+                    // Dynamic Engine Afterburner Glow
+                    let afterburner = ctx.createRadialGradient(-16, 0, 1, -16, 0, 16);
+                    afterburner.addColorStop(0, "rgba(255, 235, 59, 0.9)");
+                    afterburner.addColorStop(0.4, "rgba(234, 88, 12, 0.7)");
+                    afterburner.addColorStop(1, "rgba(217, 29, 56, 0)");
+                    ctx.fillStyle = afterburner;
+                    ctx.beginPath(); ctx.arc(-15, 0, 15, 0, Math.PI * 2); ctx.fill();
 
-                    // Main fuselages and details
-                    ctx.fillStyle = "#ffffff"; 
+                    // Aircraft structural silhouettes
+                    ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
-                    ctx.moveTo(-16, -2);
-                    ctx.lineTo(12, -2);
-                    ctx.quadraticCurveTo(22, 0, 12, 2);
-                    ctx.lineTo(-16, 2);
+                    ctx.moveTo(-16, -1);
+                    ctx.lineTo(2, -2);
+                    ctx.quadraticCurveTo(10, -2, 18, 0); // Nose point
+                    ctx.quadraticCurveTo(10, 2, 2, 2);
+                    ctx.lineTo(-16, 1);
                     ctx.closePath();
                     ctx.fill();
 
-                    // Jet main wing
+                    // Main wings
                     ctx.fillStyle = "var(--aviator-red)";
                     ctx.beginPath();
-                    ctx.moveTo(-4, -2);
-                    ctx.lineTo(-11, -12);
-                    ctx.lineTo(-1, -12);
-                    ctx.lineTo(5, -2);
+                    ctx.moveTo(-2, -1.5);
+                    ctx.lineTo(-13, -15);
+                    ctx.lineTo(-1, -15);
+                    ctx.lineTo(8, -1.5);
                     ctx.closePath();
                     ctx.fill();
 
-                    // Rear tail wing
+                    // Wing shadows/Under-layer
+                    ctx.fillStyle = "#a81329";
                     ctx.beginPath();
-                    ctx.moveTo(-12, -2);
-                    ctx.lineTo(-17, -8);
+                    ctx.moveTo(-2, 1.5);
+                    ctx.lineTo(-13, 14);
+                    ctx.lineTo(-1, 14);
+                    ctx.lineTo(8, 1.5);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Tail section
+                    ctx.fillStyle = "var(--aviator-red)";
+                    ctx.beginPath();
+                    ctx.moveTo(-11, -1.5);
+                    ctx.lineTo(-18, -8);
                     ctx.lineTo(-13, -8);
-                    ctx.lineTo(-8, -2);
+                    ctx.lineTo(-7, -1.5);
                     ctx.closePath();
                     ctx.fill();
 
-                    // Wing under-shading
-                    ctx.fillStyle = "#b51328";
+                    ctx.fillStyle = "#a81329";
                     ctx.beginPath();
-                    ctx.moveTo(-4, 2);
-                    ctx.lineTo(-11, 10);
-                    ctx.lineTo(-1, 10);
-                    ctx.lineTo(5, 2);
+                    ctx.moveTo(-11, 1.5);
+                    ctx.lineTo(-18, 7);
+                    ctx.lineTo(-13, 7);
+                    ctx.lineTo(-7, 1.5);
                     ctx.closePath();
                     ctx.fill();
 
