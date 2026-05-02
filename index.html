@@ -464,6 +464,19 @@
                         <label>Display Name</label>
                         <input type="text" id="authDisplayName" class="form-input-control" placeholder="John Doe">
                     </div>
+                    <div class="form-input-group">
+                        <label>Country</label>
+                        <select id="authCountry" class="form-input-control">
+                            <option value="">Select your country</option>
+                            <option value="Burundi">Burundi</option>
+                            <option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Rwanda">Rwanda</option>
+                            <option value="South Sudan">South Sudan</option>
+                            <option value="Tanzania">Tanzania</option>
+                            <option value="Uganda">Uganda</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-input-group">
                     <label>Email Address</label>
@@ -472,6 +485,10 @@
                 <div class="form-input-group">
                     <label>Password</label>
                     <input type="password" id="authPass" class="form-input-control" placeholder="Minimum 6 characters">
+                </div>
+                <div id="signupConfirmField" class="form-input-group hidden">
+                    <label>Confirm Password</label>
+                    <input type="password" id="authConfirmPass" class="form-input-control" placeholder="Re-enter your password">
                 </div>
             </div>
             
@@ -679,11 +696,13 @@
             currentAuthMode = mode;
             const submitBtn = document.getElementById('authSubmit');
             const fields = document.getElementById('signupFields');
+            const confirmField = document.getElementById('signupConfirmField');
 
             if (mode === 'signup') {
                 document.getElementById('tabSignUp').classList.add('active');
                 document.getElementById('tabSignIn').classList.remove('active');
                 fields.classList.remove('hidden');
+                confirmField.classList.remove('hidden');
                 document.getElementById('authTitle').innerText = "Create Account";
                 document.getElementById('authDesc').innerText = "Build and test customized predictors";
                 submitBtn.innerText = "Register Now";
@@ -691,6 +710,7 @@
                 document.getElementById('tabSignIn').classList.add('active');
                 document.getElementById('tabSignUp').classList.remove('active');
                 fields.classList.add('hidden');
+                confirmField.classList.add('hidden');
                 document.getElementById('authTitle').innerText = "Welcome Back";
                 document.getElementById('authDesc').innerText = "Log in using your secure details";
                 submitBtn.innerText = "Access System";
@@ -705,9 +725,15 @@
             if (!email || pass.length < 6) return alert("Please specify a valid email and matching password.");
 
             if (currentAuthMode === 'signup') {
+                const country = document.getElementById('authCountry').value;
+                const confirmPass = document.getElementById('authConfirmPass').value;
+
+                if (!country) return alert("Please select your country.");
+                if (pass !== confirmPass) return alert("Passwords do not match. Please re-enter.");
+
                 const { data, error } = await supabaseClient.auth.signUp({
                     email, password: pass,
-                    options: { data: { username: name || 'Explorer' } }
+                    options: { data: { username: name || 'Explorer', country: country } }
                 });
                 if (error) return alert("Registration Error: " + error.message);
                 alert("Account activation link sent! Check your inbox.");
