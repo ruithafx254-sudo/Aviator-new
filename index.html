@@ -17,6 +17,7 @@
             --text-primary: #ffffff;
             --text-secondary: #9ea3a8;
             --aviator-red: #d91d38;
+            --poly-blue: #2454ff;
         }
         
         body { 
@@ -30,7 +31,7 @@
             box-sizing: border-box;
         }
 
-        /* Redesigned Premium Header without Back Button */
+        /* Top Header Navbar */
         .top-header-navbar {
             background: #111315;
             border-bottom: 1px solid var(--betika-border);
@@ -72,7 +73,7 @@
             display: flex; flex-direction: column; gap: 14px;
         }
 
-        /* Visual Board styling matched exactly */
+        /* Visual Board styling */
         .aviator-flight-panel {
             background: #151719; border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
@@ -84,7 +85,7 @@
         }
         .game-canvas { width: 100%; height: 100%; display: block; }
         
-        /* Small multipliers history bar */
+        /* Multipliers history bar */
         .history-pills-row {
             display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px;
             scrollbar-width: none; font-size: 11px; font-weight: 700;
@@ -127,7 +128,7 @@
             border-radius: 16px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
         }
         
-        /* Adjustment +/- Stepper style */
+        /* Stepper style */
         .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
         .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 6px; font-weight: bold; outline: none; }
         .wager-input { background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 800; outline: none; width: 66px; text-align: center; }
@@ -156,7 +157,6 @@
         .auto-switch-row { display: flex; justify-content: space-between; align-items: center; }
         .auto-switch-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
         
-        /* Premium Custom Checkbox Toggle */
         .switch-input-wrapper { position: relative; width: 44px; height: 22px; }
         .switch-input-wrapper input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
@@ -177,7 +177,7 @@
         }
         .auto-input-field { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; width: 60px; outline: none; text-align: right; }
 
-        /* Floating AI Target Tool */
+        /* Floating AI Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
@@ -191,31 +191,51 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Sliding Modals */
+        /* Sliding Polymarket Themed Modals */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
             backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 16px; 
         }
         .form-modal-card { 
-            background: #181a1d; border: 1px solid var(--betika-border); 
-            width: 100%; max-width: 350px; padding: 22px; border-radius: 18px; box-sizing: border-box;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: slideDown 0.2s ease-out;
+            background: #151719; border: 1px solid #2454ff; 
+            width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; box-sizing: border-box;
+            box-shadow: 0 12px 40px rgba(36, 84, 255, 0.25);
+            animation: slideDown 0.2s ease-out; position: relative;
         }
-        .form-input-group { text-align: left; margin-bottom: 14px; }
-        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
+
+        /* Polymarket Themed Header Badges */
+        .modal-brand-badge {
+            display: inline-block; background: rgba(36, 84, 255, 0.15); color: #2454ff;
+            font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+            padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(36, 84, 255, 0.25);
+        }
+        .modal-title { margin: 0 0 8px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
+        .modal-subtitle { font-size: 12px; color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.4; }
+
+        .form-input-group { text-align: left; margin-bottom: 16px; }
+        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.4px; }
         .form-input-control { 
-            width: 100%; padding: 12px; background: #101112; border: 1px solid var(--betika-border); 
+            width: 100%; padding: 14px; background: #101112; border: 1px solid var(--betika-border); 
             border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #fff; 
+            transition: border-color 0.2s;
         }
+        .form-input-control:focus { border-color: var(--poly-blue); }
+
         .form-submit-btn { 
-            width: 100%; padding: 14px; background: var(--bet-green); color: #fff; 
-            border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 13px; 
-            text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2);
-            transition: transform 0.1s ease;
+            width: 100%; padding: 16px; background: var(--poly-blue); color: #fff; 
+            border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; 
+            text-transform: uppercase; margin-top: 8px; box-shadow: 0 4px 18px rgba(36, 84, 255, 0.35);
+            transition: transform 0.1s ease, background 0.15s;
         }
-        .form-submit-btn.withdraw-btn { background: #0284c7; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); }
+        .form-submit-btn:hover { background: #1a44d6; }
         .form-submit-btn:active { transform: scale(0.98); }
+
+        .modal-dismiss-btn {
+            text-align: center; font-size: 13px; font-weight: 700; color: var(--text-secondary); 
+            margin-bottom: 0; cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.5px;
+            transition: color 0.15s;
+        }
+        .modal-dismiss-btn:hover { color: #fff; }
 
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
@@ -349,23 +369,23 @@
 
     <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
-            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color:#12cf5c;">M-Pesa Deposit</h3>
-            <div class="form-input-group">
-                <label>Phone Number</label>
-                <input type="tel" id="depPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
-            </div>
+            <div class="modal-brand-badge">Polymarket Africa</div>
+            <h3 class="modal-title">Deposit Funds</h3>
+            <p class="modal-subtitle">Direct deposits are securely handled via our mobile payment channel.</p>
             <div class="form-input-group">
                 <label>Amount (KES)</label>
                 <input type="number" id="depAmount" class="form-input-control" value="100" min="10" required>
             </div>
-            <button onclick="executePayheroDeposit()" class="form-submit-btn">Deposit via M-Pesa</button>
-            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('depositModal')">Dismiss</p>
+            <button onclick="executeLipwaDeposit()" class="form-submit-btn">Continue to Payment</button>
+            <p class="modal-dismiss-btn" onclick="closeModal('depositModal')">Cancel</p>
         </div>
     </div>
 
     <div id="withdrawModal" class="overlay-screen">
         <div class="form-modal-card">
-            <h3 style="margin-top: 0; font-size: 16px; text-align: center; color: #0284c7;">M-Pesa Withdrawal</h3>
+            <div class="modal-brand-badge">Polymarket Africa</div>
+            <h3 class="modal-title">Withdraw Funds</h3>
+            <p class="modal-subtitle">Transfer winnings back to your mobile wallet quickly and securely.</p>
             <div class="form-input-group">
                 <label>M-Pesa Phone Number</label>
                 <input type="tel" id="wdPhone" class="form-input-control" placeholder="e.g. 0712345678" required>
@@ -374,8 +394,8 @@
                 <label>Amount (KES)</label>
                 <input type="number" id="wdAmount" class="form-input-control" placeholder="Minimum 100" min="100" required>
             </div>
-            <button onclick="executeWithdrawal()" class="form-submit-btn withdraw-btn">Request Withdrawal</button>
-            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer; margin-top:14px;" onclick="closeModal('withdrawModal')">Dismiss</p>
+            <button onclick="executeWithdrawal()" class="form-submit-btn">Request Payout</button>
+            <p class="modal-dismiss-btn" onclick="closeModal('withdrawModal')">Cancel</p>
         </div>
     </div>
 
@@ -613,21 +633,13 @@
             alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
-        // M-Pesa Embedded Payments Handlers
-        function executePayheroDeposit() {
-            let phone = document.getElementById('depPhone').value;
+        // Redirects directly to the Lipwa/Payhero link provided
+        function executeLipwaDeposit() {
             let amount = parseFloat(document.getElementById('depAmount').value) || 0;
-            if (!phone) return alert("Please input your M-Pesa number.");
             if (amount < 10) return alert("Deposit minimum limit is KES 10.");
 
             closeModal('depositModal');
-            alert(`STK Push request initialized via Payhero to ${phone}. Completing simulation credit...`);
-            
-            setTimeout(() => {
-                clientUserBalance += amount;
-                updateVisualUIBalance();
-                alert(`Account successfully recharged with KES ${amount.toLocaleString()}`);
-            }, 1500);
+            window.location.href = "https://lipwa.link/8367";
         }
 
         function executeWithdrawal() {
@@ -640,7 +652,7 @@
             clientUserBalance -= amount;
             updateVisualUIBalance();
             closeModal('withdrawModal');
-            alert(`Withdrawal initialized for KES ${amount.toLocaleString()} directly to your phone.`);
+            alert(`Withdrawal of KES ${amount.toLocaleString()} was successfully scheduled to your mobile number.`);
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
