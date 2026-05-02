@@ -74,6 +74,13 @@
             background: var(--poly-blue); color: #fff;
         }
 
+        /* Authenticated Controls Pill styling */
+        .auth-controls-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
@@ -328,7 +335,7 @@
                 <button onclick="openAuthModal('signup')" class="header-auth-btn">Sign Up</button>
             </div>
 
-            <div id="authenticatedControls" class="header-actions hidden">
+            <div id="authenticatedControls" class="auth-controls-container hidden">
                 <div class="user-balance-pill">
                     <div id="balanceDisplay">0.00</div><span>KES</span>
                 </div>
