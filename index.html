@@ -21,7 +21,7 @@
             --aviator-red: #d91d38;
             --poly-blue: #2454ff;
 
-            /* Extracted from Polymarkets Africa */
+            /* Polymarkets Style Tokens */
             --accent: #2ebd85; 
             --border: #cbd5e1; 
             --text-main: #0f172a; 
@@ -58,7 +58,22 @@
         .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
         .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
         
-        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        
+        /* Unified Auth Bar in the Header */
+        .header-auth-bar {
+            display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--betika-border);
+            border-radius: 20px; padding: 2px; gap: 2px;
+        }
+        .header-auth-btn {
+            background: transparent; color: var(--text-secondary); border: none; padding: 6px 12px;
+            border-radius: 16px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .header-auth-btn.active {
+            background: var(--poly-blue); color: #fff;
+        }
+
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
@@ -73,13 +88,9 @@
             font-size: 11px; cursor: pointer; text-transform: uppercase;
             transition: transform 0.1s ease;
         }
-        .action-header-btn.deposit {
-            background: #12cf5c; border: none;
+        .action-header-btn.funds {
+            background: var(--bet-green); border: none;
             box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
-        }
-        .action-header-btn.auth {
-            background: var(--poly-blue); border: none;
-            box-shadow: 0 4px 12px rgba(36, 84, 255, 0.25);
         }
         .action-header-btn:active { transform: scale(0.96); }
 
@@ -207,7 +218,7 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Sliding Polymarket System Modal */
+        /* Modal Containers */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
@@ -278,15 +289,16 @@
             </div>
         </div>
         <div class="header-actions">
-            <div id="authRequiredArea" class="hidden">
-                <button onclick="openAuthModal('signin')" class="action-header-btn auth">Sign In</button>
+            <div id="authRequiredArea" class="header-auth-bar">
+                <button onclick="openAuthModal('signin')" class="header-auth-btn active">Sign In</button>
+                <button onclick="openAuthModal('signup')" class="header-auth-btn">Sign Up</button>
             </div>
-            <div id="authenticatedControls" class="header-actions">
+
+            <div id="authenticatedControls" class="header-actions hidden">
                 <div class="user-balance-pill">
                     <div id="balanceDisplay">0.00</div><span>KES</span>
                 </div>
-                <button onclick="openModalWithMode('depositModal', 'withdraw')" class="action-header-btn">Withdraw</button>
-                <button onclick="openModalWithMode('depositModal', 'deposit')" class="action-header-btn deposit">Deposit</button>
+                <button onclick="openFundsModal()" class="action-header-btn funds">Funds</button>
                 <button onclick="handleUserSignOut()" class="action-header-btn">Logout</button>
             </div>
         </div>
@@ -405,7 +417,7 @@
             </div>
             
             <h2 id="authTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Welcome Back</h2>
-            <p id="authDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 16px 0;">Sign in to save progress across your devices</p>
+            <p id="authDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 16px 0;">Sign in to check and configure your forecasts</p>
             
             <div class="funds-card-container">
                 <div id="signupFields" class="hidden">
@@ -420,7 +432,7 @@
                 </div>
                 <div class="form-input-group">
                     <label>Password</label>
-                    <input type="password" id="authPass" class="form-input-control" placeholder="Min. 6 characters">
+                    <input type="password" id="authPass" class="form-input-control" placeholder="Minimum 6 characters">
                 </div>
             </div>
             
@@ -437,7 +449,7 @@
             </div>
             
             <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Fund Balance</h2>
-            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Pay Hero Checkout via Lipwa</p>
+            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Deposit via Lipwa</p>
             
             <div class="funds-card-container">
                 <div id="depositFormFields">
@@ -471,8 +483,6 @@
                     <div class="amt-chip" onclick="setAmt(1000)">1k</div>
                     <div class="amt-chip" onclick="setAmt(2000)">2k</div>
                     <div class="amt-chip" onclick="setAmt(5000)">5k</div>
-                    <div class="amt-chip" onclick="setAmt(10000)">10k</div>
-                    <div class="amt-chip" onclick="setAmt(20000)">20k</div>
                 </div>
             </div>
             
@@ -489,12 +499,12 @@
     </div>
 
     <script>
-        // Supabase Credentials Configuration
+        // Supabase Initialization
         const SUPABASE_URL = "https://ienpwfcvnlixqlieebas.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_Nwm6t6KrBd3DX6in8F2ICw_y6Xu_Aq8";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Core dynamic user variables
+        // Core Balance and Client State Variables
         let clientUserBalance = 3000.00;
         let authenticatedUser = null;
         let currentAuthMode = 'signin';
@@ -518,9 +528,9 @@
             triggerGameLoopEngine();
         };
 
-        // Authenticate & Profile Handlers
+        // Profile, State and Persistence Rules
         async function evaluateLocalUserSession() {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 authenticatedUser = session.user;
                 await pullLatestUserProfileData();
@@ -534,7 +544,7 @@
             if (!authenticatedUser) return;
             const { data, error } = await supabaseClient
                 .from('profiles')
-                .select('balance, username')
+                .select('balance')
                 .eq('id', authenticatedUser.id)
                 .single();
 
@@ -571,7 +581,7 @@
             }
         }
 
-        // Authentication Modal States
+        // Account Auth UI Toggle Controls
         function openAuthModal(mode) {
             setAuthMode(mode);
             document.getElementById('authModal').style.display = 'flex';
@@ -587,14 +597,14 @@
                 document.getElementById('tabSignIn').classList.remove('active');
                 fields.classList.remove('hidden');
                 document.getElementById('authTitle').innerText = "Create Account";
-                document.getElementById('authDesc').innerText = "Start placing forecasts securely";
+                document.getElementById('authDesc').innerText = "Build and test customized predictors";
                 submitBtn.innerText = "Register Now";
             } else {
                 document.getElementById('tabSignIn').classList.add('active');
                 document.getElementById('tabSignUp').classList.remove('active');
                 fields.classList.add('hidden');
                 document.getElementById('authTitle').innerText = "Welcome Back";
-                document.getElementById('authDesc').innerText = "Log in using email & password";
+                document.getElementById('authDesc').innerText = "Log in using your secure details";
                 submitBtn.innerText = "Access System";
             }
         }
@@ -612,7 +622,7 @@
                     options: { data: { username: name || 'Explorer' } }
                 });
                 if (error) return alert("Registration Error: " + error.message);
-                alert("Account activation email sent. Please log in.");
+                alert("Account activation link sent! Check your inbox.");
                 setAuthMode('signin');
             } else {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
@@ -620,7 +630,7 @@
                 authenticatedUser = data.user;
                 await pullLatestUserProfileData();
                 closeModal('authModal');
-                alert("Authorization confirmed.");
+                alert("Authentication verified successfully.");
             }
         }
 
@@ -630,10 +640,10 @@
             clientUserBalance = 0;
             updateVisualUIBalance();
             updateAuthVisualDisplay(false);
-            alert("Signed out successfully.");
+            alert("Session terminated securely.");
         }
 
-        // Betting & Auto Tabs Handlers
+        // Dashboard Tabs Interaction
         function switchBetCategory(panel, category) {
             const isBet = category === 'bet';
             document.getElementById(`tabBet${panel}`).className = `dashboard-tab ${isBet ? 'active' : ''}`;
@@ -664,9 +674,9 @@
         function initializeCanvasFlight() {
             function drawFrame() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
-                
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
+
                 for (let x = 0; x < cvs.width; x += 40) {
                     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
                 }
@@ -815,7 +825,7 @@
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
             if (gameStatus === "waiting") {
-                if (stakeValue > clientUserBalance) return alert("Insufficient account funds.");
+                if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
                 if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
 
                 activePanelBets[panel] = stakeValue;
@@ -839,10 +849,10 @@
             btn.innerHTML = `<span>Cashed Out</span>`;
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
-            alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
+            alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
-        // Funds System Methods
+        // Unified Modal Interactions
         function setFundsMode(mode) {
             currentFundsMode = mode;
             document.getElementById('depAmt').value = "100.00";
@@ -855,6 +865,7 @@
                 document.getElementById('depositFormFields').classList.add('hidden');
                 submitBtn.style.background = "var(--no-red)";
                 submitBtn.innerText = "Confirm Payout";
+                document.getElementById('fundsDesc').innerText = "Withdraw directly to M-Pesa";
             } else {
                 document.getElementById('tabDeposit').classList.add('active');
                 document.getElementById('tabWithdraw').classList.remove('active');
@@ -862,11 +873,18 @@
                 document.getElementById('depositFormFields').classList.remove('hidden');
                 submitBtn.style.background = "var(--yes-blue)";
                 submitBtn.innerText = "Confirm Action";
+                document.getElementById('fundsDesc').innerText = "Pay Hero Checkout via Lipwa";
             }
         }
 
         function setAmt(v) { 
             document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
+        }
+
+        function openFundsModal() {
+            if (!authenticatedUser) return openAuthModal('signin');
+            setFundsMode('deposit');
+            document.getElementById('depositModal').style.display = 'flex';
         }
 
         async function handleFundsAction() {
@@ -880,13 +898,13 @@
             if (currentFundsMode === 'withdraw') {
                 const wPhone = document.getElementById('withPhone').value.trim();
                 const wName = document.getElementById('withName').value.trim();
-                if (!wPhone || !wName) return alert("Please fill in the withdrawal M-Pesa phone number and name.");
+                if (!wPhone || !wName) return alert("Fill in the withdrawal M-Pesa phone number and name.");
 
                 if (amt > clientUserBalance) return alert("Insufficient available balance.");
 
                 await updateDatabaseBalance(clientUserBalance - amt);
                 closeModal('depositModal');
-                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} has been generated.`);
+                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
             } else {
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
@@ -899,12 +917,6 @@
                 
                 window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
             }
-        }
-
-        function openModalWithMode(id, mode) {
-            if (!authenticatedUser) return openAuthModal('signin');
-            setFundsMode(mode);
-            document.getElementById(id).style.display = 'flex';
         }
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
