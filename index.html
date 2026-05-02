@@ -755,6 +755,13 @@
                     options: { data: { username: name || 'Explorer', country: country } }
                 });
                 if (error) return alert("Registration Error: " + error.message);
+                
+                if (data && data.user) {
+                    await supabaseClient
+                        .from('profiles')
+                        .insert([{ id: data.user.id, balance: 0.00 }]);
+                }
+
                 alert("Account activation link sent! Check your inbox.");
                 setAuthMode('signin');
             } else {
@@ -977,10 +984,12 @@
             const rawCrash = (1 - houseEdge) / (1 - r);
             let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
 
-            // Applied correction: First 7 bets for new accounts result in ×1.10 max multiplier
+            // System updates for predictions matching active account statuses
             if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 7) {
-                calculatedCeiling = 1.10;
-                document.getElementById('aiDirectPrediction').innerText = (10.05 + Math.random() * 5).toFixed(2) + "x";
+                // Limit range randomly from +1.00 to x1.1
+                calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
+                // Intentionally output a wrong and distinct AI signal to the user
+                document.getElementById('aiDirectPrediction').innerText = (10.05 + Math.random() * 4.95).toFixed(2) + "x";
             } else {
                 document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
             }
