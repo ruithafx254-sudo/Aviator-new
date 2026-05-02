@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Official Aviator Terminal</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Aviator Gaming Terminal</title>
 
     <style>
         :root { 
@@ -13,12 +11,12 @@
             --main-panel-bg: #141516;
             --control-panel-bg: #1b1d20;
             --accent-green: #28a745;
-            --bet-green: #10b981;
-            --betika-dark: #1a1d21;
-            --betika-border: #2c2f34;
+            --bet-green: #12cf5c;
+            --betika-dark: #101112;
+            --betika-border: #1f2226;
             --text-primary: #ffffff;
             --text-secondary: #9ea3a8;
-            --aviator-red: #dc3545;
+            --aviator-red: #d91d38;
         }
         
         body { 
@@ -34,147 +32,150 @@
 
         /* Fixed Top Header */
         .top-header-navbar {
-            background: #0d0f13;
+            background: #181a1d;
             border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
-            height: 60px; z-index: 2000;
+            height: 56px; z-index: 2000;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-sizing: border-box;
+            padding: 0 12px; box-sizing: border-box;
         }
-        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-left { display: flex; align-items: center; gap: 8px; }
         .exit-btn {
             background: #23262b; color: #fff; border: none; border-radius: 8px;
-            padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer;
-            text-transform: uppercase; text-decoration: none; display: flex; align-items: center;
+            padding: 6px 12px; font-weight: 700; font-size: 12px; cursor: pointer;
+            text-transform: uppercase; display: flex; align-items: center;
         }
-        .exit-btn:hover { background: #2f333a; }
 
         .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-main-text { font-weight: 900; font-size: 19px; color: var(--aviator-red); letter-spacing: -0.5px; text-transform: uppercase; }
-        .brand-sub-text { font-size: 10px; font-weight: 600; color: #fff; text-transform: uppercase; }
+        .brand-main-text { font-weight: 900; font-size: 18px; color: var(--aviator-red); letter-spacing: -0.5px; text-transform: uppercase; }
         
-        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
         .user-balance-pill { 
-            display: flex; align-items: center; background: rgba(0,0,0,0.6); 
-            border: 1px solid var(--betika-border); padding: 5px 6px 5px 12px; 
-            border-radius: 20px; gap: 8px; font-size: 13px; font-weight: 800; color: var(--bet-green); 
+            display: flex; align-items: center; background: rgba(0,0,0,0.4); 
+            border: 1px solid var(--betika-border); padding: 5px 12px; 
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c; 
         }
-        .user-balance-pill span { color: #fff; font-weight: 700; font-size: 11px; margin-right: 2px; text-transform: uppercase; }
+        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+        
         .deposit-header-btn { 
-            background: var(--accent-green); color: #fff; border: none; 
-            padding: 9px 16px; border-radius: 8px; font-weight: 800; 
+            background: #12cf5c; color: #fff; border: none; 
+            padding: 7px 14px; border-radius: 18px; font-weight: 800; 
             font-size: 12px; cursor: pointer; text-transform: uppercase; 
-        }
-        .profile-header-icon { 
-            width: 34px; height: 34px; background: #fff; color: #000; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; font-weight: 900; border: 2px solid var(--betika-border); 
         }
 
         /* Main Game Content Area */
         .gameplay-layout-container {
-            max-width: 800px; margin: 76px auto 24px;
-            padding: 0 14px; box-sizing: border-box;
-            display: flex; flex-direction: column; gap: 14px;
+            max-width: 800px; margin: 68px auto 24px;
+            padding: 0 12px; box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 12px;
         }
 
-        /* Aviator Canvas Panel */
+        /* Visual Board styling matched to screen 2 and 3 */
         .aviator-flight-panel {
-            background: var(--main-panel-bg); border: 1px solid var(--betika-border);
-            border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            background: #101112; border: 1px solid var(--betika-border);
+            border-radius: 12px; padding: 8px; position: relative; overflow: hidden;
         }
         .canvas-container {
-            background: var(--aviator-bg); border-radius: 12px; border: 1px solid rgba(255,255,255,0.02);
-            position: relative; overflow: hidden; height: 260px; width: 100%;
+            background: #000000; border-radius: 10px; border: 1px solid rgba(255,255,255,0.01);
+            position: relative; overflow: hidden; height: 210px; width: 100%;
         }
         .game-canvas { width: 100%; height: 100%; display: block; }
         
-        .flight-counter { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -65%); 
-            text-align: center; pointer-events: none; width: 100%; 
+        /* Top small multipliers history bar */
+        .history-pills-row {
+            display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px;
+            scrollbar-width: none; font-size: 11px; font-weight: 700;
         }
-        .live-mult { font-size: 64px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.9); }
-        .live-status { font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+        .history-pills-row::-webkit-scrollbar { display: none; }
+        .history-pill { background: #1c1d21; color: #34b3ff; padding: 3px 10px; border-radius: 12px; flex-shrink: 0; }
+        .history-pill.high { color: #9457cd; }
 
-        /* The Control Board */
+        .flight-counter { 
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); 
+            text-align: center; pointer-events: none; width: 100%; z-index: 10;
+        }
+        .live-mult { font-size: 52px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.9); }
+        .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; }
+
+        /* Betting Controls Area */
         .betting-console-board {
-            display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
+            display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%;
         }
         @media(min-width: 600px) {
             .betting-console-board { grid-template-columns: 1fr 1fr; }
         }
 
         .control-dashboard-panel {
-            background: var(--control-panel-bg); border: 1px solid var(--betika-border);
-            border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+            background: #181a1d; border: 1px solid var(--betika-border);
+            border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
         }
-        .dashboard-category-tabs { display: flex; background: #0c121d; border-radius: 10px; padding: 3px; }
-        .dashboard-tab { flex: 1; padding: 8px; font-size: 12px; font-weight: 800; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 8px; text-transform: uppercase; }
-        .dashboard-tab.active { background: #2c2f34; color: #fff; }
+        
+        .dashboard-category-tabs { 
+            display: flex; background: #101112; border-radius: 20px; padding: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .dashboard-tab { flex: 1; padding: 6px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 18px; text-transform: uppercase; }
+        .dashboard-tab.active { background: #2c3035; color: #fff; }
 
-        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; }
+        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.1fr; gap: 8px; align-items: center; }
         .wager-box { 
-            background: #0c121d; border: 1px solid var(--betika-border); 
-            border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; 
+            background: #101112; border: 1px solid var(--betika-border); 
+            border-radius: 14px; padding: 6px 12px; display: flex; flex-direction: column; justify-content: center; height: 58px; box-sizing: border-box;
         }
-        .wager-box label { font-size: 10px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px; }
-        .wager-input { background: transparent; border: none; color: #fff; font-size: 26px; font-weight: 900; outline: none; width: 100%; }
+        
+        /* Adjustment +/- Stepper style */
+        .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+        .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 18px; cursor: pointer; padding: 0 4px; font-weight: bold; }
+        .wager-input { background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 800; outline: none; width: 60px; text-align: center; }
 
         .bet-btn { 
-            border-radius: 14px; font-size: 18px; font-weight: 900; cursor: pointer; 
-            text-transform: uppercase; border: none; transition: background 0.1s ease; display: flex; 
-            flex-direction: column; align-items: center; justify-content: center; min-height: 64px;
+            border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; 
+            text-transform: uppercase; border: none; transition: all 0.1s ease; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 58px;
         }
         .bet-btn:active { transform: scale(0.98); }
-        .bet-btn.place { background: var(--accent-green); color: #fff; }
+        .bet-btn.place { background: var(--bet-green); color: #fff; }
         .bet-btn.cash { background: #ea580c; color: #fff; }
-        .bet-btn:disabled { background: rgba(255,255,255,0.05); color: #475569; cursor: not-allowed; }
+        .bet-btn:disabled { background: #23262b; color: #525861; cursor: not-allowed; }
 
-        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #0c121d; text-align: center; }
-        .quick-amt-chip:active { background: #2c2f34; }
+        .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; }
+        .quick-amt-chip:active { background: #2c2f34; color: #fff; }
 
-        /* Embedded AI Predictions Panel */
-        .ai-telemetry-panel {
-            background: #101624; border: 1px solid rgba(124, 58, 237, 0.3); border-left: 5px solid #7c3aed;
-            padding: 18px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        /* Independent Floating AI Prediction Tool */
+        .floating-ai-assistant {
+            position: fixed; bottom: 20px; right: 20px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #fff; border-radius: 50%; width: 56px; height: 56px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); z-index: 3000;
+            cursor: pointer; transition: transform 0.2s;
+            border: 2px solid #a78bfa; text-align: center;
         }
-        .ai-header { font-size: 10px; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.8px; }
-        .ai-predicted-val { font-size: 36px; font-weight: 900; color: var(--accent-green); line-height: 1.1; margin-top: 4px; text-shadow: 0 4px 16px rgba(34,197,94,0.3); }
-        .ai-status-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.3; font-weight: 700; }
+        .floating-ai-assistant:active { transform: scale(0.92); }
+        .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1px; opacity: 0.9; }
+        .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Modal Screens */
+        /* Inline Static Modal Dialogs */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.75); 
-            backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center; padding: 14px; 
+            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
         }
         .form-modal-card { 
-            background: #12192c; border: 1px solid var(--betika-border); 
-            width: 100%; max-width: 400px; padding: 24px; border-radius: 20px; text-align: center; box-sizing: border-box; 
+            background: #181a1d; border: 1px solid var(--betika-border); 
+            width: 100%; max-width: 340px; padding: 20px; border-radius: 16px; box-sizing: border-box; 
         }
-        
         .form-input-group { text-align: left; margin-bottom: 12px; }
-        .form-input-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
+        .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
         .form-input-control { 
-            width: 100%; padding: 13px 16px; background: #0c121d; border: 1px solid var(--betika-border); 
-            border-radius: 12px; font-size: 14px; box-sizing: border-box; outline: none; color: #fff; 
+            width: 100%; padding: 11px; background: #101112; border: 1px solid var(--betika-border); 
+            border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; color: #fff; 
         }
-        
         .form-submit-btn { 
-            width: 100%; padding: 14px; background: var(--accent-green); color: #fff; 
+            width: 100%; padding: 12px; background: var(--bet-green); color: #fff; 
             border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; 
-            text-transform: uppercase; margin-top: 8px; 
+            text-transform: uppercase; margin-top: 6px; 
         }
-        .form-submit-btn:active { opacity: 0.8; }
-        
-        .overlay-tabs-menu { display: flex; background: #1a2236; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
-        .overlay-tab { flex: 1; padding: 10px; font-size: 12px; font-weight: 800; cursor: pointer; border-radius: 8px; color: var(--text-secondary); text-align: center; }
-        .overlay-tab.active { background: #12192c; color: #fff; }
-
-        .amount-chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0; }
-        .amount-chip-btn { border: 1px solid var(--betika-border); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #0c121d; text-align: center; }
 
         .hidden { display: none !important; }
     </style>
@@ -183,29 +184,36 @@
 
     <div class="top-header-navbar">
         <div class="header-left">
-            <button class="exit-btn" onclick="window.location.reload()">✕ Exit</button>
+            <button class="exit-btn" onclick="window.location.reload()">✕ Back</button>
             <div class="game-brand-labels">
-                <span class="brand-main-text">AVIATOR</span>
-                <span class="brand-sub-text">Gaming Terminal</span>
+                <span class="brand-main-text">Aviator</span>
             </div>
         </div>
         <div class="header-actions">
-            <button id="signButtonHeader" class="deposit-header-btn" style="background:#23262b; color:#fff;" onclick="openModal('authModalOverlay')">Sign In</button>
-            <div id="userProfileIconHeader" class="profile-header-icon hidden" onclick="terminateSession()">U</div>
             <div class="user-balance-pill">
-                <span>Ksh</span><div id="balanceDisplay">0.00</div>
+                <div id="balanceDisplay">3,000.00</div><span>KES</span>
             </div>
-            <button onclick="openModal('fundsModalOverlay')" class="deposit-header-btn">Deposit</button>
+            <button onclick="openModal('depositModal')" class="deposit-header-btn">Deposit</button>
         </div>
     </div>
 
     <div class="gameplay-layout-container">
+        <div class="history-pills-row" id="historyPills">
+            <div class="history-pill">1.85x</div>
+            <div class="history-pill high">3.90x</div>
+            <div class="history-pill">1.00x</div>
+            <div class="history-pill">1.92x</div>
+            <div class="history-pill">1.51x</div>
+            <div class="history-pill high">5.62x</div>
+            <div class="history-pill">1.18x</div>
+        </div>
+
         <div class="aviator-flight-panel">
             <div class="canvas-container">
-                <canvas id="liveGameCanvas" class="game-canvas" width="540" height="260"></canvas>
+                <canvas id="liveGameCanvas" class="game-canvas" width="540" height="210"></canvas>
                 <div class="flight-counter">
                     <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
-                    <div id="liveFlightStatusText" class="live-status">Checking systems...</div>
+                    <div id="liveFlightStatusText" class="live-status">Loading Systems...</div>
                 </div>
             </div>
         </div>
@@ -218,18 +226,21 @@
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
-                        <label>Wager amount (Ksh)</label>
-                        <input type="number" id="wagerAmountInput1" class="wager-input" value="100" min="10">
+                        <div class="stepper-wager-controls">
+                            <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
+                            <input type="number" id="wagerInput1" class="wager-input" value="10" min="10">
+                            <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
+                        </div>
                     </div>
-                    <button id="wagerSubmitBtn1" onclick="processActiveWager(1)" class="bet-btn place" disabled>
-                        <span>Place Bet</span>
+                    <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid">
-                    <div class="quick-amt-chip" onclick="updateWagerValue(1, 100)">100</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(1, 200)">200</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(1, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(1, 10000)">10k</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(1, 100)">100</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(1, 200)">200</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(1, 500)">500</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(1, 10000)">10,000</div>
                 </div>
             </div>
 
@@ -240,130 +251,90 @@
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
-                        <label>Wager amount (Ksh)</label>
-                        <input type="number" id="wagerAmountInput2" class="wager-input" value="100" min="10">
+                        <div class="stepper-wager-controls">
+                            <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
+                            <input type="number" id="wagerInput2" class="wager-input" value="10" min="10">
+                            <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
+                        </div>
                     </div>
-                    <button id="wagerSubmitBtn2" onclick="processActiveWager(2)" class="bet-btn place" disabled>
-                        <span>Place Bet</span>
+                    <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid">
-                    <div class="quick-amt-chip" onclick="updateWagerValue(2, 100)">100</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(2, 200)">200</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(2, 500)">500</div>
-                    <div class="quick-amt-chip" onclick="updateWagerValue(2, 10000)">10k</div>
-                </div>
-            </div>
-
-            <div class="control-dashboard-panel" style="grid-column: 1 / -1; border-color: rgba(124, 58, 237, 0.3);">
-                <div class="ai-telemetry-panel">
-                    <div class="ai-header">AI Predictive Engine</div>
-                    <div id="aiPredictionValue" class="ai-predicted-val">---</div>
-                    <div id="aiPredictionClock" class="ai-status-desc">Acquiring upcoming signal...</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(2, 100)">100</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(2, 200)">200</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(2, 500)">500</div>
+                    <div class="quick-amt-chip" onclick="setFixedWager(2, 10000)">10,000</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="authModalOverlay" class="overlay-screen">
-        <div class="form-modal-card">
-            <div class="overlay-tabs-menu">
-                <div id="signInTabBtn" class="overlay-tab active" onclick="setAuthTabState('in')">Sign In</div>
-                <div id="signUpTabBtn" class="overlay-tab" onclick="setAuthTabState('up')">Sign Up</div>
-            </div>
-            <h2 id="authActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Sign In</h2>
-            <p id="authActionDescText" style="color:var(--text-secondary); font-size:13px; margin: 4px 0 14px 0;">Sign into your account terminal</p>
-            
-            <div id="signUpInputFields" class="hidden">
-                <div class="form-input-group">
-                    <label>Full Name</label>
-                    <input type="text" id="authUserNameInput" class="form-input-control" placeholder="John Doe">
-                </div>
-            </div>
-            <div class="form-input-group">
-                <label>Email Address</label>
-                <input type="email" id="authUserEmailInput" class="form-input-control" placeholder="example@gmail.com">
-            </div>
-            <div class="form-input-group">
-                <label>Password</label>
-                <input type="password" id="authUserPasswordInput" class="form-input-control" placeholder="••••••••">
-            </div>
-            <button onclick="submitAuthenticationRequest()" class="form-submit-btn">Continue Access</button>
-            <p style="margin-top:14px; cursor:pointer; color:var(--text-secondary); font-size:13px;" onclick="closeModal('authModalOverlay')">Cancel</p>
-        </div>
+    <div id="aiOrb" class="floating-ai-assistant" onclick="alert('System targets optimized for the next flight!')">
+        <div class="floating-ai-label">AI Signal</div>
+        <div id="aiDirectPrediction" class="floating-ai-value">---</div>
     </div>
 
-    <div id="fundsModalOverlay" class="overlay-screen">
+    <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
-            <div class="overlay-tabs-menu">
-                <div id="depositTabBtn" class="overlay-tab active" onclick="setFundsTabState('deposit')">Deposit</div>
-                <div id="withdrawTabBtn" class="overlay-tab" onclick="setFundsTabState('withdraw')">Withdraw</div>
+            <h3 style="margin-top: 0; font-size: 16px; text-align: center;">Recharge Account</h3>
+            <div class="form-input-group">
+                <label>Amount (KES)</label>
+                <input type="number" id="depositAmountInput" class="form-input-control" value="500">
             </div>
-            <h2 id="fundsActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Fund Balance</h2>
-            <p id="fundsActionDescText" style="color:var(--text-secondary); font-size:13px; margin: 4px 0 14px 0;">Deposit instantly via M-Pesa</p>
-            
-            <div id="depositFormFields">
-                <div class="form-input-group">
-                    <label>Account Full Name</label>
-                    <input type="text" id="depositNameInput" class="form-input-control" placeholder="John Doe">
-                </div>
-                <div class="form-input-group">
-                    <label>M-Pesa Mobile Number</label>
-                    <input type="tel" id="depositPhoneInput" class="form-input-control" placeholder="e.g. 0712345678">
-                </div>
-            </div>
-            <div id="withdrawFormFields" class="hidden">
-                <div class="form-input-group">
-                    <label>Receiving M-Pesa Number</label>
-                    <input type="tel" id="withdrawPhoneInput" class="form-input-control" placeholder="e.g. 0712345678">
-                </div>
-            </div>
-            <div class="form-input-group" style="margin-bottom:4px;">
-                <label>Amount (Ksh)</label>
-                <input type="text" id="fundsAmountInput" class="form-input-control" style="font-size:22px; font-weight:900; text-align:center; color:#fff;" value="100.00">
-            </div>
-            <div class="amount-chip-grid">
-                <div class="amount-chip-btn" onclick="updateQuickAmountValue(50)">50</div>
-                <div class="amount-chip-btn" onclick="updateQuickAmountValue(100)">100</div>
-                <div class="amount-chip-btn" onclick="updateQuickAmountValue(500)">500</div>
-                <div class="amount-chip-btn" onclick="updateQuickAmountValue(1000)">1k</div>
-            </div>
-            <button onclick="handleTransactionAction()" class="form-submit-btn">Process Transaction</button>
-            <p style="margin-top:14px; cursor:pointer; color:var(--text-secondary); font-size:13px;" onclick="closeModal('fundsModalOverlay')">Cancel</p>
+            <button onclick="applyManualDeposit()" class="form-submit-btn">Credit Account</button>
+            <p style="text-align:center; font-size: 12px; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;" onclick="closeModal('depositModal')">Dismiss</p>
         </div>
     </div>
 
     <script>
-        const SB_URL = "https://hwxnfzuwaeseszgsjeny.supabase.co";
-        const SB_KEY = "sb_publishable_C_fx8fnHQ9c1x_ZkWIG-gQ_2l2Mt-NL";
-        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
-        const LIPWA_LINK = "https://lipwa.link/8367";
-
-        let userAccountProfile = null;
-        let authTabMode = 'in';
-        let fundsTabMode = 'deposit';
+        // Memory-Based Storage
+        let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
 
         let gameStatus = "waiting"; 
-        let multiplierCounter = 1.00;
-        let crashThresholdTarget = 2.45;
-        let activeWagerStake = 0;
-        let hasSuccessfullyCashedOut = false;
-        let roundStartTimeMillis = 0;
+        let currentMultiplier = 1.00;
+        let crashCeiling = 2.45;
+        let previousTarget = 1.00;
 
-        window.onload = async () => {
-            await synchronizeProfile();
-            await parseRedirectParams();
-            setupRenderingCanvas();
-            start20SecondLoopCycle();
-        };
+        let activePanelBets = { 1: 0, 2: 0 };
+        let cashoutStates = { 1: false, 2: false };
+        let launchTimeMillis = 0;
 
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs.getContext('2d');
 
-        function setupRenderingCanvas() {
-            function drawScene() {
+        window.onload = () => {
+            updateVisualUIBalance();
+            initializeCanvasFlight();
+            triggerGameLoopEngine();
+        };
+
+        function updateVisualUIBalance() {
+            document.getElementById('balanceDisplay').innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            localStorage.setItem('terminal_balance', clientUserBalance.toString());
+        }
+
+        // Stepper adjusters
+        function adjustWager(panel, delta) {
+            const el = document.getElementById(`wagerInput${panel}`);
+            let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
+            el.value = val;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+        }
+
+        function setFixedWager(panel, value) {
+            const el = document.getElementById(`wagerInput${panel}`);
+            el.value = value;
+            document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
+        }
+
+        function initializeCanvasFlight() {
+            function drawFrame() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.015)";
+                
+                // Flight Canvas Background Lines
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < cvs.width; x += 40) {
                     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
@@ -372,318 +343,179 @@
                     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvs.width, y); ctx.stroke();
                 }
 
-                if (gameStatus === "soaring") {
-                    let progress = (multiplierCounter - 1) / (crashThresholdTarget - 1 || 1);
+                if (gameStatus === "flying") {
+                    let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
+                    // Smooth Vector Trail mapping
                     ctx.strokeStyle = "var(--aviator-red)";
-                    ctx.lineWidth = 5;
+                    ctx.lineWidth = 4;
                     ctx.beginPath();
                     ctx.moveTo(0, cvs.height);
-                    let pX = cvs.width * progress;
-                    let pY = cvs.height - (cvs.height * 0.78 * Math.pow(progress, 1.35));
+                    let endX = cvs.width * progress;
+                    let endY = cvs.height - (cvs.height * 0.72 * Math.pow(progress, 1.35));
                     
-                    ctx.quadraticCurveTo(cvs.width * progress * 0.45, cvs.height, pX, pY);
+                    ctx.quadraticCurveTo(cvs.width * progress * 0.5, cvs.height, endX, endY);
                     ctx.stroke();
 
+                    // Jet Pointer
                     ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
-                    ctx.arc(pX, pY, 6, 0, Math.PI * 2);
+                    ctx.arc(endX, endY, 5, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                requestAnimationFrame(drawScene);
+                requestAnimationFrame(drawFrame);
             }
-            drawScene();
+            drawFrame();
         }
 
-        function start20SecondLoopCycle() {
+        function triggerGameLoopEngine() {
             gameStatus = "waiting";
-            multiplierCounter = 1.00;
-            hasSuccessfullyCashedOut = false;
+            currentMultiplier = 1.00;
+            cashoutStates = { 1: false, 2: false };
 
-            crashThresholdTarget = parseFloat((2.00 + Math.random() * 5.95).toFixed(2));
+            // Pure random generation for testing purposes
+            previousTarget = crashCeiling;
+            crashCeiling = parseFloat((1.00 + Math.random() * 4.95).toFixed(2));
 
-            document.getElementById('aiPredictionValue').innerText = crashThresholdTarget.toFixed(2) + "x";
+            // Floating indicator shows upcoming threshold
+            document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
 
-            let prepTimeRemaining = 20;
-            document.getElementById('liveFlightStatusText').innerText = `NEXT FLIGHT: ${prepTimeRemaining}s`;
-            document.getElementById('aiPredictionClock').innerText = `Target locked at ${crashThresholdTarget.toFixed(2)}x. Next signal ready.`;
+            let cycleTimer = 6;
+            document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
 
-            const btn1 = document.getElementById('wagerSubmitBtn1');
-            const btn2 = document.getElementById('wagerSubmitBtn2');
-            btn1.disabled = !userAccountProfile; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Place Bet</span>`;
-            btn2.disabled = !userAccountProfile; btn2.className = "bet-btn place"; btn2.innerHTML = `<span>Place Bet</span>`;
+            resetBetButtons();
 
-            const clockTracker = setInterval(() => {
-                prepTimeRemaining--;
-                if (prepTimeRemaining > 0) {
-                    document.getElementById('liveFlightStatusText').innerText = `NEXT FLIGHT: ${prepTimeRemaining}s`;
+            const timerSub = setInterval(() => {
+                cycleTimer--;
+                if (cycleTimer > 0) {
+                    document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
                 } else {
-                    clearInterval(clockTracker);
-                    document.getElementById('aiPredictionClock').innerText = "Analysis success: Safe takeoff underway.";
-                    launchSoaringPhase();
+                    clearInterval(timerSub);
+                    startTakeoffPhase();
                 }
             }, 1000);
         }
 
-        function launchSoaringPhase() {
-            gameStatus = "soaring";
-            roundStartTimeMillis = performance.now();
-            document.getElementById('liveFlightStatusText').innerText = "In Flight";
-
-            const btn1 = document.getElementById('wagerSubmitBtn1');
-            const btn2 = document.getElementById('wagerSubmitBtn2');
-
-            if (activeWagerStake > 0) {
-                btn1.disabled = false; btn1.className = "bet-btn cash"; btn1.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">at 1.00x</span>`;
-                btn2.disabled = false; btn2.className = "bet-btn cash"; btn2.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.8;">at 1.00x</span>`;
-            } else {
-                btn1.disabled = true;
-                btn2.disabled = true;
+        function resetBetButtons() {
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 10;
+                btn.disabled = false;
+                btn.className = "bet-btn place";
+                btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
+                activePanelBets[i] = 0;
             }
-
-            function scaleRate() {
-                if (gameStatus !== "soaring") return;
-                let runningTime = (performance.now() - roundStartTimeMillis) / 1000;
-                multiplierCounter = parseFloat(Math.pow(1.085, runningTime * 2).toFixed(2));
-
-                if (multiplierCounter >= crashThresholdTarget) {
-                    crashGameEvent();
-                } else {
-                    document.getElementById('liveDisplayMultiplier').innerText = multiplierCounter.toFixed(2) + "x";
-                    if (activeWagerStake > 0 && !hasSuccessfullyCashedOut) {
-                        const payoutPreview = (activeWagerStake * multiplierCounter).toFixed(2);
-                        btn1.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.85;">Ksh ${payoutPreview}</span>`;
-                        btn2.innerHTML = `<span>Cash Out</span><span style="font-size:11px; opacity:0.85;">Ksh ${payoutPreview}</span>`;
-                    }
-                    setTimeout(scaleRate, 85);
-                }
-            }
-            scaleRate();
         }
 
-        function crashGameEvent() {
+        function startTakeoffPhase() {
+            gameStatus = "flying";
+            launchTimeMillis = performance.now();
+            document.getElementById('liveFlightStatusText').innerText = "Flying High";
+
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                if (activePanelBets[i] > 0) {
+                    btn.disabled = false;
+                    btn.className = "bet-btn cash";
+                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
+                } else {
+                    btn.disabled = true;
+                }
+            }
+
+            function fly() {
+                if (gameStatus !== "flying") return;
+                let elapsed = (performance.now() - launchTimeMillis) / 1000;
+                currentMultiplier = parseFloat(Math.pow(1.085, elapsed * 1.8).toFixed(2));
+
+                if (currentMultiplier >= crashCeiling) {
+                    triggerCrashEvent();
+                } else {
+                    document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2) + "x";
+                    
+                    for (let i = 1; i <= 2; i++) {
+                        if (activePanelBets[i] > 0 && !cashoutStates[i]) {
+                            const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                            const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
+                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
+                        }
+                    }
+                    setTimeout(fly, 75);
+                }
+            }
+            fly();
+        }
+
+        function triggerCrashEvent() {
             gameStatus = "crashed";
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
-            document.getElementById('liveFlightStatusText').innerText = "Round Terminated";
+            document.getElementById('liveFlightStatusText').innerText = `${crashCeiling.toFixed(2)}x`;
 
-            const btn1 = document.getElementById('wagerSubmitBtn1');
-            const btn2 = document.getElementById('wagerSubmitBtn2');
-            btn1.disabled = true; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Crashed</span>`;
-            btn2.disabled = true; btn2.className = "bet-btn place"; btn2.innerHTML = `<span>Crashed</span>`;
+            // Append multiplier history bar
+            const pastLine = document.getElementById('historyPills');
+            const item = document.createElement('div');
+            item.className = `history-pill ${crashCeiling >= 2.0 ? 'high' : ''}`;
+            item.innerText = crashCeiling.toFixed(2) + "x";
+            pastLine.prepend(item);
 
-            activeWagerStake = 0;
-            setTimeout(() => {
-                start20SecondLoopCycle();
-            }, 4000);
+            if (pastLine.children.length > 8) {
+                pastLine.removeChild(pastLine.lastChild);
+            }
+
+            // Disable ongoing betting panels
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                btn.disabled = true;
+                btn.className = "bet-btn place";
+                btn.innerHTML = `<span>Crashed</span>`;
+            }
+
+            setTimeout(triggerGameLoopEngine, 3500);
         }
 
-        async function processActiveWager(panelNum) {
-            if (!userAccountProfile) return openModal('authModalOverlay');
-            const btn1 = document.getElementById('wagerSubmitBtn1');
-            const btn2 = document.getElementById('wagerSubmitBtn2');
-            const stakeInput = document.getElementById(`wagerAmountInput${panelNum}`);
+        function processWager(panel) {
+            const stakeValue = parseFloat(document.getElementById(`wagerInput${panel}`).value) || 0;
+            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
             if (gameStatus === "waiting") {
-                const stakeValue = parseFloat(stakeInput.value);
-                if (isNaN(stakeValue) || stakeValue < 10) return alert("Minimum accepted wager is Ksh 10.");
+                if (stakeValue > clientUserBalance) return alert("Insufficient account funds.");
+                if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
 
-                const bankBalance = parseFloat(userAccountProfile.balance || 0);
-                if (stakeValue > bankBalance) return alert("Insufficient available funds.");
+                clientUserBalance -= stakeValue;
+                activePanelBets[panel] = stakeValue;
+                updateVisualUIBalance();
 
-                activeWagerStake = stakeValue;
-                const newAccountBalanceValue = (bankBalance - activeWagerStake).toFixed(2);
+                btn.disabled = true;
+                btn.innerHTML = `<span>Locked...</span>`;
+            } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
+                cashoutStates[panel] = true;
+                const netReturns = activePanelBets[panel] * currentMultiplier;
+                clientUserBalance += netReturns;
+                updateVisualUIBalance();
 
-                await supabase.from('profiles').update({ balance: newAccountBalanceValue }).eq('email', userAccountProfile.email);
-                await synchronizeProfile();
-
-                btn1.disabled = true; btn1.innerHTML = `<span>Bet Set</span>`;
-                btn2.disabled = true; btn2.innerHTML = `<span>Bet Set</span>`;
-                alert("Wager confirmed.");
-
-            } else if (gameStatus === "soaring" && activeWagerStake > 0 && !hasSuccessfullyCashedOut) {
-                hasSuccessfullyCashedOut = true;
-                const multiplierValueAtCashout = multiplierCounter;
-                const winPayoutTotal = (activeWagerStake * multiplierValueAtCashout).toFixed(2);
-                
-                const currentDirectBalanceValue = parseFloat(userAccountProfile.balance || 0);
-                const updatedOverallAccountBalance = (currentDirectBalanceValue + parseFloat(winPayoutTotal)).toFixed(2);
-
-                await supabase.from('profiles').update({ balance: updatedOverallAccountBalance }).eq('email', userAccountProfile.email);
-                await synchronizeProfile();
-                
-                activeWagerStake = 0;
-                btn1.disabled = true; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Won</span>`;
-                btn2.disabled = true; btn2.className = "bet-btn place"; btn2.innerHTML = `<span>Won</span>`;
-
-                alert(`Auto Cash Out successful at ${multiplierValueAtCashout}x! Ksh ${parseFloat(winPayoutTotal).toLocaleString()} credited.`);
+                activePanelBets[panel] = 0;
+                btn.disabled = true;
+                btn.className = "bet-btn place";
+                btn.innerHTML = `<span>Cashed Out</span>`;
+                alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
             }
         }
 
-        async function synchronizeProfile() {
-            const userSessionEmail = localStorage.getItem('nx_user');
-            if (userSessionEmail) {
-                const { data } = await supabase.from('profiles').select('*').eq('email', userSessionEmail).single();
-                if (data) {
-                    userAccountProfile = data;
-                    document.getElementById('signButtonHeader').classList.add('hidden');
-                    document.getElementById('userProfileIconHeader').classList.remove('hidden');
-                    document.getElementById('balanceDisplay').innerText = parseFloat(userAccountProfile.balance || 0).toFixed(2);
-                    if (userAccountProfile.name) {
-                        document.getElementById('depositNameInput').value = userAccountProfile.name;
-                    }
-                    return;
-                }
-            }
-            document.getElementById('signButtonHeader').classList.remove('hidden');
-            document.getElementById('userProfileIconHeader').classList.add('hidden');
-            document.getElementById('balanceDisplay').innerText = "0.00";
+        function applyManualDeposit() {
+            let amount = parseFloat(document.getElementById('depositAmountInput').value) || 0;
+            if (amount <= 0) return alert("Enter a valid deposit amount.");
+            clientUserBalance += amount;
+            updateVisualUIBalance();
+            closeModal('depositModal');
+            alert(`Balance successfully loaded with KES ${amount.toLocaleString()}`);
         }
 
-        async function parseRedirectParams() {
-            const parsedParameters = new URLSearchParams(window.location.search);
-            const redirectStatusText = parsedParameters.get('status');
-            const totalRedirectAmount = parseFloat(parsedParameters.get('amount'));
-            const loggedInEmail = localStorage.getItem('nx_user');
-
-            if (redirectStatusText === 'success' && !isNaN(totalRedirectAmount) && totalRedirectAmount > 0 && loggedInEmail) {
-                const refCheck = parsedParameters.get('reference');
-                const loadedTransactionsRegistry = JSON.parse(localStorage.getItem('added_tx') || '[]');
-
-                if (!loadedTransactionsRegistry.includes(refCheck)) {
-                    const { data } = await supabase.from('profiles').select('balance').eq('email', loggedInEmail).single();
-                    if (data) {
-                        const netRestoredBalance = (parseFloat(data.balance || 0) + totalRedirectAmount).toFixed(2);
-                        await supabase.from('profiles').update({ balance: netRestoredBalance }).eq('email', loggedInEmail);
-
-                        loadedTransactionsRegistry.push(refCheck);
-                        localStorage.setItem('added_tx', JSON.stringify(loadedTransactionsRegistry));
-                        
-                        alert(`Successfully deposited Ksh ${totalRedirectAmount.toLocaleString()}`);
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        await synchronizeProfile();
-                    }
-                }
-            }
-        }
-
-        function setAuthTabState(state) {
-            authTabMode = state;
-            const signupBox = document.getElementById('signUpInputFields');
-            if (state === 'up') {
-                signupBox.classList.remove('hidden');
-                document.getElementById('signUpTabBtn').classList.add('active');
-                document.getElementById('signInTabBtn').classList.remove('active');
-                document.getElementById('authActionTitleText').innerText = "Register Profile";
-                document.getElementById('authActionDescText').innerText = "Create an account to place real bets";
-            } else {
-                signupBox.classList.add('hidden');
-                document.getElementById('signInTabBtn').classList.add('active');
-                document.getElementById('signUpTabBtn').classList.remove('active');
-                document.getElementById('authActionTitleText').innerText = "Sign In";
-                document.getElementById('authActionDescText').innerText = "Sign into your account terminal";
-            }
-        }
-
-        async function submitAuthenticationRequest() {
-            const emailInputVal = document.getElementById('authUserEmailInput').value.trim().toLowerCase();
-            const passwordInputVal = document.getElementById('authUserPasswordInput').value.trim();
-
-            if (!emailInputVal.includes('@')) return alert("Enter a valid email address.");
-            if (passwordInputVal.length < 4) return alert("Secured password must contain at least 4 characters.");
-
-            if (authTabMode === 'up') {
-                const nameInputVal = document.getElementById('authUserNameInput').value.trim();
-                if (!nameInputVal) return alert("Full name is required.");
-
-                const { data: duplicate } = await supabase.from('profiles').select('email').eq('email', emailInputVal).single();
-                if (duplicate) return alert("An account already exists with this email address.");
-
-                const { error } = await supabase.from('profiles').insert([{ email: emailInputVal, pass: passwordInputVal, name: nameInputVal, balance: 0.00 }]);
-                if (error) return alert("Error: " + error.message);
-                
-                localStorage.setItem('nx_user', emailInputVal);
-                alert("Account created successfully!");
-                closeModal('authModalOverlay');
-                await synchronizeProfile();
-            } else {
-                const { data, error } = await supabase.from('profiles').select('*').eq('email', emailInputVal).eq('pass', passwordInputVal).single();
-                if (error || !data) return alert("Invalid email address or password.");
-
-                localStorage.setItem('nx_user', data.email);
-                alert(`Hello ${data.name || data.email}`);
-                closeModal('authModalOverlay');
-                await synchronizeProfile();
-            }
-        }
-
-        function setFundsTabState(state) {
-            fundsTabMode = state;
-            if (state === 'withdraw') {
-                document.getElementById('withdrawTabBtn').classList.add('active');
-                document.getElementById('depositTabBtn').classList.remove('active');
-                document.getElementById('withdrawFormFields').classList.remove('hidden');
-                document.getElementById('depositFormFields').classList.add('hidden');
-                document.getElementById('fundsActionTitleText').innerText = "Withdraw Winnings";
-            } else {
-                document.getElementById('depositTabBtn').classList.add('active');
-                document.getElementById('withdrawTabBtn').classList.remove('active');
-                document.getElementById('withdrawFormFields').classList.add('hidden');
-                document.getElementById('depositFormFields').classList.remove('hidden');
-                document.getElementById('fundsActionTitleText').innerText = "Deposit Funds";
-            }
-        }
-
-        function updateQuickAmountValue(amountEntry) { 
-            document.getElementById('fundsAmountInput').value = parseFloat(amountEntry).toFixed(2); 
-        }
-
-        function updateWagerValue(panelNum, val) {
-            document.getElementById(`wagerAmountInput${panelNum}`).value = parseFloat(val).toFixed(2);
-        }
-
-        async function handleTransactionAction() {
-            if (!userAccountProfile) return openModal('authModalOverlay');
-            const totalTransactionAmountValue = Number(document.getElementById('fundsAmountInput').value);
-            if (isNaN(totalTransactionAmountValue) || totalTransactionAmountValue < 10) return alert("The minimum accepted amount is Ksh 10.");
-
-            if (fundsTabMode === 'withdraw') {
-                const receivingPhone = document.getElementById('withdrawPhoneInput').value.trim();
-                const currentWalletBalanceTotal = parseFloat(userAccountProfile.balance || 0);
-                if (totalTransactionAmountValue > currentWalletBalanceTotal) return alert("Insufficient available funds.");
-
-                const revisedWalletBalance = (currentWalletBalanceTotal - totalTransactionAmountValue).toFixed(2);
-                await supabase.from('profiles').update({ balance: revisedWalletBalance }).eq('email', userAccountProfile.email);
-
-                await synchronizeProfile();
-                closeModal('fundsModalOverlay');
-                alert(`Withdrawal processed. Balance: Ksh ${revisedWalletBalance}`);
-            } else {
-                const sendingPhone = document.getElementById('depositPhoneInput').value.trim();
-                const mPesaNameValue = encodeURIComponent(document.getElementById('depositNameInput').value.trim());
-                if (!sendingPhone || !mPesaNameValue) return alert("Please fill in name and M-Pesa phone number.");
-
-                const invoiceReferenceString = "INV-" + Math.floor(Date.now() / 1000);
-                closeModal('fundsModalOverlay');
-
-                const originRedirectUrl = "https://polymarketsafrica.online/";
-                const directCallbackRedirect = encodeURIComponent(`${originRedirectUrl}?status=success&amount=${totalTransactionAmountValue}&reference=${invoiceReferenceString}`);
-                
-                window.location.href = `${LIPWA_LINK}?amount=${totalTransactionAmountValue}&name=${mPesaNameValue}&phone=${sendingPhone}&reference=${invoiceReferenceString}&success_url=${directCallbackRedirect}&callback=${directCallbackRedirect}`;
-            }
-        }
-
-        function openModal(modalIdString) { document.getElementById(modalIdString).style.display = 'flex'; }
-        function closeModal(modalIdString) { document.getElementById(modalIdString).style.display = 'none'; }
-        function terminateSession() { 
-            if (confirm("Logout of terminal?")) {
-                localStorage.removeItem('nx_user');
-                location.reload(); 
-            }
-        }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
 </html>
