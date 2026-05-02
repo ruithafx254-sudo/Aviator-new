@@ -504,7 +504,6 @@
         const SUPABASE_ANON_KEY = "sb_publishable_Nwm6t6KrBd3DX6in8F2ICw_y6Xu_Aq8";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Core Balance and Client State Variables
         let clientUserBalance = 3000.00;
         let authenticatedUser = null;
         let currentAuthMode = 'signin';
@@ -528,7 +527,6 @@
             triggerGameLoopEngine();
         };
 
-        // Profile, State and Persistence Rules
         async function evaluateLocalUserSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
@@ -581,7 +579,6 @@
             }
         }
 
-        // Account Auth UI Toggle Controls
         function openAuthModal(mode) {
             setAuthMode(mode);
             document.getElementById('authModal').style.display = 'flex';
@@ -614,7 +611,7 @@
             const pass = document.getElementById('authPass').value;
             const name = document.getElementById('authDisplayName').value.trim();
 
-            if (!email || pass.length < 6) return alert("Please specify a valid email and matching password (at least 6 characters).");
+            if (!email || pass.length < 6) return alert("Please specify a valid email and matching password.");
 
             if (currentAuthMode === 'signup') {
                 const { data, error } = await supabaseClient.auth.signUp({
@@ -643,7 +640,6 @@
             alert("Session terminated securely.");
         }
 
-        // Dashboard Tabs Interaction
         function switchBetCategory(panel, category) {
             const isBet = category === 'bet';
             document.getElementById(`tabBet${panel}`).className = `dashboard-tab ${isBet ? 'active' : ''}`;
@@ -671,12 +667,16 @@
             document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
         }
 
+        // Aircraft Drawing Engine
         function initializeCanvasFlight() {
+            let smokeParticles = [];
+
             function drawFrame() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+                // Grid background
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
-
                 for (let x = 0; x < cvs.width; x += 40) {
                     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvs.height); ctx.stroke();
                 }
@@ -688,20 +688,104 @@
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
-                    ctx.strokeStyle = "var(--aviator-red)";
+                    // Flight Path
+                    ctx.strokeStyle = "rgba(217, 29, 56, 0.4)";
                     ctx.lineWidth = 4;
                     ctx.beginPath();
                     ctx.moveTo(0, cvs.height);
+                    
                     let endX = cvs.width * progress;
                     let endY = cvs.height - (cvs.height * 0.72 * Math.pow(progress, 1.35));
                     
+                    // Bezier flight arc
                     ctx.quadraticCurveTo(cvs.width * progress * 0.5, cvs.height, endX, endY);
                     ctx.stroke();
 
-                    ctx.fillStyle = "#ffffff";
+                    // Generate dynamic particles
+                    if (Math.random() < 0.65) {
+                        smokeParticles.push({
+                            x: endX, y: endY,
+                            size: 2 + Math.random() * 5,
+                            alpha: 0.8,
+                            vx: -1 - Math.random() * 1.5,
+                            vy: 0.5 - Math.random()
+                        });
+                    }
+
+                    // Render particles
+                    for (let i = smokeParticles.length - 1; i >= 0; i--) {
+                        let p = smokeParticles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.alpha -= 0.025;
+
+                        if (p.alpha <= 0) {
+                            smokeParticles.splice(i, 1);
+                            continue;
+                        }
+
+                        ctx.fillStyle = `rgba(217, 29, 56, ${p.alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Compute current tilt angle based on the arc's progression
+                    let nextProg = progress + 0.01;
+                    let nextY = cvs.height - (cvs.height * 0.72 * Math.pow(nextProg, 1.35));
+                    let tiltAngle = Math.atan2(nextY - endY, (cvs.width * nextProg) - endX);
+
+                    // Draw Realistic Vector Aircraft
+                    ctx.save();
+                    ctx.translate(endX, endY);
+                    ctx.rotate(tiltAngle);
+
+                    // Airplane red body glow
+                    ctx.fillStyle = "rgba(217, 29, 56, 0.25)";
+                    ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.fill();
+
+                    // Main fuselages and details
+                    ctx.fillStyle = "#ffffff"; 
                     ctx.beginPath();
-                    ctx.arc(endX, endY, 6, 0, Math.PI * 2);
+                    ctx.moveTo(-16, -2);
+                    ctx.lineTo(12, -2);
+                    ctx.quadraticCurveTo(22, 0, 12, 2);
+                    ctx.lineTo(-16, 2);
+                    ctx.closePath();
                     ctx.fill();
+
+                    // Jet main wing
+                    ctx.fillStyle = "var(--aviator-red)";
+                    ctx.beginPath();
+                    ctx.moveTo(-4, -2);
+                    ctx.lineTo(-11, -12);
+                    ctx.lineTo(-1, -12);
+                    ctx.lineTo(5, -2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Rear tail wing
+                    ctx.beginPath();
+                    ctx.moveTo(-12, -2);
+                    ctx.lineTo(-17, -8);
+                    ctx.lineTo(-13, -8);
+                    ctx.lineTo(-8, -2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Wing under-shading
+                    ctx.fillStyle = "#b51328";
+                    ctx.beginPath();
+                    ctx.moveTo(-4, 2);
+                    ctx.lineTo(-11, 10);
+                    ctx.lineTo(-1, 10);
+                    ctx.lineTo(5, 2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.restore();
+                } else {
+                    smokeParticles = [];
                 }
                 requestAnimationFrame(drawFrame);
             }
@@ -852,7 +936,6 @@
             alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
-        // Unified Modal Interactions
         function setFundsMode(mode) {
             currentFundsMode = mode;
             document.getElementById('depAmt').value = "100.00";
