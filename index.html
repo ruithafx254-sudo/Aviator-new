@@ -665,7 +665,6 @@
                 updateAuthVisualDisplay(true);
                 applyInitialLimitsToUI();
             } else if (error) {
-                // Creates a new profile explicitly
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
                     .insert([{ id: authenticatedUser.id, balance: 0.00, bet_count: 0, is_new: true }]);
@@ -682,7 +681,6 @@
 
         function applyInitialLimitsToUI() {
             if (isFirstTimeUser) {
-                // Force initial field values to the 100 KES floor
                 document.getElementById('wagerInput1').value = 100;
                 document.getElementById('wagerInput2').value = 100;
                 document.getElementById('subLabel1').innerText = "100.00 KES";
@@ -766,7 +764,6 @@
                 });
                 if (error) return alert("Registration Error: " + error.message);
                 
-                // Add a new profile explicitly tagging the customer as new
                 await supabaseClient.from('profiles').upsert({
                     id: data.user.id, balance: 0.00, bet_count: 0, is_new: true
                 });
@@ -1058,7 +1055,6 @@
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
                             btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
 
-                            // First 3 bets capping rule for new users
                             if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier >= 1.05) {
                                 executeCashOut(i);
                                 continue;
@@ -1113,7 +1109,6 @@
             if (gameStatus === "waiting") {
                 if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
                 
-                // Restriction Rule check for new users
                 let minAllowed = (isFirstTimeUser) ? 100 : 10;
                 if (stakeValue < minAllowed) {
                     return alert(`The minimum stake required is KES ${minAllowed}.00`);
@@ -1125,7 +1120,6 @@
                 btn.disabled = true;
                 btn.innerHTML = `<span>Locked...</span>`;
             } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
-                // For new users capping limits on early bets
                 if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier > 1.05) {
                     return alert("New accounts have a multiplier cap of exactly 1.05x on their first 3 bets.");
                 }
@@ -1136,7 +1130,6 @@
         async function executeCashOut(panel) {
             cashoutStates[panel] = true;
 
-            // Apply multiplier ceiling override for first 3 bets on new accounts
             let multiplierApplied = currentMultiplier;
             if (isFirstTimeUser && accountBetCount < 3) {
                 if (multiplierApplied > 1.05) {
@@ -1152,7 +1145,6 @@
             btn.className = "bet-btn place";
             btn.innerHTML = `<span>Cashed Out</span>`;
 
-            // Increment persistent database counter
             accountBetCount++;
             let updatePayload = { bet_count: accountBetCount };
             
