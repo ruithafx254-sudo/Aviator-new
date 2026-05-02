@@ -784,7 +784,6 @@
             document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
         }
 
-        // Advanced High-Fidelity Canvas Rendering System
         function initializeCanvasFlight() {
             let smokeParticles = [];
             
@@ -803,7 +802,6 @@
 
                 ctx.clearRect(0, 0, width, height);
 
-                // Grid background lines
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < width; x += 40) {
@@ -817,11 +815,9 @@
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
 
-                    // Authentic curve movement matching genuine game profiles
                     let endX = width * progress * 0.86 + (width * 0.05);
                     let endY = height - (height * 0.74 * Math.pow(progress, 1.4)) - (height * 0.06);
 
-                    // Red primary curve line
                     ctx.save();
                     ctx.strokeStyle = "#d91d38";
                     ctx.lineWidth = 4;
@@ -832,7 +828,6 @@
                     ctx.quadraticCurveTo(width * progress * 0.45, height - (height * 0.06), endX, endY);
                     ctx.stroke();
 
-                    // Trailing soft background glow fill under the line
                     ctx.beginPath();
                     ctx.moveTo(width * 0.05, height - (height * 0.06));
                     ctx.quadraticCurveTo(width * progress * 0.45, height - (height * 0.06), endX, endY);
@@ -846,7 +841,6 @@
                     ctx.fill();
                     ctx.restore();
 
-                    // Smooth dust/jet thruster effects
                     if (Math.random() < 0.9) {
                         smokeParticles.push({
                             x: endX - 4, y: endY + 2,
@@ -874,7 +868,6 @@
                         ctx.fill();
                     }
 
-                    // Render genuine prop plane
                     let nextProg = Math.min(progress + 0.005, 1.0);
                     let nextY = height - (height * 0.74 * Math.pow(nextProg, 1.4)) - (height * 0.06);
                     let tiltAngle = Math.atan2(nextY - endY, (width * nextProg * 0.86 + (width * 0.05)) - endX);
@@ -883,26 +876,23 @@
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    // Outer glowing effect around plane
                     ctx.shadowColor = "rgba(217, 29, 56, 0.7)";
                     ctx.shadowBlur = 10;
 
-                    // Plane Body (Red core profile)
                     ctx.fillStyle = "#d91d38";
                     ctx.beginPath();
                     ctx.moveTo(-16, -2);
                     ctx.lineTo(-24, -4);
-                    ctx.lineTo(-26, -10); // Tail fin
+                    ctx.lineTo(-26, -10);
                     ctx.lineTo(-21, -1);
                     ctx.lineTo(-12, 1);
                     ctx.lineTo(8, 2);
-                    ctx.quadraticCurveTo(15, 2, 16, -1); // Smooth nose curve
+                    ctx.quadraticCurveTo(15, 2, 16, -1);
                     ctx.lineTo(12, -4);
                     ctx.lineTo(-11, -3);
                     ctx.closePath();
                     ctx.fill();
 
-                    // White highlight details on fuselage
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = "#ffffff";
                     ctx.beginPath();
@@ -913,7 +903,6 @@
                     ctx.closePath();
                     ctx.fill();
 
-                    // Propeller details
                     ctx.strokeStyle = "#ffffff";
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
@@ -921,7 +910,6 @@
                     ctx.lineTo(16, 3);
                     ctx.stroke();
 
-                    // Front landing wheels
                     ctx.fillStyle = "#111111";
                     ctx.beginPath();
                     ctx.arc(3, 4, 2.5, 0, Math.PI * 2);
@@ -930,7 +918,6 @@
                     ctx.lineWidth = 0.8;
                     ctx.stroke();
 
-                    // High wings (Characteristic design)
                     ctx.fillStyle = "#b1132a";
                     ctx.beginPath();
                     ctx.moveTo(-2, -2);
