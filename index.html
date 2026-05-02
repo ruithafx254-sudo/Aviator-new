@@ -32,7 +32,7 @@
             box-sizing: border-box;
         }
 
-        /* Top Header - Authentic Betika Style */
+        /* Fixed Top Header */
         .top-header-navbar {
             background: #0d0f13;
             border-bottom: 1px solid var(--betika-border);
@@ -71,14 +71,14 @@
             cursor: pointer; font-weight: 900; border: 2px solid var(--betika-border); 
         }
 
-        /* Main Game View Layout */
+        /* Main Game Content Area */
         .gameplay-layout-container {
             max-width: 800px; margin: 76px auto 24px;
             padding: 0 14px; box-sizing: border-box;
             display: flex; flex-direction: column; gap: 14px;
         }
 
-        /* Aviator Flight Panel */
+        /* Aviator Canvas Panel */
         .aviator-flight-panel {
             background: var(--main-panel-bg); border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
@@ -97,7 +97,7 @@
         .live-mult { font-size: 64px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.9); }
         .live-status { font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
 
-        /* The Control Board - Grid for Both Wagers & AI Prediction */
+        /* The Control Board */
         .betting-console-board {
             display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
         }
@@ -105,7 +105,6 @@
             .betting-console-board { grid-template-columns: 1fr 1fr; }
         }
 
-        /* Official Control Dashboard Panels */
         .control-dashboard-panel {
             background: var(--control-panel-bg); border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
@@ -136,7 +135,7 @@
         .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #0c121d; text-align: center; }
         .quick-amt-chip:active { background: #2c2f34; }
 
-        /* PREDICTION PANEL (SHARED STYLE) */
+        /* Embedded AI Predictions Panel */
         .ai-telemetry-panel {
             background: #101624; border: 1px solid rgba(124, 58, 237, 0.3); border-left: 5px solid #7c3aed;
             padding: 18px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px;
@@ -146,7 +145,7 @@
         .ai-predicted-val { font-size: 36px; font-weight: 900; color: var(--accent-green); line-height: 1.1; margin-top: 4px; text-shadow: 0 4px 16px rgba(34,197,94,0.3); }
         .ai-status-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.3; font-weight: 700; }
 
-        /* General Overlay Masks */
+        /* Modal Screens */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.75); 
             backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center; padding: 14px; 
@@ -162,7 +161,6 @@
             width: 100%; padding: 13px 16px; background: #0c121d; border: 1px solid var(--betika-border); 
             border-radius: 12px; font-size: 14px; box-sizing: border-box; outline: none; color: #fff; 
         }
-        .form-input-control:focus { border-color: var(--bet-green); }
         
         .form-submit-btn { 
             width: 100%; padding: 14px; background: var(--accent-green); color: #fff; 
@@ -185,9 +183,7 @@
 
     <div class="top-header-navbar">
         <div class="header-left">
-            <button class="exit-btn" onclick="window.location.reload()">
-                ✕ Exit
-            </button>
+            <button class="exit-btn" onclick="window.location.reload()">✕ Exit</button>
             <div class="game-brand-labels">
                 <span class="brand-main-text">AVIATOR</span>
                 <span class="brand-sub-text">Gaming Terminal</span>
@@ -204,25 +200,22 @@
     </div>
 
     <div class="gameplay-layout-container">
-        
         <div class="aviator-flight-panel">
             <div class="canvas-container">
                 <canvas id="liveGameCanvas" class="game-canvas" width="540" height="260"></canvas>
                 <div class="flight-counter">
                     <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
-                    <div id="liveFlightStatusText" class="live-status">Checking trajection...</div>
+                    <div id="liveFlightStatusText" class="live-status">Checking systems...</div>
                 </div>
             </div>
         </div>
 
         <div class="betting-console-board">
-            
             <div class="control-dashboard-panel">
                 <div class="dashboard-category-tabs">
                     <div class="dashboard-tab active">Bet</div>
                     <div class="dashboard-tab">Auto</div>
                 </div>
-
                 <div class="wager-entry-row">
                     <div class="wager-box">
                         <label>Wager amount (Ksh)</label>
@@ -232,7 +225,6 @@
                         <span>Place Bet</span>
                     </button>
                 </div>
-
                 <div class="quick-amounts-grid">
                     <div class="quick-amt-chip" onclick="updateWagerValue(1, 100)">100</div>
                     <div class="quick-amt-chip" onclick="updateWagerValue(1, 200)">200</div>
@@ -246,7 +238,6 @@
                     <div class="dashboard-tab active">Bet</div>
                     <div class="dashboard-tab">Auto</div>
                 </div>
-
                 <div class="wager-entry-row">
                     <div class="wager-box">
                         <label>Wager amount (Ksh)</label>
@@ -256,7 +247,6 @@
                         <span>Place Bet</span>
                     </button>
                 </div>
-
                 <div class="quick-amounts-grid">
                     <div class="quick-amt-chip" onclick="updateWagerValue(2, 100)">100</div>
                     <div class="quick-amt-chip" onclick="updateWagerValue(2, 200)">200</div>
@@ -267,12 +257,11 @@
 
             <div class="control-dashboard-panel" style="grid-column: 1 / -1; border-color: rgba(124, 58, 237, 0.3);">
                 <div class="ai-telemetry-panel">
-                    <div class="ai-header">AI Signal Engine</div>
-                    <div id="aiPredictionValue" class="ai-predicted-val">2.50x</div>
-                    <div id="aiPredictionClock" class="ai-status-desc">Synchronizing flight sequence data... Waiting for the 20s scan phase.</div>
+                    <div class="ai-header">AI Predictive Engine</div>
+                    <div id="aiPredictionValue" class="ai-predicted-val">---</div>
+                    <div id="aiPredictionClock" class="ai-status-desc">Acquiring upcoming signal...</div>
                 </div>
             </div>
-            
         </div>
     </div>
 
@@ -282,7 +271,7 @@
                 <div id="signInTabBtn" class="overlay-tab active" onclick="setAuthTabState('in')">Sign In</div>
                 <div id="signUpTabBtn" class="overlay-tab" onclick="setAuthTabState('up')">Sign Up</div>
             </div>
-            <h2 id="authActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Log In</h2>
+            <h2 id="authActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Sign In</h2>
             <p id="authActionDescText" style="color:var(--text-secondary); font-size:13px; margin: 4px 0 14px 0;">Sign into your account terminal</p>
             
             <div id="signUpInputFields" class="hidden">
@@ -291,16 +280,14 @@
                     <input type="text" id="authUserNameInput" class="form-input-control" placeholder="John Doe">
                 </div>
             </div>
-            
             <div class="form-input-group">
                 <label>Email Address</label>
                 <input type="email" id="authUserEmailInput" class="form-input-control" placeholder="example@gmail.com">
             </div>
             <div class="form-input-group">
-                <label>Secured Password</label>
+                <label>Password</label>
                 <input type="password" id="authUserPasswordInput" class="form-input-control" placeholder="••••••••">
             </div>
-
             <button onclick="submitAuthenticationRequest()" class="form-submit-btn">Continue Access</button>
             <p style="margin-top:14px; cursor:pointer; color:var(--text-secondary); font-size:13px;" onclick="closeModal('authModalOverlay')">Cancel</p>
         </div>
@@ -312,23 +299,22 @@
                 <div id="depositTabBtn" class="overlay-tab active" onclick="setFundsTabState('deposit')">Deposit</div>
                 <div id="withdrawTabBtn" class="overlay-tab" onclick="setFundsTabState('withdraw')">Withdraw</div>
             </div>
-            
             <h2 id="fundsActionTitleText" style="margin:0; font-size:18px; font-weight:800;">Fund Balance</h2>
-            <p id="fundsActionDescText" style="color:var(--text-secondary); font-size:13px; margin: 4px 0 14px 0;">Process transactions instantly via M-Pesa</p>
+            <p id="fundsActionDescText" style="color:var(--text-secondary); font-size:13px; margin: 4px 0 14px 0;">Deposit instantly via M-Pesa</p>
             
             <div id="depositFormFields">
                 <div class="form-input-group">
-                    <label>M-Pesa Full Name</label>
+                    <label>Account Full Name</label>
                     <input type="text" id="depositNameInput" class="form-input-control" placeholder="John Doe">
                 </div>
                 <div class="form-input-group">
-                    <label>M-Pesa Phone Number</label>
+                    <label>M-Pesa Mobile Number</label>
                     <input type="tel" id="depositPhoneInput" class="form-input-control" placeholder="e.g. 0712345678">
                 </div>
             </div>
             <div id="withdrawFormFields" class="hidden">
                 <div class="form-input-group">
-                    <label>Withdrawal M-Pesa Phone</label>
+                    <label>Receiving M-Pesa Number</label>
                     <input type="tel" id="withdrawPhoneInput" class="form-input-control" placeholder="e.g. 0712345678">
                 </div>
             </div>
@@ -342,8 +328,7 @@
                 <div class="amount-chip-btn" onclick="updateQuickAmountValue(500)">500</div>
                 <div class="amount-chip-btn" onclick="updateQuickAmountValue(1000)">1k</div>
             </div>
-            
-            <button onclick="handleTransactionAction()" class="form-submit-btn">Execute Transaction</button>
+            <button onclick="handleTransactionAction()" class="form-submit-btn">Process Transaction</button>
             <p style="margin-top:14px; cursor:pointer; color:var(--text-secondary); font-size:13px;" onclick="closeModal('fundsModalOverlay')">Cancel</p>
         </div>
     </div>
@@ -358,7 +343,6 @@
         let authTabMode = 'in';
         let fundsTabMode = 'deposit';
 
-        // Simulation mechanics
         let gameStatus = "waiting"; 
         let multiplierCounter = 1.00;
         let crashThresholdTarget = 2.45;
@@ -379,8 +363,6 @@
         function setupRenderingCanvas() {
             function drawScene() {
                 ctx.clearRect(0, 0, cvs.width, cvs.height);
-                
-                // Deep style grid
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.015)";
                 ctx.lineWidth = 1;
                 for (let x = 0; x < cvs.width; x += 40) {
@@ -398,7 +380,6 @@
                     ctx.lineWidth = 5;
                     ctx.beginPath();
                     ctx.moveTo(0, cvs.height);
-                    
                     let pX = cvs.width * progress;
                     let pY = cvs.height - (cvs.height * 0.78 * Math.pow(progress, 1.35));
                     
@@ -415,25 +396,21 @@
             drawScene();
         }
 
-        // Live Gaming State Cycle
         function start20SecondLoopCycle() {
             gameStatus = "waiting";
             multiplierCounter = 1.00;
             hasSuccessfullyCashedOut = false;
 
-            // Algorithm locked floor value set to exactly 2.00x minimum
             crashThresholdTarget = parseFloat((2.00 + Math.random() * 5.95).toFixed(2));
 
-            // Load values to AI display panel immediately (Exactly 20s prior)
             document.getElementById('aiPredictionValue').innerText = crashThresholdTarget.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
 
             let prepTimeRemaining = 20;
             document.getElementById('liveFlightStatusText').innerText = `NEXT FLIGHT: ${prepTimeRemaining}s`;
-            document.getElementById('aiPredictionClock').innerText = `Target locked at ${crashThresholdTarget.toFixed(2)}x. Flight starting in exactly ${prepTimeRemaining}s.`;
+            document.getElementById('aiPredictionClock').innerText = `Target locked at ${crashThresholdTarget.toFixed(2)}x. Next signal ready.`;
 
-            // Setup Buttons for Waiting
             const btn1 = document.getElementById('wagerSubmitBtn1');
             const btn2 = document.getElementById('wagerSubmitBtn2');
             btn1.disabled = !userAccountProfile; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Place Bet</span>`;
@@ -443,10 +420,9 @@
                 prepTimeRemaining--;
                 if (prepTimeRemaining > 0) {
                     document.getElementById('liveFlightStatusText').innerText = `NEXT FLIGHT: ${prepTimeRemaining}s`;
-                    document.getElementById('aiPredictionClock').innerText = `Target locked at ${crashThresholdTarget.toFixed(2)}x. Flight starting in ${prepTimeRemaining}s.`;
                 } else {
                     clearInterval(clockTracker);
-                    document.getElementById('aiPredictionClock').innerText = "Signal confirmed. Telemetry accurate. Trajectory soaring.";
+                    document.getElementById('aiPredictionClock').innerText = "Analysis success: Safe takeoff underway.";
                     launchSoaringPhase();
                 }
             }, 1000);
@@ -457,7 +433,6 @@
             roundStartTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "In Flight";
 
-            // If a bet was placed on either, activate the cashout on both
             const btn1 = document.getElementById('wagerSubmitBtn1');
             const btn2 = document.getElementById('wagerSubmitBtn2');
 
@@ -495,7 +470,6 @@
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
             document.getElementById('liveFlightStatusText').innerText = "Round Terminated";
 
-            // Deactivate Buttons
             const btn1 = document.getElementById('wagerSubmitBtn1');
             const btn2 = document.getElementById('wagerSubmitBtn2');
             btn1.disabled = true; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Crashed</span>`;
@@ -508,15 +482,14 @@
         }
 
         async function processActiveWager(panelNum) {
-            if (!userAccountProfile) return openModal('authModalScreen');
+            if (!userAccountProfile) return openModal('authModalOverlay');
             const btn1 = document.getElementById('wagerSubmitBtn1');
             const btn2 = document.getElementById('wagerSubmitBtn2');
             const stakeInput = document.getElementById(`wagerAmountInput${panelNum}`);
 
             if (gameStatus === "waiting") {
-                // If a bet is placed on any panel, lock both inputs
                 const stakeValue = parseFloat(stakeInput.value);
-                if (isNaN(stakeValue) || stakeValue < 10) return alert("The minimum accepted wager value is Ksh 10.");
+                if (isNaN(stakeValue) || stakeValue < 10) return alert("Minimum accepted wager is Ksh 10.");
 
                 const bankBalance = parseFloat(userAccountProfile.balance || 0);
                 if (stakeValue > bankBalance) return alert("Insufficient available funds.");
@@ -529,10 +502,9 @@
 
                 btn1.disabled = true; btn1.innerHTML = `<span>Bet Set</span>`;
                 btn2.disabled = true; btn2.innerHTML = `<span>Bet Set</span>`;
-                alert("Wager placed on virtual game. Systems awaiting liftoff.");
+                alert("Wager confirmed.");
 
             } else if (gameStatus === "soaring" && activeWagerStake > 0 && !hasSuccessfullyCashedOut) {
-                // Cash out mid-flight
                 hasSuccessfullyCashedOut = true;
                 const multiplierValueAtCashout = multiplierCounter;
                 const winPayoutTotal = (activeWagerStake * multiplierValueAtCashout).toFixed(2);
@@ -544,10 +516,10 @@
                 await synchronizeProfile();
                 
                 activeWagerStake = 0;
-                btn1.disabled = true; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Completed</span>`;
-                btn2.disabled = true; btn2.className = "bet-btn place"; btn2.innerHTML = `<span>Completed</span>`;
+                btn1.disabled = true; btn1.className = "bet-btn place"; btn1.innerHTML = `<span>Won</span>`;
+                btn2.disabled = true; btn2.className = "bet-btn place"; btn2.innerHTML = `<span>Won</span>`;
 
-                alert(`Auto Cash Out successful at ${multiplierValueAtCashout}x! Ksh ${parseFloat(winPayoutTotal).toLocaleString()} credited to wallet.`);
+                alert(`Auto Cash Out successful at ${multiplierValueAtCashout}x! Ksh ${parseFloat(winPayoutTotal).toLocaleString()} credited.`);
             }
         }
 
@@ -559,7 +531,7 @@
                     userAccountProfile = data;
                     document.getElementById('signButtonHeader').classList.add('hidden');
                     document.getElementById('userProfileIconHeader').classList.remove('hidden');
-                    document.getElementById('userBalanceText').innerText = parseFloat(userAccountProfile.balance || 0).toFixed(2);
+                    document.getElementById('balanceDisplay').innerText = parseFloat(userAccountProfile.balance || 0).toFixed(2);
                     if (userAccountProfile.name) {
                         document.getElementById('depositNameInput').value = userAccountProfile.name;
                     }
@@ -568,7 +540,7 @@
             }
             document.getElementById('signButtonHeader').classList.remove('hidden');
             document.getElementById('userProfileIconHeader').classList.add('hidden');
-            document.getElementById('userBalanceText').innerText = "0.00";
+            document.getElementById('balanceDisplay').innerText = "0.00";
         }
 
         async function parseRedirectParams() {
@@ -590,7 +562,7 @@
                         loadedTransactionsRegistry.push(refCheck);
                         localStorage.setItem('added_tx', JSON.stringify(loadedTransactionsRegistry));
                         
-                        alert(`Successfully deposited Ksh ${totalRedirectAmount.toLocaleString()} via M-Pesa.`);
+                        alert(`Successfully deposited Ksh ${totalRedirectAmount.toLocaleString()}`);
                         window.history.replaceState({}, document.title, window.location.pathname);
                         await synchronizeProfile();
                     }
@@ -611,7 +583,7 @@
                 signupBox.classList.add('hidden');
                 document.getElementById('signInTabBtn').classList.add('active');
                 document.getElementById('signUpTabBtn').classList.remove('active');
-                document.getElementById('authActionTitleText').innerText = "Log In";
+                document.getElementById('authActionTitleText').innerText = "Sign In";
                 document.getElementById('authActionDescText').innerText = "Sign into your account terminal";
             }
         }
@@ -625,17 +597,17 @@
 
             if (authTabMode === 'up') {
                 const nameInputVal = document.getElementById('authUserNameInput').value.trim();
-                if (!nameInputVal) return alert("Full legal name is required.");
+                if (!nameInputVal) return alert("Full name is required.");
 
                 const { data: duplicate } = await supabase.from('profiles').select('email').eq('email', emailInputVal).single();
                 if (duplicate) return alert("An account already exists with this email address.");
 
                 const { error } = await supabase.from('profiles').insert([{ email: emailInputVal, pass: passwordInputVal, name: nameInputVal, balance: 0.00 }]);
-                if (error) return alert("Authentication Registration Issue: " + error.message);
+                if (error) return alert("Error: " + error.message);
                 
                 localStorage.setItem('nx_user', emailInputVal);
                 alert("Account created successfully!");
-                closeModal('authModalScreen');
+                closeModal('authModalOverlay');
                 await synchronizeProfile();
             } else {
                 const { data, error } = await supabase.from('profiles').select('*').eq('email', emailInputVal).eq('pass', passwordInputVal).single();
@@ -643,7 +615,7 @@
 
                 localStorage.setItem('nx_user', data.email);
                 alert(`Hello ${data.name || data.email}`);
-                closeModal('authModalScreen');
+                closeModal('authModalOverlay');
                 await synchronizeProfile();
             }
         }
@@ -674,9 +646,9 @@
         }
 
         async function handleTransactionAction() {
-            if (!userAccountProfile) return openModal('authModalScreen');
+            if (!userAccountProfile) return openModal('authModalOverlay');
             const totalTransactionAmountValue = Number(document.getElementById('fundsAmountInput').value);
-            if (isNaN(totalTransactionAmountValue) || totalTransactionAmountValue < 10) return alert("The minimum amount accepted is Ksh 10.");
+            if (isNaN(totalTransactionAmountValue) || totalTransactionAmountValue < 10) return alert("The minimum accepted amount is Ksh 10.");
 
             if (fundsTabMode === 'withdraw') {
                 const receivingPhone = document.getElementById('withdrawPhoneInput').value.trim();
@@ -687,15 +659,15 @@
                 await supabase.from('profiles').update({ balance: revisedWalletBalance }).eq('email', userAccountProfile.email);
 
                 await synchronizeProfile();
-                closeModal('fundsModalScreen');
-                alert(`Withdrawal request processed. Current Wallet Balance: Ksh ${revisedWalletBalance}`);
+                closeModal('fundsModalOverlay');
+                alert(`Withdrawal processed. Balance: Ksh ${revisedWalletBalance}`);
             } else {
                 const sendingPhone = document.getElementById('depositPhoneInput').value.trim();
                 const mPesaNameValue = encodeURIComponent(document.getElementById('depositNameInput').value.trim());
-                if (!sendingPhone || !mPesaNameValue) return alert("Please fill in both your name and M-Pesa phone number.");
+                if (!sendingPhone || !mPesaNameValue) return alert("Please fill in name and M-Pesa phone number.");
 
                 const invoiceReferenceString = "INV-" + Math.floor(Date.now() / 1000);
-                closeModal('fundsModalScreen');
+                closeModal('fundsModalOverlay');
 
                 const originRedirectUrl = "https://polymarketsafrica.online/";
                 const directCallbackRedirect = encodeURIComponent(`${originRedirectUrl}?status=success&amount=${totalTransactionAmountValue}&reference=${invoiceReferenceString}`);
@@ -707,7 +679,7 @@
         function openModal(modalIdString) { document.getElementById(modalIdString).style.display = 'flex'; }
         function closeModal(modalIdString) { document.getElementById(modalIdString).style.display = 'none'; }
         function terminateSession() { 
-            if (confirm("Logout of your active terminal?")) {
+            if (confirm("Logout of terminal?")) {
                 localStorage.removeItem('nx_user');
                 location.reload(); 
             }
