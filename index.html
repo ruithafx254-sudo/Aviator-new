@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aviator Crash Terminal</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root { 
             --aviator-bg: #000000;
@@ -75,6 +77,10 @@
             background: #12cf5c; border: none;
             box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
         }
+        .action-header-btn.auth {
+            background: var(--poly-blue); border: none;
+            box-shadow: 0 4px 12px rgba(36, 84, 255, 0.25);
+        }
         .action-header-btn:active { transform: scale(0.96); }
 
         /* Main Game Content Area */
@@ -139,7 +145,6 @@
             border-radius: 166px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
         }
         
-        /* Stepper style */
         .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
         .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 6px; font-weight: bold; outline: none; }
         .wager-input { background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 800; outline: none; width: 66px; text-align: center; }
@@ -202,7 +207,7 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Sliding Polymarket Themed Funds/Deposit Modal System */
+        /* Sliding Polymarket System Modal */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
@@ -263,8 +268,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -275,11 +278,17 @@
             </div>
         </div>
         <div class="header-actions">
-            <div class="user-balance-pill">
-                <div id="balanceDisplay">3,000.00</div><span>KES</span>
+            <div id="authRequiredArea" class="hidden">
+                <button onclick="openAuthModal('signin')" class="action-header-btn auth">Sign In</button>
             </div>
-            <button onclick="openModalWithMode('depositModal', 'withdraw')" class="action-header-btn">Withdraw</button>
-            <button onclick="openModalWithMode('depositModal', 'deposit')" class="action-header-btn deposit">Deposit</button>
+            <div id="authenticatedControls" class="header-actions">
+                <div class="user-balance-pill">
+                    <div id="balanceDisplay">0.00</div><span>KES</span>
+                </div>
+                <button onclick="openModalWithMode('depositModal', 'withdraw')" class="action-header-btn">Withdraw</button>
+                <button onclick="openModalWithMode('depositModal', 'deposit')" class="action-header-btn deposit">Deposit</button>
+                <button onclick="handleUserSignOut()" class="action-header-btn">Logout</button>
+            </div>
         </div>
     </div>
 
@@ -388,6 +397,38 @@
         <div id="aiDirectPrediction" class="floating-ai-value">---</div>
     </div>
 
+    <div id="authModal" class="overlay-screen">
+        <div class="form-modal-card">
+            <div class="auth-nav">
+                <div id="tabSignIn" class="auth-tab active" onclick="setAuthMode('signin')">Sign In</div>
+                <div id="tabSignUp" class="auth-tab" onclick="setAuthMode('signup')">Sign Up</div>
+            </div>
+            
+            <h2 id="authTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Welcome Back</h2>
+            <p id="authDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 16px 0;">Sign in to save progress across your devices</p>
+            
+            <div class="funds-card-container">
+                <div id="signupFields" class="hidden">
+                    <div class="form-input-group">
+                        <label>Display Name</label>
+                        <input type="text" id="authDisplayName" class="form-input-control" placeholder="John Doe">
+                    </div>
+                </div>
+                <div class="form-input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="authEmail" class="form-input-control" placeholder="user@example.com">
+                </div>
+                <div class="form-input-group">
+                    <label>Password</label>
+                    <input type="password" id="authPass" class="form-input-control" placeholder="Min. 6 characters">
+                </div>
+            </div>
+            
+            <button id="authSubmit" onclick="handleAuthAction()" class="form-submit-btn" style="background:var(--yes-blue);">Access System</button>
+            <p class="modal-dismiss-btn" onclick="closeModal('authModal')">Cancel</p>
+        </div>
+    </div>
+
     <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
             <div class="auth-nav">
@@ -448,13 +489,15 @@
     </div>
 
     <script>
-        // Supabase Initialization
+        // Supabase Credentials Configuration
         const SUPABASE_URL = "https://ienpwfcvnlixqlieebas.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_Nwm6t6KrBd3DX6in8F2ICw_y6Xu_Aq8";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Memory-Based LocalStorage
-        let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
+        // Core dynamic user variables
+        let clientUserBalance = 3000.00;
+        let authenticatedUser = null;
+        let currentAuthMode = 'signin';
         let currentFundsMode = 'deposit';
         const LIPWA_LINK = "https://lipwa.link/8367";
 
@@ -470,14 +513,124 @@
         const ctx = cvs.getContext('2d');
 
         window.onload = () => {
-            updateVisualUIBalance();
+            evaluateLocalUserSession();
             initializeCanvasFlight();
             triggerGameLoopEngine();
         };
 
+        // Authenticate & Profile Handlers
+        async function evaluateLocalUserSession() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                authenticatedUser = session.user;
+                await pullLatestUserProfileData();
+            } else {
+                authenticatedUser = null;
+                updateAuthVisualDisplay(false);
+            }
+        }
+
+        async function pullLatestUserProfileData() {
+            if (!authenticatedUser) return;
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('balance, username')
+                .eq('id', authenticatedUser.id)
+                .single();
+
+            if (data && !error) {
+                clientUserBalance = parseFloat(data.balance || 0);
+                updateVisualUIBalance();
+                updateAuthVisualDisplay(true);
+            }
+        }
+
+        async function updateDatabaseBalance(newBal) {
+            clientUserBalance = parseFloat(newBal);
+            updateVisualUIBalance();
+
+            if (authenticatedUser) {
+                await supabaseClient
+                    .from('profiles')
+                    .update({ balance: clientUserBalance })
+                    .eq('id', authenticatedUser.id);
+            }
+        }
+
         function updateVisualUIBalance() {
             document.getElementById('balanceDisplay').innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            localStorage.setItem('terminal_balance', clientUserBalance.toString());
+        }
+
+        function updateAuthVisualDisplay(isAuth) {
+            if (isAuth) {
+                document.getElementById('authenticatedControls').classList.remove('hidden');
+                document.getElementById('authRequiredArea').classList.add('hidden');
+            } else {
+                document.getElementById('authenticatedControls').classList.add('hidden');
+                document.getElementById('authRequiredArea').classList.remove('hidden');
+            }
+        }
+
+        // Authentication Modal States
+        function openAuthModal(mode) {
+            setAuthMode(mode);
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function setAuthMode(mode) {
+            currentAuthMode = mode;
+            const submitBtn = document.getElementById('authSubmit');
+            const fields = document.getElementById('signupFields');
+
+            if (mode === 'signup') {
+                document.getElementById('tabSignUp').classList.add('active');
+                document.getElementById('tabSignIn').classList.remove('active');
+                fields.classList.remove('hidden');
+                document.getElementById('authTitle').innerText = "Create Account";
+                document.getElementById('authDesc').innerText = "Start placing forecasts securely";
+                submitBtn.innerText = "Register Now";
+            } else {
+                document.getElementById('tabSignIn').classList.add('active');
+                document.getElementById('tabSignUp').classList.remove('active');
+                fields.classList.add('hidden');
+                document.getElementById('authTitle').innerText = "Welcome Back";
+                document.getElementById('authDesc').innerText = "Log in using email & password";
+                submitBtn.innerText = "Access System";
+            }
+        }
+
+        async function handleAuthAction() {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value;
+            const name = document.getElementById('authDisplayName').value.trim();
+
+            if (!email || pass.length < 6) return alert("Please specify a valid email and matching password (at least 6 characters).");
+
+            if (currentAuthMode === 'signup') {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email, password: pass,
+                    options: { data: { username: name || 'Explorer' } }
+                });
+                if (error) return alert("Registration Error: " + error.message);
+                alert("Account activation email sent. Please log in.");
+                setAuthMode('signin');
+            } else {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+                if (error) return alert("Access Denied: " + error.message);
+                authenticatedUser = data.user;
+                await pullLatestUserProfileData();
+                closeModal('authModal');
+                alert("Authorization confirmed.");
+            }
+        }
+
+        async function handleUserSignOut() {
+            await supabaseClient.auth.signOut();
+            authenticatedUser = null;
+            clientUserBalance = 0;
+            updateVisualUIBalance();
+            updateAuthVisualDisplay(false);
+            alert("Signed out successfully.");
         }
 
         // Betting & Auto Tabs Handlers
@@ -655,7 +808,9 @@
             setTimeout(triggerGameLoopEngine, 3500);
         }
 
-        function processWager(panel) {
+        async function processWager(panel) {
+            if (!authenticatedUser) return openAuthModal('signin');
+
             const stakeValue = parseFloat(document.getElementById(`wagerInput${panel}`).value) || 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
@@ -663,9 +818,8 @@
                 if (stakeValue > clientUserBalance) return alert("Insufficient account funds.");
                 if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
 
-                clientUserBalance -= stakeValue;
                 activePanelBets[panel] = stakeValue;
-                updateVisualUIBalance();
+                await updateDatabaseBalance(clientUserBalance - stakeValue);
 
                 btn.disabled = true;
                 btn.innerHTML = `<span>Locked...</span>`;
@@ -674,17 +828,17 @@
             }
         }
 
-        function executeCashOut(panel) {
+        async function executeCashOut(panel) {
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
-            clientUserBalance += netReturns;
-            updateVisualUIBalance();
-
+            
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.disabled = true;
             btn.className = "bet-btn place";
             btn.innerHTML = `<span>Cashed Out</span>`;
+
+            await updateDatabaseBalance(clientUserBalance + netReturns);
             alert(`Successfully cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
@@ -716,6 +870,8 @@
         }
 
         async function handleFundsAction() {
+            if (!authenticatedUser) return openAuthModal('signin');
+
             const amt = Number(document.getElementById('depAmt').value);
             if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
 
@@ -728,42 +884,13 @@
 
                 if (amt > clientUserBalance) return alert("Insufficient available balance.");
 
-                // Insert withdrawal transaction to Supabase
-                const { error } = await supabase
-                    .from('transactions')
-                    .insert([{ 
-                        reference: invoiceRef, 
-                        name: wName, 
-                        phone: wPhone, 
-                        amount: amt, 
-                        mode: 'withdraw', 
-                        status: 'pending' 
-                    }]);
-
-                if (error) console.error("Supabase Error:", error.message);
-
-                clientUserBalance -= amt;
-                updateVisualUIBalance();
+                await updateDatabaseBalance(clientUserBalance - amt);
                 closeModal('depositModal');
                 alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} has been generated.`);
             } else {
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
-
-                // Insert deposit transaction to Supabase
-                const { error } = await supabase
-                    .from('transactions')
-                    .insert([{ 
-                        reference: invoiceRef, 
-                        name: dName, 
-                        phone: dPhone, 
-                        amount: amt, 
-                        mode: 'deposit', 
-                        status: 'pending' 
-                    }]);
-
-                if (error) console.error("Supabase Error:", error.message);
 
                 closeModal('depositModal');
 
@@ -775,6 +902,7 @@
         }
 
         function openModalWithMode(id, mode) {
+            if (!authenticatedUser) return openAuthModal('signin');
             setFundsMode(mode);
             document.getElementById(id).style.display = 'flex';
         }
