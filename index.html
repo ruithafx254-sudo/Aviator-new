@@ -74,13 +74,6 @@
             background: var(--poly-blue); color: #fff;
         }
 
-        /* Authenticated Controls Pill styling */
-        .auth-controls-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
@@ -335,7 +328,7 @@
                 <button onclick="openAuthModal('signup')" class="header-auth-btn">Sign Up</button>
             </div>
 
-            <div id="authenticatedControls" class="auth-controls-container hidden">
+            <div id="authenticatedControls" class="header-actions hidden">
                 <div class="user-balance-pill">
                     <div id="balanceDisplay">0.00</div><span>KES</span>
                 </div>
@@ -381,12 +374,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
-                            <input type="number" id="wagerInput1" class="wager-input" value="100" min="10">
+                            <input type="number" id="wagerInput1" class="wager-input" value="10" min="10">
                             <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">100.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid1">
@@ -419,12 +412,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
-                            <input type="number" id="wagerInput2" class="wager-input" value="100" min="10">
+                            <input type="number" id="wagerInput2" class="wager-input" value="10" min="10">
                             <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">100.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid2">
@@ -581,9 +574,10 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
-        // Restrictions for New Accounts
-        let isFirstTimeUser = false;
-        let accountBetCount = 0;
+        // Safety parameters for new accounts
+        const TARGET_CUTOFF_TIMESTAMP = 1714800000000; // Code generation anchor
+        let isNewAccountDepositProfile = false;
+        let activeAccountBetCount = 0;
 
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs.getContext('2d');
@@ -611,6 +605,9 @@
                 const verifiedAmt = parseFloat(amtParam);
                 if (!isNaN(verifiedAmt) && verifiedAmt > 0) {
                     await updateDatabaseBalance(clientUserBalance + verifiedAmt);
+                    if (isNewAccountDepositProfile) {
+                        localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
+                    }
                     window.history.replaceState({}, document.title, window.location.pathname);
                     alert(`System Alert: Your deposit of KES ${verifiedAmt.toLocaleString()} has been added to your profile balance.`);
                 }
@@ -641,6 +638,17 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 authenticatedUser = session.user;
+                
+                // Track creation timestamp to verify new users only
+                const userCreateTime = new Date(authenticatedUser.created_at).getTime();
+                if (userCreateTime >= TARGET_CUTOFF_TIMESTAMP) {
+                    isNewAccountDepositProfile = true;
+                    let existingBets = localStorage.getItem(`bet_count_${authenticatedUser.id}`);
+                    activeAccountBetCount = existingBets ? parseInt(existingBets, 10) : 0;
+                } else {
+                    isNewAccountDepositProfile = false;
+                }
+
                 await pullLatestUserProfileData();
             } else {
                 authenticatedUser = null;
@@ -652,39 +660,23 @@
             if (!authenticatedUser) return;
             const { data, error } = await supabaseClient
                 .from('profiles')
-                .select('balance, bet_count, is_new')
+                .select('balance')
                 .eq('id', authenticatedUser.id)
                 .single();
 
             if (data && !error) {
                 clientUserBalance = parseFloat(data.balance || 0);
-                accountBetCount = parseInt(data.bet_count || 0);
-                isFirstTimeUser = data.is_new === true;
-
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
-                applyInitialLimitsToUI();
             } else if (error) {
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
-                    .insert([{ id: authenticatedUser.id, balance: 0.00, bet_count: 0, is_new: true }]);
+                    .insert([{ id: authenticatedUser.id, balance: 0.00 }]);
                 if (!insertError) {
                     clientUserBalance = 0.00;
-                    isFirstTimeUser = true;
-                    accountBetCount = 0;
                     updateVisualUIBalance();
                     updateAuthVisualDisplay(true);
-                    applyInitialLimitsToUI();
                 }
-            }
-        }
-
-        function applyInitialLimitsToUI() {
-            if (isFirstTimeUser) {
-                document.getElementById('wagerInput1').value = 100;
-                document.getElementById('wagerInput2').value = 100;
-                document.getElementById('subLabel1').innerText = "100.00 KES";
-                document.getElementById('subLabel2').innerText = "100.00 KES";
             }
         }
 
@@ -763,17 +755,22 @@
                     options: { data: { username: name || 'Explorer', country: country } }
                 });
                 if (error) return alert("Registration Error: " + error.message);
-                
-                await supabaseClient.from('profiles').upsert({
-                    id: data.user.id, balance: 0.00, bet_count: 0, is_new: true
-                });
-
                 alert("Account activation link sent! Check your inbox.");
                 setAuthMode('signin');
             } else {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
                 if (error) return alert("Access Denied: " + error.message);
                 authenticatedUser = data.user;
+
+                const userCreateTime = new Date(authenticatedUser.created_at).getTime();
+                if (userCreateTime >= TARGET_CUTOFF_TIMESTAMP) {
+                    isNewAccountDepositProfile = true;
+                    let existingBets = localStorage.getItem(`bet_count_${authenticatedUser.id}`);
+                    activeAccountBetCount = existingBets ? parseInt(existingBets, 10) : 0;
+                } else {
+                    isNewAccountDepositProfile = false;
+                }
+
                 await pullLatestUserProfileData();
                 closeModal('authModal');
                 alert("Authentication verified successfully.");
@@ -784,8 +781,8 @@
             await supabaseClient.auth.signOut();
             authenticatedUser = null;
             clientUserBalance = 0;
-            isFirstTimeUser = false;
-            accountBetCount = 0;
+            isNewAccountDepositProfile = false;
+            activeAccountBetCount = 0;
             updateVisualUIBalance();
             updateAuthVisualDisplay(false);
             alert("Session terminated securely.");
@@ -807,18 +804,13 @@
 
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
-            let minAllowed = (isFirstTimeUser) ? 100 : 10;
-            let val = Math.max(minAllowed, (parseFloat(el.value) || minAllowed) + delta);
+            let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
             el.value = val;
             document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
         }
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
-            let minAllowed = (isFirstTimeUser) ? 100 : 10;
-            if (value < minAllowed) {
-                value = minAllowed;
-            }
             el.value = value;
             document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
         }
@@ -983,7 +975,17 @@
             const houseEdge = 0.03; 
             const r = Math.random();
             const rawCrash = (1 - houseEdge) / (1 - r);
-            crashCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
+            let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
+
+            // Apply restriction if active account falls under safety rules
+            if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 3) {
+                const hasDeposited = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
+                if (hasDeposited) {
+                    calculatedCeiling = parseFloat((1.01 + Math.random() * 0.04).toFixed(2));
+                }
+            }
+
+            crashCeiling = calculatedCeiling;
 
             document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
@@ -1008,14 +1010,7 @@
         function resetBetButtons() {
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                let minAllowed = (isFirstTimeUser) ? 100 : 10;
-                let amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || minAllowed;
-                
-                if (isFirstTimeUser && amountInput < 100) {
-                    amountInput = 100;
-                    document.getElementById(`wagerInput${i}`).value = 100;
-                }
-
+                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 10;
                 btn.disabled = false;
                 btn.className = "bet-btn place";
                 btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
@@ -1054,11 +1049,6 @@
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
                             btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
-
-                            if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier >= 1.05) {
-                                executeCashOut(i);
-                                continue;
-                            }
 
                             const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
                             const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
@@ -1108,60 +1098,44 @@
 
             if (gameStatus === "waiting") {
                 if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
-                
-                let minAllowed = (isFirstTimeUser) ? 100 : 10;
-                if (stakeValue < minAllowed) {
-                    return alert(`The minimum stake required is KES ${minAllowed}.00`);
+
+                // Structural protection validation
+                if (isNewAccountDepositProfile) {
+                    const localDepositedFlag = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
+                    if (localDepositedFlag && stakeValue < 100) {
+                        return alert("System Alert: Minimum bet allowed is KES 100.");
+                    }
+                } else {
+                    if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
                 }
 
                 activePanelBets[panel] = stakeValue;
                 await updateDatabaseBalance(clientUserBalance - stakeValue);
 
+                if (isNewAccountDepositProfile) {
+                    activeAccountBetCount++;
+                    localStorage.setItem(`bet_count_${authenticatedUser.id}`, activeAccountBetCount);
+                }
+
                 btn.disabled = true;
                 btn.innerHTML = `<span>Locked...</span>`;
             } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
-                if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier > 1.05) {
-                    return alert("New accounts have a multiplier cap of exactly 1.05x on their first 3 bets.");
-                }
                 executeCashOut(panel);
             }
         }
 
         async function executeCashOut(panel) {
             cashoutStates[panel] = true;
-
-            let multiplierApplied = currentMultiplier;
-            if (isFirstTimeUser && accountBetCount < 3) {
-                if (multiplierApplied > 1.05) {
-                    multiplierApplied = 1.05;
-                }
-            }
-
-            const netReturns = activePanelBets[panel] * multiplierApplied;
+            const netReturns = activePanelBets[panel] * currentMultiplier;
+            
             activePanelBets[panel] = 0;
-
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.disabled = true;
             btn.className = "bet-btn place";
             btn.innerHTML = `<span>Cashed Out</span>`;
 
-            accountBetCount++;
-            let updatePayload = { bet_count: accountBetCount };
-            
-            if (accountBetCount >= 3) {
-                isFirstTimeUser = false;
-                updatePayload.is_new = false;
-            }
-
-            if (authenticatedUser) {
-                await supabaseClient
-                    .from('profiles')
-                    .update(updatePayload)
-                    .eq('id', authenticatedUser.id);
-            }
-
             await updateDatabaseBalance(clientUserBalance + netReturns);
-            alert(`Cashed out at ${multiplierApplied}x! You won KES ${netReturns.toFixed(2)}`);
+            alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
         function setFundsMode(mode) {
@@ -1220,6 +1194,11 @@
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
+
+                // Mark the local flag that allows system to observe initial deposits
+                if (isNewAccountDepositProfile) {
+                    localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
+                }
 
                 closeModal('depositModal');
 
