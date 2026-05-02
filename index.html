@@ -977,17 +977,16 @@
             const rawCrash = (1 - houseEdge) / (1 - r);
             let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
 
-            // Apply restriction if active account falls under safety rules
-            if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 3) {
-                const hasDeposited = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
-                if (hasDeposited) {
-                    calculatedCeiling = parseFloat((1.01 + Math.random() * 0.04).toFixed(2));
-                }
+            // Applied correction: First 7 bets for new accounts result in ×1.10 max multiplier
+            if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 7) {
+                calculatedCeiling = 1.10;
+                document.getElementById('aiDirectPrediction').innerText = (10.05 + Math.random() * 5).toFixed(2) + "x";
+            } else {
+                document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
             }
 
             crashCeiling = calculatedCeiling;
 
-            document.getElementById('aiDirectPrediction').innerText = crashCeiling.toFixed(2) + "x";
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
 
