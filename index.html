@@ -263,6 +263,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -446,6 +448,11 @@
     </div>
 
     <script>
+        // Supabase Initialization
+        const SUPABASE_URL = "https://ienpwfcvnlixqlieebas.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_Nwm6t6KrBd3DX6in8F2ICw_y6Xu_Aq8";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Memory-Based LocalStorage
         let clientUserBalance = parseFloat(localStorage.getItem('terminal_balance') || '3000.00');
         let currentFundsMode = 'deposit';
@@ -708,7 +715,7 @@
             document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
         }
 
-        function handleFundsAction() {
+        async function handleFundsAction() {
             const amt = Number(document.getElementById('depAmt').value);
             if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
 
@@ -721,6 +728,20 @@
 
                 if (amt > clientUserBalance) return alert("Insufficient available balance.");
 
+                // Insert withdrawal transaction to Supabase
+                const { error } = await supabase
+                    .from('transactions')
+                    .insert([{ 
+                        reference: invoiceRef, 
+                        name: wName, 
+                        phone: wPhone, 
+                        amount: amt, 
+                        mode: 'withdraw', 
+                        status: 'pending' 
+                    }]);
+
+                if (error) console.error("Supabase Error:", error.message);
+
                 clientUserBalance -= amt;
                 updateVisualUIBalance();
                 closeModal('depositModal');
@@ -729,6 +750,20 @@
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
+
+                // Insert deposit transaction to Supabase
+                const { error } = await supabase
+                    .from('transactions')
+                    .insert([{ 
+                        reference: invoiceRef, 
+                        name: dName, 
+                        phone: dPhone, 
+                        amount: amt, 
+                        mode: 'deposit', 
+                        status: 'pending' 
+                    }]);
+
+                if (error) console.error("Supabase Error:", error.message);
 
                 closeModal('depositModal');
 
