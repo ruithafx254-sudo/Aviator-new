@@ -374,12 +374,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
-                            <input type="number" id="wagerInput1" class="wager-input" value="10" min="10">
+                            <input type="number" id="wagerInput1" class="wager-input" value="100" min="10">
                             <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">100.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid1">
@@ -412,12 +412,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
-                            <input type="number" id="wagerInput2" class="wager-input" value="10" min="10">
+                            <input type="number" id="wagerInput2" class="wager-input" value="100" min="10">
                             <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">100.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid2">
@@ -574,6 +574,10 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
+        // Restrictions for New Accounts
+        let isFirstTimeUser = false;
+        let accountBetCount = 0;
+
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs.getContext('2d');
 
@@ -641,23 +645,41 @@
             if (!authenticatedUser) return;
             const { data, error } = await supabaseClient
                 .from('profiles')
-                .select('balance')
+                .select('balance, bet_count, is_new')
                 .eq('id', authenticatedUser.id)
                 .single();
 
             if (data && !error) {
                 clientUserBalance = parseFloat(data.balance || 0);
+                accountBetCount = parseInt(data.bet_count || 0);
+                isFirstTimeUser = data.is_new === true;
+
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
+                applyInitialLimitsToUI();
             } else if (error) {
+                // Creates a new profile explicitly
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
-                    .insert([{ id: authenticatedUser.id, balance: 0.00 }]);
+                    .insert([{ id: authenticatedUser.id, balance: 0.00, bet_count: 0, is_new: true }]);
                 if (!insertError) {
                     clientUserBalance = 0.00;
+                    isFirstTimeUser = true;
+                    accountBetCount = 0;
                     updateVisualUIBalance();
                     updateAuthVisualDisplay(true);
+                    applyInitialLimitsToUI();
                 }
+            }
+        }
+
+        function applyInitialLimitsToUI() {
+            if (isFirstTimeUser) {
+                // Force initial field values to the 100 KES floor
+                document.getElementById('wagerInput1').value = 100;
+                document.getElementById('wagerInput2').value = 100;
+                document.getElementById('subLabel1').innerText = "100.00 KES";
+                document.getElementById('subLabel2').innerText = "100.00 KES";
             }
         }
 
@@ -736,6 +758,12 @@
                     options: { data: { username: name || 'Explorer', country: country } }
                 });
                 if (error) return alert("Registration Error: " + error.message);
+                
+                // Add a new profile explicitly tagging the customer as new
+                await supabaseClient.from('profiles').upsert({
+                    id: data.user.id, balance: 0.00, bet_count: 0, is_new: true
+                });
+
                 alert("Account activation link sent! Check your inbox.");
                 setAuthMode('signin');
             } else {
@@ -752,6 +780,8 @@
             await supabaseClient.auth.signOut();
             authenticatedUser = null;
             clientUserBalance = 0;
+            isFirstTimeUser = false;
+            accountBetCount = 0;
             updateVisualUIBalance();
             updateAuthVisualDisplay(false);
             alert("Session terminated securely.");
@@ -773,13 +803,18 @@
 
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
-            let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
+            let minAllowed = (isFirstTimeUser) ? 100 : 10;
+            let val = Math.max(minAllowed, (parseFloat(el.value) || minAllowed) + delta);
             el.value = val;
             document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
         }
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
+            let minAllowed = (isFirstTimeUser) ? 100 : 10;
+            if (value < minAllowed) {
+                value = minAllowed;
+            }
             el.value = value;
             document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
         }
@@ -969,7 +1004,14 @@
         function resetBetButtons() {
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 10;
+                let minAllowed = (isFirstTimeUser) ? 100 : 10;
+                let amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || minAllowed;
+                
+                if (isFirstTimeUser && amountInput < 100) {
+                    amountInput = 100;
+                    document.getElementById(`wagerInput${i}`).value = 100;
+                }
+
                 btn.disabled = false;
                 btn.className = "bet-btn place";
                 btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
@@ -1008,6 +1050,12 @@
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
                             btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
+
+                            // First 3 bets capping rule for new users
+                            if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier >= 1.05) {
+                                executeCashOut(i);
+                                continue;
+                            }
 
                             const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
                             const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
@@ -1057,7 +1105,12 @@
 
             if (gameStatus === "waiting") {
                 if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
-                if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
+                
+                // Restriction Rule check for new users
+                let minAllowed = (isFirstTimeUser) ? 100 : 10;
+                if (stakeValue < minAllowed) {
+                    return alert(`The minimum stake required is KES ${minAllowed}.00`);
+                }
 
                 activePanelBets[panel] = stakeValue;
                 await updateDatabaseBalance(clientUserBalance - stakeValue);
@@ -1065,22 +1118,51 @@
                 btn.disabled = true;
                 btn.innerHTML = `<span>Locked...</span>`;
             } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
+                // For new users capping limits on early bets
+                if (isFirstTimeUser && accountBetCount < 3 && currentMultiplier > 1.05) {
+                    return alert("New accounts have a multiplier cap of exactly 1.05x on their first 3 bets.");
+                }
                 executeCashOut(panel);
             }
         }
 
         async function executeCashOut(panel) {
             cashoutStates[panel] = true;
-            const netReturns = activePanelBets[panel] * currentMultiplier;
-            
+
+            // Apply multiplier ceiling override for first 3 bets on new accounts
+            let multiplierApplied = currentMultiplier;
+            if (isFirstTimeUser && accountBetCount < 3) {
+                if (multiplierApplied > 1.05) {
+                    multiplierApplied = 1.05;
+                }
+            }
+
+            const netReturns = activePanelBets[panel] * multiplierApplied;
             activePanelBets[panel] = 0;
+
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.disabled = true;
             btn.className = "bet-btn place";
             btn.innerHTML = `<span>Cashed Out</span>`;
 
+            // Increment persistent database counter
+            accountBetCount++;
+            let updatePayload = { bet_count: accountBetCount };
+            
+            if (accountBetCount >= 3) {
+                isFirstTimeUser = false;
+                updatePayload.is_new = false;
+            }
+
+            if (authenticatedUser) {
+                await supabaseClient
+                    .from('profiles')
+                    .update(updatePayload)
+                    .eq('id', authenticatedUser.id);
+            }
+
             await updateDatabaseBalance(clientUserBalance + netReturns);
-            alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
+            alert(`Cashed out at ${multiplierApplied}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
         function setFundsMode(mode) {
