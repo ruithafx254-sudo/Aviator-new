@@ -983,17 +983,23 @@
             const rawCrash = (1 - houseEdge) / (1 - r);
             let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
 
-            // Whitelist verification logic
+            const hasActiveStake = activePanelBets[1] > 0 || activePanelBets[2] > 0;
             const isWhitelistedEmail = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
 
             if (isWhitelistedEmail) {
-                // Predictions are always fully correct without staking adjustments
+                // For joseeruitha@gmail.com account, with or without stake prediction always correct
                 document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
-            } else if (authenticatedUser && isNewAccountDepositProfile && activeAccountBetCount < 7) {
-                calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
-                document.getElementById('aiDirectPrediction').innerText = (1.05 + Math.random() * 1.5).toFixed(2) + "x";
             } else {
-                document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
+                // For other accounts
+                if (hasActiveStake) {
+                    // With stake, not correct prediction. Flies away between 1.0 and 1.1 automatically.
+                    calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
+                    // The prediction remains as normal or different, so it's "not correct" compared to ceiling
+                    document.getElementById('aiDirectPrediction').innerText = (1.50 + Math.random() * 2.0).toFixed(2) + "x";
+                } else {
+                    // Without stake, there is correct prediction
+                    document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
+                }
             }
 
             crashCeiling = calculatedCeiling;
