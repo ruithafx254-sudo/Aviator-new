@@ -395,7 +395,7 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
-                            <input type="number" id="wagerInput1" class="wager-input" value="100" min="100">
+                            <input type="number" id="wagerInput1" class="wager-input" value="100" min="100" onchange="validateInputField(1)">
                             <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
                         </div>
                     </div>
@@ -433,7 +433,7 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
-                            <input type="number" id="wagerInput2" class="wager-input" value="100" min="100">
+                            <input type="number" id="wagerInput2" class="wager-input" value="100" min="100" onchange="validateInputField(2)">
                             <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
                         </div>
                     </div>
@@ -828,6 +828,16 @@
             }
         }
 
+        function validateInputField(panel) {
+            const el = document.getElementById(`wagerInput${panel}`);
+            let val = parseFloat(el.value);
+            if (isNaN(val) || val < 100) {
+                val = 100;
+                el.value = val;
+            }
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+        }
+
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(100, (parseFloat(el.value) || 100) + delta);
@@ -837,8 +847,9 @@
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
-            el.value = value;
-            document.getElementById(`subLabel${panel}`).innerText = `${value.toFixed(2)} KES`;
+            let val = Math.max(100, value);
+            el.value = val;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
         }
 
         function initializeCanvasFlight() {
@@ -1145,16 +1156,8 @@
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
             if (gameStatus === "waiting") {
+                if (stakeValue < 100) return alert("System Alert: Minimum bet allowed is KES 100.00.");
                 if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
-
-                if (isNewAccountDepositProfile) {
-                    const localDepositedFlag = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
-                    if (localDepositedFlag && stakeValue < 100) {
-                        return alert("System Alert: Minimum bet allowed is KES 100.");
-                    }
-                } else {
-                    if (stakeValue < 100) return alert("Minimum bet required is 100 KES.");
-                }
 
                 activePanelBets[panel] = stakeValue;
                 await updateDatabaseBalance(clientUserBalance - stakeValue);
