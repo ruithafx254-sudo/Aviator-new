@@ -30,6 +30,7 @@
             --yes-bg: #eff6ff; 
             --no-red: #df1c41; 
             --no-bg: #fff1f2;
+            --text-main: #0f172a;
             --tech-bg: #0f172a;
         }
         
@@ -979,17 +980,29 @@
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             
-            // AI Prediction is generated as normal to show in the orb right away
-            const houseEdge = 0.03;
+            // Expanded random logic between 1 and 500
+            let predictedCeiling;
             const r = Math.random();
-            const predictedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
-            
+            if (r < 0.45) {
+                // Generates higher variety (1.01 to 3.00)
+                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
+            } else if (r < 0.80) {
+                // Generates medium/large spikes (3.01 to 20.00)
+                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
+            } else if (r < 0.95) {
+                // High spike multipliers (20.01 to 100.00)
+                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
+            } else {
+                // Massive ultra payouts (100.01 to 500.00)
+                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
+            }
+
             if (isJoseeruitha) {
                 // For the admin account, set crash point directly to the prediction value
                 crashCeiling = predictedCeiling;
                 document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
             } else {
-                // Normal user sees a high prediction but it's not locked into the system crashCeiling yet
+                // Normal user sees a prediction across full variety range
                 document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
                 crashCeiling = predictedCeiling;
             }
@@ -1032,7 +1045,7 @@
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
-            // CRITICAL CHECK: Enforce limits right as betting closes
+            // Enforce limits right as betting closes
             if (!isJoseeruitha && hasStakeActive) {
                 // Normal user bets trigger an instantaneous early crash
                 crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
