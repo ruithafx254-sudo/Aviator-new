@@ -427,8 +427,7 @@
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 1000)">1,000</div>
                 </div>
                 <div id="autoControls2" class="auto-controls-section hidden">
-                    <div class="auto-switch-row">
-                        <span class="auto-switch-label">Auto Cash Out</span>
+                    <div class="auto-switch-label">Auto Cash Out</span>
                         <label class="switch-input-wrapper">
                             <input type="checkbox" id="autoCashoutToggle2">
                             <span class="toggle-slider"></span>
@@ -978,26 +977,31 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            const houseEdge = 0.03; 
-            const r = Math.random();
-            const rawCrash = (1 - houseEdge) / (1 - r);
-            let calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, rawCrash)).toFixed(2));
+            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
+            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
-            const hasActiveStake = activePanelBets[1] > 0 || activePanelBets[2] > 0;
-            const isWhitelistedEmail = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
+            let calculatedCeiling = 1.00;
 
-            if (isWhitelistedEmail) {
-                // For joseeruitha@gmail.com account, with or without stake prediction always correct
+            if (isJoseeruitha) {
+                // Prediction is ALWAYS fully correct (with or without stake)
+                const houseEdge = 0.03;
+                const r = Math.random();
+                calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
                 document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
             } else {
-                // For other accounts
-                if (hasActiveStake) {
-                    // With stake, not correct prediction. Flies away between 1.0 and 1.1 automatically.
+                if (hasStakeActive) {
+                    // With stake, prediction is NOT correct. Flies away between x1.0 and x1.1
                     calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
-                    // The prediction remains as normal or different, so it's "not correct" compared to ceiling
-                    document.getElementById('aiDirectPrediction').innerText = (1.50 + Math.random() * 2.0).toFixed(2) + "x";
+                    // The direct prediction displays a separate correct number but is decoupled from the flying range
+                    const houseEdge = 0.03;
+                    const r = Math.random();
+                    const wrongPrediction = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
+                    document.getElementById('aiDirectPrediction').innerText = wrongPrediction + "x";
                 } else {
-                    // Without stake, there is correct prediction
+                    // Without stake, prediction is correct
+                    const houseEdge = 0.03;
+                    const r = Math.random();
+                    calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
                     document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
                 }
             }
