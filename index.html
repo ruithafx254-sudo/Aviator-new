@@ -978,36 +978,21 @@
             cashoutStates = { 1: false, 2: false };
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
-            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
-
-            let calculatedCeiling = 1.00;
-
+            
+            // AI Prediction is generated as normal to show in the orb right away
+            const houseEdge = 0.03;
+            const r = Math.random();
+            const predictedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
+            
             if (isJoseeruitha) {
-                // Prediction is ALWAYS fully correct (with or without a bet)
-                const houseEdge = 0.03;
-                const r = Math.random();
-                calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
-                document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
+                // For the admin account, set crash point directly to the prediction value
+                crashCeiling = predictedCeiling;
+                document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
             } else {
-                if (hasStakeActive) {
-                    // Other account WITH active bet -> Crash early between 1.0 and 1.1 immediately
-                    calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
-                    
-                    // We generate a separate high target for visual display only, disconnected from early crash
-                    const houseEdge = 0.03;
-                    const r = Math.random();
-                    const wrongPrediction = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
-                    document.getElementById('aiDirectPrediction').innerText = wrongPrediction + "x";
-                } else {
-                    // Other account WITHOUT active bet -> Direct prediction is fully correct
-                    const houseEdge = 0.03;
-                    const r = Math.random();
-                    calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
-                    document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
-                }
+                // Normal user sees a high prediction but it's not locked into the system crashCeiling yet
+                document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
+                crashCeiling = predictedCeiling;
             }
-
-            crashCeiling = calculatedCeiling;
 
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
@@ -1043,6 +1028,15 @@
             gameStatus = "flying";
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
+
+            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
+            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
+
+            // CRITICAL CHECK: Enforce limits right as betting closes
+            if (!isJoseeruitha && hasStakeActive) {
+                // Normal user bets trigger an instantaneous early crash
+                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
+            }
 
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
