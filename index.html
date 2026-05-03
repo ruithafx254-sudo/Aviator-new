@@ -624,6 +624,7 @@
             if (status === 'success' && amtParam && authenticatedUser) {
                 const verifiedAmt = parseFloat(amtParam);
                 if (!isNaN(verifiedAmt) && verifiedAmt > 0) {
+                    // Update current user balance directly
                     await updateDatabaseBalance(clientUserBalance + verifiedAmt);
                     if (isNewAccountDepositProfile) {
                         localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
@@ -684,10 +685,12 @@
                 .single();
 
             if (data && !error) {
+                // Read exact balance, fall back explicitly to 0.00
                 clientUserBalance = parseFloat(data.balance || 0);
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
             } else if (error) {
+                // If there's no existing profile or record, create one explicitly with 0.00 balance
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
                     .insert([{ id: authenticatedUser.id, balance: 0.00 }]);
@@ -775,6 +778,7 @@
                 });
                 if (error) return alert("Registration Error: " + error.message);
                 
+                // Immediately generate the associated user profile with a 0.00 balance
                 if (data && data.user) {
                     await supabaseClient
                         .from('profiles')
@@ -1011,29 +1015,22 @@
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             
-            // Expanded random logic between 1 and 500
             let predictedCeiling;
             const r = Math.random();
             if (r < 0.45) {
-                // Generates higher variety (1.01 to 3.00)
                 predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
             } else if (r < 0.80) {
-                // Generates medium/large spikes (3.01 to 20.00)
                 predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
             } else if (r < 0.95) {
-                // High spike multipliers (20.01 to 100.00)
                 predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
             } else {
-                // Massive ultra payouts (100.01 to 500.00)
                 predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
             if (isJoseeruitha) {
-                // For the admin account, set crash point directly to the prediction value
                 crashCeiling = predictedCeiling;
                 document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
             } else {
-                // Normal user sees a prediction across full variety range
                 document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
                 crashCeiling = predictedCeiling;
             }
@@ -1076,9 +1073,7 @@
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
-            // Enforce limits right as betting closes
             if (!isJoseeruitha && hasStakeActive) {
-                // Normal user bets trigger an instantaneous early crash
                 crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
             }
 
@@ -1241,7 +1236,7 @@
                 closeModal('depositModal');
                 alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
             } else {
-                if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
+                if (isNaN(amt) || amt < 10) return alert("Minimum deposit amount required is Ksh 10.00.");
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
