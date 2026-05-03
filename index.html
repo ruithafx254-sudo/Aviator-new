@@ -682,12 +682,10 @@
                 .single();
 
             if (data && !error) {
-                // Guaranteed default initialization to exactly 0.00 if balance is missing
                 clientUserBalance = parseFloat(data.balance || 0);
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
             } else {
-                // Rebuild entry safely with exactly 0.00 if it doesn't exist yet
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
                     .upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
@@ -775,7 +773,6 @@
                 });
                 if (error) return alert("Registration Error: " + error.message);
                 
-                // Secure creation of entry directly upon signup completion
                 if (data && data.user) {
                     await supabaseClient
                         .from('profiles')
