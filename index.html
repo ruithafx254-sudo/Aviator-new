@@ -142,7 +142,7 @@
             position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
             text-align: center; pointer-events: none; width: 100%; z-index: 10;
         }
-        .live-mult { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
+        .live-mult { font-size: 115px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
         .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
 
         /* Real-Time Live Players Overlay */
@@ -219,6 +219,7 @@
         .bet-btn:active { transform: scale(0.97); }
         .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2); }
         .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
+        .bet-btn.cashedout { background: rgba(18, 207, 92, 0.15); border: 1px solid var(--bet-green); color: #fff; cursor: default; pointer-events: none; box-shadow: none; }
         .bet-btn:disabled { background: #212429; color: #525861; cursor: not-allowed; box-shadow: none; }
 
         .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -1179,9 +1180,11 @@
 
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                btn.disabled = true;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Crashed</span>`;
+                if (!cashoutStates[i]) {
+                    btn.disabled = true;
+                    btn.className = "bet-btn place";
+                    btn.innerHTML = `<span>Crashed</span>`;
+                }
             }
 
             setTimeout(triggerGameLoopEngine, 3500);
@@ -1224,12 +1227,10 @@
 
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-            btn.disabled = true;
-            btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Cashed Out</span>`;
+            btn.className = "bet-btn cashedout";
+            btn.innerHTML = `<span style="font-size:12px; font-weight:700; color:#fff; opacity:0.9;">YOU CASHED OUT</span><span style="font-size:18px; font-weight:800; color:var(--bet-green); margin-top:2px;">${currentMultiplier.toFixed(2)}x</span><span style="font-size:11px; font-weight:700; color:#fff; opacity:0.9;">Win KES: ${netReturns.toFixed(2)}</span>`;
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
-            alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
         }
 
         function setFundsMode(mode) {
