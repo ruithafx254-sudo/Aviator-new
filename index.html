@@ -447,7 +447,8 @@
                     <div class="quick-amt-chip" onclick="setFixedWager(2, 1000)">1,000</div>
                 </div>
                 <div id="autoControls2" class="auto-controls-section hidden">
-                    <div class="auto-switch-label">Auto Cash Out</span>
+                    <div class="auto-switch-row">
+                        <span class="auto-switch-label">Auto Cash Out</span>
                         <label class="switch-input-wrapper">
                             <input type="checkbox" id="autoCashoutToggle2">
                             <span class="toggle-slider"></span>
@@ -688,7 +689,6 @@
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
             } else {
-                // Force initial 0.00 fallback directly on profile failure/absence
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
                     .upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
