@@ -332,9 +332,11 @@
 </head>
 <body>
 
-    <audio id="audioFlight" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto" loop></audio>
+    <audio id="audioFlightOpen" src="Aviator open.mp3" preload="auto"></audio>
+    <audio id="audioFlightMiddle" src="Aviator middle.mp3" preload="auto" loop></audio>
+    <audio id="audioFlightFinal" src="Aviator final.mp3" preload="auto"></audio>
+    
     <audio id="audioCashout" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
-    <audio id="audioFlewAway" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" preload="auto"></audio>
 
     <div class="top-header-navbar">
         <div class="header-left">
@@ -613,9 +615,18 @@
         ];
 
         // Access audio references
-        const flightSfx = document.getElementById('audioFlight');
+        const audioOpen = document.getElementById('audioFlightOpen');
+        const audioMiddle = document.getElementById('audioFlightMiddle');
+        const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
-        const crashSfx = document.getElementById('audioFlewAway');
+
+        // Play sequence relay triggers
+        audioOpen.onended = () => {
+            if (gameStatus === "flying") {
+                audioMiddle.currentTime = 0;
+                audioMiddle.play().catch(err => console.log('Continuous sound relay blocked:', err));
+            }
+        };
 
         window.onload = async () => {
             await evaluateLocalUserSession();
@@ -1076,10 +1087,10 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
 
-            // Trigger takeoff / engine flight audio
-            flightSfx.currentTime = 0;
-            flightSfx.volume = 0.45;
-            flightSfx.play().catch(err => console.log('Audio Autoplay Blocked:', err));
+            // Trigger takeoff sequence sounds
+            audioOpen.currentTime = 0;
+            audioOpen.volume = 0.5;
+            audioOpen.play().catch(err => console.log('Audio Autoplay Blocked:', err));
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
@@ -1132,11 +1143,13 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
-            // Stop takeoff audio and play the "Flew Away" swoosh sound
-            flightSfx.pause();
-            crashSfx.currentTime = 0;
-            crashSfx.volume = 0.6;
-            crashSfx.play().catch(err => console.log('Audio playback prevented:', err));
+            // Stop sound sequence tracks and play final fly-away track
+            audioOpen.pause();
+            audioMiddle.pause();
+            
+            audioFinal.currentTime = 0;
+            audioFinal.volume = 0.6;
+            audioFinal.play().catch(err => console.log('Final flight sound blocked:', err));
 
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
@@ -1191,7 +1204,7 @@
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
             
-            // Trigger victory / cashout ping sound
+            // Trigger victory cashout ping sound
             winSfx.currentTime = 0;
             winSfx.volume = 0.6;
             winSfx.play().catch(err => console.log('Audio playback prevented:', err));
