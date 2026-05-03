@@ -102,6 +102,22 @@
             display: flex; flex-direction: column; gap: 14px;
         }
 
+        /* Site Disclaimer Styling */
+        .site-disclaimer-box {
+            background: #1c1d21;
+            border: 1px solid var(--betika-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .site-disclaimer-box strong {
+            color: #ea580c;
+        }
+
         /* Visual Board styling */
         .aviator-flight-panel {
             background: #151719; border: 1px solid var(--betika-border);
@@ -350,6 +366,10 @@
             <div class="history-pill">1.18x</div>
         </div>
 
+        <div class="site-disclaimer-box">
+            <strong>Important Notice:</strong> AI predictions are generated for analytical evaluation purposes only and are not always correct. Ensure strict alignment with personal gambling risk management rules. Play responsibly.
+        </div>
+
         <div class="aviator-flight-panel">
             <div class="canvas-container">
                 <canvas id="liveGameCanvas" class="game-canvas" width="540" height="230"></canvas>
@@ -375,12 +395,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(1, -10)">−</button>
-                            <input type="number" id="wagerInput1" class="wager-input" value="10" min="10">
+                            <input type="number" id="wagerInput1" class="wager-input" value="100" min="100">
                             <button class="stepper-btn" onclick="adjustWager(1, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">10.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">100.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid1">
@@ -413,12 +433,12 @@
                     <div class="wager-box">
                         <div class="stepper-wager-controls">
                             <button class="stepper-btn" onclick="adjustWager(2, -10)">−</button>
-                            <input type="number" id="wagerInput2" class="wager-input" value="10" min="10">
+                            <input type="number" id="wagerInput2" class="wager-input" value="100" min="100">
                             <button class="stepper-btn" onclick="adjustWager(2, 10)">+</button>
                         </div>
                     </div>
                     <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">10.00 KES</span>
+                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">100.00 KES</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid2">
@@ -530,10 +550,10 @@
                 </div>
                 <div class="form-input-group" style="margin-bottom:4px;">
                     <label id="amtLabel">Amount (Ksh)</label>
-                    <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="100.00">
+                    <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
                 <div class="chip-grid">
-                    <div class="amt-chip" onclick="setAmt(100)">100</div>
+                    <div class="amt-chip" onclick="setAmt(200)">200</div>
                     <div class="amt-chip" onclick="setAmt(250)">250</div>
                     <div class="amt-chip" onclick="setAmt(500)">500</div>
                     <div class="amt-chip" onclick="setAmt(1000)">1k</div>
@@ -810,7 +830,7 @@
 
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
-            let val = Math.max(10, (parseFloat(el.value) || 10) + delta);
+            let val = Math.max(100, (parseFloat(el.value) || 100) + delta);
             el.value = val;
             document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
         }
@@ -1029,7 +1049,7 @@
         function resetBetButtons() {
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 10;
+                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 100;
                 btn.disabled = false;
                 btn.className = "bet-btn place";
                 btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
@@ -1133,7 +1153,7 @@
                         return alert("System Alert: Minimum bet allowed is KES 100.");
                     }
                 } else {
-                    if (stakeValue < 10) return alert("Minimum bet required is 10 KES.");
+                    if (stakeValue < 100) return alert("Minimum bet required is 100 KES.");
                 }
 
                 activePanelBets[panel] = stakeValue;
@@ -1167,7 +1187,7 @@
 
         function setFundsMode(mode) {
             currentFundsMode = mode;
-            document.getElementById('depAmt').value = "100.00";
+            document.getElementById('depAmt').value = "200.00";
             const submitBtn = document.getElementById('fundsSubmit');
 
             if (mode === 'withdraw') {
@@ -1203,7 +1223,7 @@
             if (!authenticatedUser) return openAuthModal('signin');
 
             const amt = Number(document.getElementById('depAmt').value);
-            if (isNaN(amt) || amt < 100) return alert("Minimum transaction amount is Ksh 100.00.");
+            if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
 
             const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
 
