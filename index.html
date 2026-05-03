@@ -620,11 +620,11 @@
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
-        // Play sequence relay triggers
+        // Continuous relay trigger
         audioOpen.onended = () => {
             if (gameStatus === "flying") {
                 audioMiddle.currentTime = 0;
-                audioMiddle.play().catch(err => console.log('Continuous sound relay blocked:', err));
+                audioMiddle.play().catch(err => console.log('Relay audio playback blocked:', err));
             }
         };
 
@@ -1013,6 +1013,7 @@
                     ctx.lineTo(-6, -15);
                     ctx.lineTo(2, -15);
                     ctx.lineTo(5, -2);
+                    box-sizing: border-box;
                     ctx.closePath();
                     ctx.fill();
 
@@ -1087,10 +1088,10 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
 
-            // Trigger takeoff sequence sounds
+            // Trigger immediate takeoff sound effect
             audioOpen.currentTime = 0;
             audioOpen.volume = 0.5;
-            audioOpen.play().catch(err => console.log('Audio Autoplay Blocked:', err));
+            audioOpen.play().catch(err => console.log('Continuous sound relay blocked:', err));
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
@@ -1143,13 +1144,14 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
-            // Stop sound sequence tracks and play final fly-away track
+            // Stop background engine sounds immediately
             audioOpen.pause();
             audioMiddle.pause();
-            
+
+            // Play the passing audio instantly
             audioFinal.currentTime = 0;
             audioFinal.volume = 0.6;
-            audioFinal.play().catch(err => console.log('Final flight sound blocked:', err));
+            audioFinal.play().catch(err => console.log('Ending audio playback blocked:', err));
 
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
@@ -1204,10 +1206,10 @@
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
             
-            // Trigger victory cashout ping sound
+            // Ping cashout noise
             winSfx.currentTime = 0;
             winSfx.volume = 0.6;
-            winSfx.play().catch(err => console.log('Audio playback prevented:', err));
+            winSfx.play().catch(err => console.log('Win notification blocked:', err));
 
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
