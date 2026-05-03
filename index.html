@@ -335,7 +335,6 @@
     <audio id="audioFlightOpen" src="Aviator open.mp3" preload="auto"></audio>
     <audio id="audioFlightMiddle" src="Aviator middle.mp3" preload="auto" loop></audio>
     <audio id="audioFlightFinal" src="Aviator final.mp3" preload="auto"></audio>
-    
     <audio id="audioCashout" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
     <div class="top-header-navbar">
@@ -605,7 +604,7 @@
         let activeAccountBetCount = 0;
 
         const cvs = document.getElementById('liveGameCanvas');
-        const ctx = cvs.getBoundingClientRect() ? cvs.getContext('2d') : null;
+        const ctx = cvs ? cvs.getContext('2d') : null;
 
         const mockupAvatars = [
             'https://randomuser.me/api/portraits/thumb/women/33.jpg',
@@ -614,19 +613,27 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
-        // Access audio references
+        // Safe operational access to internal audio nodes
         const audioOpen = document.getElementById('audioFlightOpen');
         const audioMiddle = document.getElementById('audioFlightMiddle');
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
-        // Continuous relay trigger
-        audioOpen.onended = () => {
-            if (gameStatus === "flying") {
-                audioMiddle.currentTime = 0;
-                audioMiddle.play().catch(err => console.log('Relay audio playback blocked:', err));
+        // Silent catch chain to handle browsers blocking automatic play
+        const playSafeMedia = (node) => {
+            if (node && typeof node.play === 'function') {
+                node.play().catch(err => console.log("Media playback paused by browser system policies.", err));
             }
         };
+
+        if (audioOpen) {
+            audioOpen.onended = () => {
+                if (gameStatus === "flying" && audioMiddle) {
+                    audioMiddle.currentTime = 0;
+                    playSafeMedia(audioMiddle);
+                }
+            };
+        }
 
         window.onload = async () => {
             await evaluateLocalUserSession();
@@ -658,15 +665,18 @@
                 const basePlayers = 380;
                 const dynamicChange = Math.floor(Math.sin(Date.now() / 1200) * 45);
                 const currentCount = basePlayers + dynamicChange;
-                document.getElementById('playerTotalCount').innerText = currentCount;
+                const totalTextNode = document.getElementById('playerTotalCount');
+                if (totalTextNode) totalTextNode.innerText = currentCount;
 
                 const parent = document.getElementById('avatarHUDContainer');
-                parent.innerHTML = '';
-                for (let i = 0; i < 3; i++) {
-                    const avatarDiv = document.createElement('div');
-                    avatarDiv.className = 'user-avatar-dot';
-                    avatarDiv.style.backgroundImage = `url('${mockupAvatars[i]}')`;
-                    parent.appendChild(avatarDiv);
+                if (parent) {
+                    parent.innerHTML = '';
+                    for (let i = 0; i < 3; i++) {
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'user-avatar-dot';
+                        avatarDiv.style.backgroundImage = `url('${mockupAvatars[i]}')`;
+                        parent.appendChild(avatarDiv);
+                    }
                 }
             }
             setInterval(updateCounter, 1800);
@@ -733,7 +743,10 @@
         }
 
         function updateVisualUIBalance() {
-            document.getElementById('balanceDisplay').innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const disp = document.getElementById('balanceDisplay');
+            if (disp) {
+                disp.innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            }
         }
 
         function updateAuthVisualDisplay(isAuth) {
@@ -877,6 +890,7 @@
             let smokeParticles = [];
             
             function drawFrame() {
+                if (!ctx || !cvs) return;
                 const dpr = window.devicePixelRatio || 1;
                 const rect = cvs.getBoundingClientRect();
                 if (cvs.width !== rect.width * dpr || cvs.height !== rect.height * dpr) {
@@ -1013,7 +1027,6 @@
                     ctx.lineTo(-6, -15);
                     ctx.lineTo(2, -15);
                     ctx.lineTo(5, -2);
-                    box-sizing: border-box;
                     ctx.closePath();
                     ctx.fill();
 
@@ -1045,13 +1058,9 @@
                 predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
-            if (isJoseeruitha) {
-                crashCeiling = predictedCeiling;
-                document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
-            } else {
-                document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
-                crashCeiling = predictedCeiling;
-            }
+            // Continuous display sync
+            document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
+            crashCeiling = predictedCeiling;
 
             document.getElementById('liveDisplayMultiplier').innerText = "1.00x";
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
@@ -1088,10 +1097,12 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
 
-            // Trigger immediate takeoff sound effect
-            audioOpen.currentTime = 0;
-            audioOpen.volume = 0.5;
-            audioOpen.play().catch(err => console.log('Continuous sound relay blocked:', err));
+            // Safe triggering of media instances
+            if (audioOpen) {
+                audioOpen.currentTime = 0;
+                audioOpen.volume = 0.5;
+                playSafeMedia(audioOpen);
+            }
 
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
@@ -1144,14 +1155,15 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
-            // Stop background engine sounds immediately
-            audioOpen.pause();
-            audioMiddle.pause();
+            // Explicit volume/pause steps
+            if (audioOpen) audioOpen.pause();
+            if (audioMiddle) audioMiddle.pause();
 
-            // Play the passing audio instantly
-            audioFinal.currentTime = 0;
-            audioFinal.volume = 0.6;
-            audioFinal.play().catch(err => console.log('Ending audio playback blocked:', err));
+            if (audioFinal) {
+                audioFinal.currentTime = 0;
+                audioFinal.volume = 0.6;
+                playSafeMedia(audioFinal);
+            }
 
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
@@ -1206,10 +1218,11 @@
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
             
-            // Ping cashout noise
-            winSfx.currentTime = 0;
-            winSfx.volume = 0.6;
-            winSfx.play().catch(err => console.log('Win notification blocked:', err));
+            if (winSfx) {
+                winSfx.currentTime = 0;
+                winSfx.volume = 0.6;
+                playSafeMedia(winSfx);
+            }
 
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
@@ -1292,7 +1305,10 @@
             }
         }
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeModal(id) { 
+            const node = document.getElementById(id);
+            if (node) node.style.display = 'none'; 
+        }
     </script>
 </body>
 </html>
