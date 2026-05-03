@@ -332,6 +332,10 @@
 </head>
 <body>
 
+    <audio id="audioFlight" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto" loop></audio>
+    <audio id="audioCashout" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+    <audio id="audioFlewAway" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" preload="auto"></audio>
+
     <div class="top-header-navbar">
         <div class="header-left">
             <div class="game-brand-labels">
@@ -599,7 +603,7 @@
         let activeAccountBetCount = 0;
 
         const cvs = document.getElementById('liveGameCanvas');
-        const ctx = cvs.getContext('2d');
+        const ctx = cvs.getBoundingClientRect() ? cvs.getContext('2d') : null;
 
         const mockupAvatars = [
             'https://randomuser.me/api/portraits/thumb/women/33.jpg',
@@ -607,6 +611,11 @@
             'https://randomuser.me/api/portraits/thumb/men/15.jpg',
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
+
+        // Access audio references
+        const flightSfx = document.getElementById('audioFlight');
+        const winSfx = document.getElementById('audioCashout');
+        const crashSfx = document.getElementById('audioFlewAway');
 
         window.onload = async () => {
             await evaluateLocalUserSession();
@@ -1067,6 +1076,11 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
 
+            // Trigger takeoff / engine flight audio
+            flightSfx.currentTime = 0;
+            flightSfx.volume = 0.45;
+            flightSfx.play().catch(err => console.log('Audio Autoplay Blocked:', err));
+
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
@@ -1117,6 +1131,13 @@
 
         function triggerCrashEvent() {
             gameStatus = "crashed";
+            
+            // Stop takeoff audio and play the "Flew Away" swoosh sound
+            flightSfx.pause();
+            crashSfx.currentTime = 0;
+            crashSfx.volume = 0.6;
+            crashSfx.play().catch(err => console.log('Audio playback prevented:', err));
+
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
             document.getElementById('liveFlightStatusText').innerText = `${crashCeiling.toFixed(2)}x`;
@@ -1170,6 +1191,11 @@
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
             
+            // Trigger victory / cashout ping sound
+            winSfx.currentTime = 0;
+            winSfx.volume = 0.6;
+            winSfx.play().catch(err => console.log('Audio playback prevented:', err));
+
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.disabled = true;
