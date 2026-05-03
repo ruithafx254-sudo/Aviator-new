@@ -1226,11 +1226,11 @@
             if (!authenticatedUser) return openAuthModal('signin');
 
             const amt = Number(document.getElementById('depAmt').value);
-            if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
 
             const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
 
             if (currentFundsMode === 'withdraw') {
+                if (isNaN(amt) || amt < 500) return alert("Minimum withdrawal amount required is Ksh 500.00.");
                 const wPhone = document.getElementById('withPhone').value.trim();
                 const wName = document.getElementById('withName').value.trim();
                 if (!wPhone || !wName) return alert("Fill in the withdrawal M-Pesa phone number and name.");
@@ -1241,6 +1241,7 @@
                 closeModal('depositModal');
                 alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
             } else {
+                if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
