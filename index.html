@@ -669,6 +669,8 @@
                 await pullLatestUserProfileData();
             } else {
                 authenticatedUser = null;
+                clientUserBalance = 0.00;
+                updateVisualUIBalance();
                 updateAuthVisualDisplay(false);
             }
         }
@@ -682,10 +684,11 @@
                 .single();
 
             if (data && !error) {
-                clientUserBalance = parseFloat(data.balance || 0);
+                clientUserBalance = parseFloat(data.balance || 0.00);
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
             } else {
+                // Force initial 0.00 fallback directly on profile failure/absence
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
                     .upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
@@ -698,7 +701,7 @@
         }
 
         async function updateDatabaseBalance(newBal) {
-            clientUserBalance = parseFloat(newBal);
+            clientUserBalance = parseFloat(newBal || 0.00);
             updateVisualUIBalance();
 
             if (authenticatedUser) {
@@ -804,7 +807,7 @@
         async function handleUserSignOut() {
             await supabaseClient.auth.signOut();
             authenticatedUser = null;
-            clientUserBalance = 0;
+            clientUserBalance = 0.00;
             isNewAccountDepositProfile = false;
             activeAccountBetCount = 0;
             updateVisualUIBalance();
