@@ -30,7 +30,6 @@
             --yes-bg: #eff6ff; 
             --no-red: #df1c41; 
             --no-bg: #fff1f2;
-            --text-main: #0f172a;
             --tech-bg: #0f172a;
         }
         
@@ -594,7 +593,6 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
-        // Validation limits
         const TARGET_CUTOFF_TIMESTAMP = 1714800000000;
         let isNewAccountDepositProfile = false;
         let activeAccountBetCount = 0;
@@ -624,7 +622,6 @@
             if (status === 'success' && amtParam && authenticatedUser) {
                 const verifiedAmt = parseFloat(amtParam);
                 if (!isNaN(verifiedAmt) && verifiedAmt > 0) {
-                    // Update current user balance directly
                     await updateDatabaseBalance(clientUserBalance + verifiedAmt);
                     if (isNewAccountDepositProfile) {
                         localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
@@ -685,15 +682,15 @@
                 .single();
 
             if (data && !error) {
-                // Read exact balance, fall back explicitly to 0.00
+                // Guaranteed default initialization to exactly 0.00 if balance is missing
                 clientUserBalance = parseFloat(data.balance || 0);
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
-            } else if (error) {
-                // If there's no existing profile or record, create one explicitly with 0.00 balance
+            } else {
+                // Rebuild entry safely with exactly 0.00 if it doesn't exist yet
                 const { error: insertError } = await supabaseClient
                     .from('profiles')
-                    .insert([{ id: authenticatedUser.id, balance: 0.00 }]);
+                    .upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
                 if (!insertError) {
                     clientUserBalance = 0.00;
                     updateVisualUIBalance();
@@ -778,7 +775,7 @@
                 });
                 if (error) return alert("Registration Error: " + error.message);
                 
-                // Immediately generate the associated user profile with a 0.00 balance
+                // Secure creation of entry directly upon signup completion
                 if (data && data.user) {
                     await supabaseClient
                         .from('profiles')
