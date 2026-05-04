@@ -1030,7 +1030,7 @@
                     ctx.lineTo(6, -2);
                     ctx.lineTo(8, -1);
                     ctx.lineTo(1, -2);
-                    ctx.closePath();
+                    closePath();
                     ctx.fill();
 
                     ctx.strokeStyle = "#ffffff";
@@ -1143,7 +1143,7 @@
                 if (activePanelBets[i] > 0) {
                     btn.disabled = false;
                     btn.className = "bet-btn cash";
-                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
+                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 16px; font-weight: 800; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
                 } else {
                     btn.disabled = true;
                 }
@@ -1163,7 +1163,7 @@
                         if (activePanelBets[i] > 0 && !cashoutStates[i]) {
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
-                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
+                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 16px; font-weight: 800; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
 
                             const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
                             const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
