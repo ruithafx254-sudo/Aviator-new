@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1075,13 +1077,14 @@
             
             let predictedCeiling;
             const r = Math.random();
-            // PROBABILITY OVERRIDE: 90% chance to be above 20x
-            if (r < 0.90) {
-                // Generates values between 20.00 and 500.00 with weighted distribution
-                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.1) * 480).toFixed(2));
+            if (r < 0.45) {
+                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
+            } else if (r < 0.80) {
+                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
+            } else if (r < 0.95) {
+                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
             } else {
-                // 10% chance to be below 20x for realistic variability
-                predictedCeiling = parseFloat((1.01 + Math.random() * 18.99).toFixed(2));
+                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
             // Continuous display sync
@@ -1134,7 +1137,7 @@
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
             if (!isJoseeruitha && hasStakeActive) {
-                // Internal server-side logic override if needed
+                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
             }
 
             for (let i = 1; i <= 2; i++) {
@@ -1345,4 +1348,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
