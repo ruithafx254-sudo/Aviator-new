@@ -54,25 +54,16 @@
             height: 55px;
             background: #12cf5c;
             color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            z-index: 10000;
-            box-shadow: 0 4px 25px rgba(18, 207, 92, 0.4);
-            transition: top 0.3s ease-in-out;
-            border-bottom: 2px solid #0fa84a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; text-transform: uppercase;
+            z-index: 10000; box-shadow: 0 4px 25px rgba(18, 207, 92, 0.4);
+            transition: top 0.3s ease-in-out; border-bottom: 2px solid #0fa84a;
         }
-        .cashout-notification-bar.active {
-            top: 0;
-        }
+        .cashout-notification-bar.active { top: 0; }
 
         /* Top Header Navbar */
         .top-header-navbar {
-            background: #111315;
-            border-bottom: 1px solid var(--betika-border);
+            background: #111315; border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
             height: 60px; z-index: 2000;
             display: flex; align-items: center; justify-content: space-between;
@@ -85,7 +76,6 @@
         
         .header-actions { display: flex; align-items: center; gap: 10px; }
         
-        /* Unified Auth Bar in the Header */
         .header-auth-bar {
             display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--betika-border);
             border-radius: 20px; padding: 2px; gap: 2px;
@@ -95,9 +85,7 @@
             border-radius: 16px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase;
             transition: all 0.2s;
         }
-        .header-auth-btn.active {
-            background: var(--poly-blue); color: #fff;
-        }
+        .header-auth-btn.active { background: var(--poly-blue); color: #fff; }
 
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
@@ -113,33 +101,13 @@
             font-size: 11px; cursor: pointer; text-transform: uppercase;
             transition: transform 0.1s ease;
         }
-        .action-header-btn.funds {
-            background: var(--bet-green); border: none;
-            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
-        }
+        .action-header-btn.funds { background: var(--bet-green); border: none; box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25); }
         .action-header-btn:active { transform: scale(0.96); }
 
-        /* Main Game Content Area */
         .gameplay-layout-container {
             max-width: 800px; margin: 76px auto 24px;
             padding: 0 12px; box-sizing: border-box;
             display: flex; flex-direction: column; gap: 14px;
-        }
-
-        /* Site Disclaimer Styling */
-        .site-disclaimer-box {
-            background: #1c1d21;
-            border: 1px solid var(--betika-border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 11px;
-            line-height: 1.4;
-            color: var(--text-secondary);
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .site-disclaimer-box strong {
-            color: #ea580c;
         }
 
         /* Visual Board styling */
@@ -154,7 +122,6 @@
         }
         .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(29, 78, 216, 0.25) 0%, #000 70%); }
         
-        /* Multipliers history bar */
         .history-pills-row {
             display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px;
             scrollbar-width: none; font-size: 11px; font-weight: 700;
@@ -170,47 +137,22 @@
         .live-mult { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
         .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
 
-        /* Real-Time Live Players Overlay */
         .player-counter-hud {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.65);
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 15;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
+            position: absolute; bottom: 12px; right: 12px;
+            background: rgba(0, 0, 0, 0.65); padding: 4px 10px; border-radius: 20px;
+            display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800;
+            color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); z-index: 15;
+            pointer-events: none; backdrop-filter: blur(4px);
         }
-        .avatar-pile {
-            display: flex;
-            align-items: center;
-        }
+        .avatar-pile { display: flex; align-items: center; }
         .user-avatar-dot {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 1.5px solid #101112;
-            margin-left: -6px;
-            background-size: cover;
-            background-position: center;
+            width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #101112;
+            margin-left: -6px; background-size: cover; background-position: center;
         }
         .user-avatar-dot:first-child { margin-left: 0; }
 
-        /* Betting Controls Area */
-        .betting-console-board {
-            display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
-        }
-        @media(min-width: 600px) {
-            .betting-console-board { grid-template-columns: 1fr 1fr; }
-        }
+        .betting-console-board { display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%; }
+        @media(min-width: 600px) { .betting-console-board { grid-template-columns: 1fr 1fr; } }
 
         .control-dashboard-panel {
             background: var(--control-panel-bg); border: 1px solid var(--betika-border);
@@ -250,7 +192,6 @@
         .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; transition: background 0.15s ease; }
         .quick-amt-chip:active { background: #2c3035; color: #fff; }
 
-        /* Auto Controls Section */
         .auto-controls-section {
             background: #101112; border: 1px solid var(--betika-border);
             border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
@@ -279,7 +220,6 @@
         }
         .auto-input-field { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; width: 60px; outline: none; text-align: right; }
 
-        /* Floating AI Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
@@ -293,7 +233,6 @@
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
         .floating-ai-value { font-size: 13px; font-weight: 800; }
 
-        /* Modal Containers */
         .overlay-screen { 
             display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
@@ -305,16 +244,12 @@
             animation: slideDown 0.3s ease-out; border: 1px solid var(--border);
         }
 
-        .auth-nav { 
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; 
-        }
+        .auth-nav { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
         .auth-tab { 
             flex: 1; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; 
             border-radius: 8px; color: var(--text-sub); text-align: center; transition: 0.2s;
         }
-        .auth-tab.active { 
-            background: #fff; color: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
+        .auth-tab.active { background: #fff; color: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         
         .form-input-group { position: relative; margin-bottom: 12px; text-align: left; }
         .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
@@ -397,10 +332,6 @@
             <div class="history-pill">1.51x</div>
             <div class="history-pill high">5.62x</div>
             <div class="history-pill">1.18x</div>
-        </div>
-
-        <div class="site-disclaimer-box">
-            <strong>Important Notice:</strong> AI predictions are generated for analytical evaluation purposes only and are not always correct. Ensure strict alignment with personal gambling risk management rules. Play responsibly.
         </div>
 
         <div class="aviator-flight-panel">
@@ -626,10 +557,6 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
-        const TARGET_CUTOFF_TIMESTAMP = 1714800000000;
-        let isNewAccountDepositProfile = false;
-        let activeAccountBetCount = 0;
-
         const cvs = document.getElementById('liveGameCanvas');
         const ctx = cvs ? cvs.getContext('2d') : null;
 
@@ -640,16 +567,14 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
-        // Safe operational access to internal audio nodes
         const audioOpen = document.getElementById('audioFlightOpen');
         const audioMiddle = document.getElementById('audioFlightMiddle');
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
-        // Silent catch chain to handle browsers blocking automatic play
         const playSafeMedia = (node) => {
             if (node && typeof node.play === 'function') {
-                node.play().catch(err => console.log("Media playback paused by browser system policies.", err));
+                node.play().catch(err => console.log("Media playback paused."));
             }
         };
 
@@ -678,11 +603,8 @@
                 const verifiedAmt = parseFloat(amtParam);
                 if (!isNaN(verifiedAmt) && verifiedAmt > 0) {
                     await updateDatabaseBalance(clientUserBalance + verifiedAmt);
-                    if (isNewAccountDepositProfile) {
-                        localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
-                    }
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    alert(`System Alert: Your deposit of KES ${verifiedAmt.toLocaleString()} has been added to your profile balance.`);
+                    alert(`System Alert: Your deposit of KES ${verifiedAmt.toLocaleString()} added.`);
                 }
             }
         }
@@ -714,16 +636,6 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 authenticatedUser = session.user;
-                
-                const userCreateTime = new Date(authenticatedUser.created_at).getTime();
-                if (userCreateTime >= TARGET_CUTOFF_TIMESTAMP) {
-                    isNewAccountDepositProfile = true;
-                    let existingBets = localStorage.getItem(`bet_count_${authenticatedUser.id}`);
-                    activeAccountBetCount = existingBets ? parseInt(existingBets, 10) : 0;
-                } else {
-                    isNewAccountDepositProfile = false;
-                }
-
                 await pullLatestUserProfileData();
             } else {
                 authenticatedUser = null;
@@ -746,34 +658,24 @@
                 updateVisualUIBalance();
                 updateAuthVisualDisplay(true);
             } else {
-                const { error: insertError } = await supabaseClient
-                    .from('profiles')
-                    .upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
-                if (!insertError) {
-                    clientUserBalance = 0.00;
-                    updateVisualUIBalance();
-                    updateAuthVisualDisplay(true);
-                }
+                await supabaseClient.from('profiles').upsert([{ id: authenticatedUser.id, balance: 0.00 }]);
+                clientUserBalance = 0.00;
+                updateVisualUIBalance();
+                updateAuthVisualDisplay(true);
             }
         }
 
         async function updateDatabaseBalance(newBal) {
             clientUserBalance = parseFloat(newBal || 0.00);
             updateVisualUIBalance();
-
             if (authenticatedUser) {
-                await supabaseClient
-                    .from('profiles')
-                    .update({ balance: clientUserBalance })
-                    .eq('id', authenticatedUser.id);
+                await supabaseClient.from('profiles').update({ balance: clientUserBalance }).eq('id', authenticatedUser.id);
             }
         }
 
         function updateVisualUIBalance() {
             const disp = document.getElementById('balanceDisplay');
-            if (disp) {
-                disp.innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            }
+            if (disp) disp.innerText = clientUserBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
         function updateAuthVisualDisplay(isAuth) {
@@ -786,32 +688,24 @@
             }
         }
 
-        function openAuthModal(mode) {
-            setAuthMode(mode);
-            document.getElementById('authModal').style.display = 'flex';
-        }
+        function openAuthModal(mode) { setAuthMode(mode); document.getElementById('authModal').style.display = 'flex'; }
 
         function setAuthMode(mode) {
             currentAuthMode = mode;
             const submitBtn = document.getElementById('authSubmit');
             const fields = document.getElementById('signupFields');
             const confirmField = document.getElementById('signupConfirmField');
-
             if (mode === 'signup') {
                 document.getElementById('tabSignUp').classList.add('active');
                 document.getElementById('tabSignIn').classList.remove('active');
-                fields.classList.remove('hidden');
-                confirmField.classList.remove('hidden');
+                fields.classList.remove('hidden'); confirmField.classList.remove('hidden');
                 document.getElementById('authTitle').innerText = "Create Account";
-                document.getElementById('authDesc').innerText = "Build and test customized predictors";
                 submitBtn.innerText = "Register Now";
             } else {
                 document.getElementById('tabSignIn').classList.add('active');
                 document.getElementById('tabSignUp').classList.remove('active');
-                fields.classList.add('hidden');
-                confirmField.classList.add('hidden');
+                fields.classList.add('hidden'); confirmField.classList.add('hidden');
                 document.getElementById('authTitle').innerText = "Welcome Back";
-                document.getElementById('authDesc').innerText = "Log in using your secure details";
                 submitBtn.innerText = "Access System";
             }
         }
@@ -819,67 +713,33 @@
         async function handleAuthAction() {
             const email = document.getElementById('authEmail').value.trim();
             const pass = document.getElementById('authPass').value;
-            const name = document.getElementById('authDisplayName').value.trim();
-
-            if (!email || pass.length < 6) return alert("Please specify a valid email and matching password.");
-
+            if (!email || pass.length < 6) return alert("Valid credentials required.");
             if (currentAuthMode === 'signup') {
+                const name = document.getElementById('authDisplayName').value.trim();
                 const country = document.getElementById('authCountry').value;
-                const confirmPass = document.getElementById('authConfirmPass').value;
-
-                if (!country) return alert("Please select your country.");
-                if (pass !== confirmPass) return alert("Passwords do not match. Please re-enter.");
-
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email, password: pass,
-                    options: { data: { username: name || 'Explorer', country: country } }
-                });
-                if (error) return alert("Registration Error: " + error.message);
-                
-                if (data && data.user) {
-                    await supabaseClient
-                        .from('profiles')
-                        .insert([{ id: data.user.id, balance: 0.00 }]);
-                }
-
-                alert("Account activation link sent! Check your inbox.");
-                setAuthMode('signin');
+                const { data, error } = await supabaseClient.auth.signUp({ email, password: pass, options: { data: { username: name || 'User', country: country } } });
+                if (error) return alert(error.message);
+                if (data.user) await supabaseClient.from('profiles').insert([{ id: data.user.id, balance: 0.00 }]);
+                alert("Check email for link!"); setAuthMode('signin');
             } else {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
-                if (error) return alert("Access Denied: " + error.message);
+                if (error) return alert(error.message);
                 authenticatedUser = data.user;
-
-                const userCreateTime = new Date(authenticatedUser.created_at).getTime();
-                if (userCreateTime >= TARGET_CUTOFF_TIMESTAMP) {
-                    isNewAccountDepositProfile = true;
-                    let existingBets = localStorage.getItem(`bet_count_${authenticatedUser.id}`);
-                    activeAccountBetCount = existingBets ? parseInt(existingBets, 10) : 0;
-                } else {
-                    isNewAccountDepositProfile = false;
-                }
-
                 await pullLatestUserProfileData();
                 closeModal('authModal');
-                alert("Authentication verified successfully.");
             }
         }
 
         async function handleUserSignOut() {
             await supabaseClient.auth.signOut();
-            authenticatedUser = null;
-            clientUserBalance = 0.00;
-            isNewAccountDepositProfile = false;
-            activeAccountBetCount = 0;
-            updateVisualUIBalance();
-            updateAuthVisualDisplay(false);
-            alert("Session terminated securely.");
+            authenticatedUser = null; clientUserBalance = 0.00;
+            updateVisualUIBalance(); updateAuthVisualDisplay(false);
         }
 
         function switchBetCategory(panel, category) {
             const isBet = category === 'bet';
             document.getElementById(`tabBet${panel}`).className = `dashboard-tab ${isBet ? 'active' : ''}`;
             document.getElementById(`tabAuto${panel}`).className = `dashboard-tab ${!isBet ? 'active' : ''}`;
-            
             if (isBet) {
                 document.getElementById(`autoControls${panel}`).classList.add('hidden');
                 document.getElementById(`quickGrid${panel}`).classList.remove('hidden');
@@ -892,10 +752,8 @@
         function validateInputField(panel) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = parseFloat(el.value);
-            if (isNaN(val) || val < 50) {
-                val = 50;
-                el.value = val;
-            }
+            if (isNaN(val) || val < 50) val = 50;
+            el.value = val;
             document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
         }
 
@@ -908,158 +766,39 @@
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
-            let val = Math.max(50, value);
-            el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+            el.value = Math.max(50, value);
+            document.getElementById(`subLabel${panel}`).innerText = `${parseFloat(el.value).toFixed(2)} KES`;
         }
 
         function initializeCanvasFlight() {
             let smokeParticles = [];
-            
             function drawFrame() {
                 if (!ctx || !cvs) return;
                 const dpr = window.devicePixelRatio || 1;
                 const rect = cvs.getBoundingClientRect();
                 if (cvs.width !== rect.width * dpr || cvs.height !== rect.height * dpr) {
-                    cvs.width = rect.width * dpr;
-                    cvs.height = rect.height * dpr;
+                    cvs.width = rect.width * dpr; cvs.height = rect.height * dpr;
                 }
-                ctx.resetTransform();
-                ctx.scale(dpr, dpr);
-
-                const width = rect.width;
-                const height = rect.height;
-
+                ctx.resetTransform(); ctx.scale(dpr, dpr);
+                const width = rect.width; const height = rect.height;
                 ctx.clearRect(0, 0, width, height);
-
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
-                ctx.lineWidth = 1;
-                for (let x = 0; x < width; x += 40) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
-                }
-                for (let y = 0; y < height; y += 40) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
-                }
 
                 if (gameStatus === "flying") {
                     let progress = (currentMultiplier - 1.0) / (crashCeiling - 1.0 || 1.0);
                     progress = Math.min(progress, 1.0);
-
                     let endX = width * progress * 0.86 + (width * 0.05);
                     let endY = height - (height * 0.74 * Math.pow(progress, 1.4)) - (height * 0.06);
 
-                    ctx.save();
-                    ctx.strokeStyle = "#d91d38";
-                    ctx.lineWidth = 4;
-                    ctx.lineCap = "round";
-                    ctx.lineJoin = "round";
-                    ctx.beginPath();
-                    ctx.moveTo(width * 0.05, height - (height * 0.06));
+                    ctx.save(); ctx.strokeStyle = "#d91d38"; ctx.lineWidth = 4; ctx.lineCap = "round";
+                    ctx.beginPath(); ctx.moveTo(width * 0.05, height - (height * 0.06));
                     ctx.quadraticCurveTo(width * progress * 0.45, height - (height * 0.06), endX, endY);
                     ctx.stroke();
 
-                    ctx.beginPath();
-                    ctx.moveTo(width * 0.05, height - (height * 0.06));
-                    ctx.quadraticCurveTo(width * progress * 0.45, height - (height * 0.06), endX, endY);
-                    ctx.lineTo(endX, height);
-                    ctx.lineTo(width * 0.05, height);
-                    ctx.closePath();
-                    let areaGlow = ctx.createLinearGradient(0, endY, 0, height);
-                    areaGlow.addColorStop(0, "rgba(217, 29, 56, 0.28)");
-                    areaGlow.addColorStop(1, "rgba(217, 29, 56, 0.0)");
-                    ctx.fillStyle = areaGlow;
-                    ctx.fill();
+                    ctx.save(); ctx.translate(endX, endY);
+                    ctx.fillStyle = "#d91d38"; ctx.beginPath(); ctx.moveTo(-16, -2);
+                    ctx.lineTo(8, 2); ctx.quadraticCurveTo(15, 2, 16, -1);
+                    ctx.lineTo(12, -4); ctx.closePath(); ctx.fill();
                     ctx.restore();
-
-                    if (Math.random() < 0.9) {
-                        smokeParticles.push({
-                            x: endX - 4, y: endY + 2,
-                            size: 1.2 + Math.random() * 3,
-                            alpha: 0.9,
-                            vx: -1.6 - Math.random() * 1.5,
-                            vy: 0.3 - Math.random() * 0.6
-                        });
-                    }
-
-                    for (let i = smokeParticles.length - 1; i >= 0; i--) {
-                        let p = smokeParticles[i];
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.alpha -= 0.024;
-
-                        if (p.alpha <= 0) {
-                            smokeParticles.splice(i, 1);
-                            continue;
-                        }
-
-                        ctx.fillStyle = `rgba(217, 29, 56, ${p.alpha * 0.5})`;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    let nextProg = Math.min(progress + 0.005, 1.0);
-                    let nextY = height - (height * 0.74 * Math.pow(nextProg, 1.4)) - (height * 0.06);
-                    let tiltAngle = Math.atan2(nextY - endY, (width * nextProg * 0.86 + (width * 0.05)) - endX);
-
-                    ctx.save();
-                    ctx.translate(endX, endY);
-                    ctx.rotate(tiltAngle);
-
-                    ctx.shadowColor = "rgba(217, 29, 56, 0.7)";
-                    ctx.shadowBlur = 10;
-
-                    ctx.fillStyle = "#d91d38";
-                    ctx.beginPath();
-                    ctx.moveTo(-16, -2);
-                    ctx.lineTo(-24, -4);
-                    ctx.lineTo(-26, -10);
-                    ctx.lineTo(-21, -1);
-                    ctx.lineTo(-12, 1);
-                    ctx.lineTo(8, 2);
-                    ctx.quadraticCurveTo(15, 2, 16, -1);
-                    ctx.lineTo(12, -4);
-                    ctx.lineTo(-11, -3);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.shadowBlur = 0;
-                    ctx.fillStyle = "#ffffff";
-                    ctx.beginPath();
-                    ctx.moveTo(-2, -3);
-                    ctx.lineTo(6, -2);
-                    ctx.lineTo(8, -1);
-                    ctx.lineTo(1, -2);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.strokeStyle = "#ffffff";
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(16, -5);
-                    ctx.lineTo(16, 3);
-                    ctx.stroke();
-
-                    ctx.fillStyle = "#111111";
-                    ctx.beginPath();
-                    ctx.arc(3, 4, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = "#ffffff";
-                    ctx.lineWidth = 0.8;
-                    ctx.stroke();
-
-                    ctx.fillStyle = "#b1132a";
-                    ctx.beginPath();
-                    ctx.moveTo(-2, -2);
-                    ctx.lineTo(-6, -15);
-                    ctx.lineTo(2, -15);
-                    ctx.lineTo(5, -2);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.restore();
-                } else {
-                    smokeParticles = [];
                 }
                 requestAnimationFrame(drawFrame);
             }
@@ -1071,21 +810,18 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
-            
+            // 90% Probability Multiplier is ABOVE 20.00x
             let predictedCeiling;
             const r = Math.random();
-            if (r < 0.45) {
-                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
-            } else if (r < 0.80) {
-                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
-            } else if (r < 0.95) {
-                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
+            if (r < 0.90) {
+                // High Multiplier (Above 20.0)
+                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 150).toFixed(2));
             } else {
-                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
+                // Low Multiplier (rare - 1 in 10 rounds)
+                predictedCeiling = parseFloat((1.01 + Math.random() * 18.99).toFixed(2));
             }
 
-            // Continuous display sync
+            // Set prediction display
             document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
             crashCeiling = predictedCeiling;
 
@@ -1093,10 +829,6 @@
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
 
             let cycleTimer = 6;
-            document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
-
-            resetBetButtons();
-
             const timerSub = setInterval(() => {
                 cycleTimer--;
                 if (cycleTimer > 0) {
@@ -1106,15 +838,15 @@
                     startTakeoffPhase();
                 }
             }, 1000);
+            resetBetButtons();
         }
 
         function resetBetButtons() {
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 50;
-                btn.disabled = false;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
+                const val = parseFloat(document.getElementById(`wagerInput${i}`).value) || 50;
+                btn.disabled = false; btn.className = "bet-btn place";
+                btn.innerHTML = `<span>Bet</span><span style="font-size:11px;" id="subLabel${i}">${val.toFixed(2)} KES</span>`;
                 activePanelBets[i] = 0;
             }
         }
@@ -1124,26 +856,21 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Flying High";
 
-            // Safe triggering of media instances
-            if (audioOpen) {
-                audioOpen.currentTime = 0;
-                audioOpen.volume = 0.5;
-                playSafeMedia(audioOpen);
-            }
+            if (audioOpen) { audioOpen.currentTime = 0; playSafeMedia(audioOpen); }
 
+            // Account-Specific Rule
             const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
-            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
+            const isBetting = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
-            if (!isJoseeruitha && hasStakeActive) {
-                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
+            if (!isJoseeruitha && isBetting) {
+                // Other accounts fail prediction if they bet
+                crashCeiling = parseFloat((1.01 + Math.random() * 0.08).toFixed(2));
             }
 
             for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
                 if (activePanelBets[i] > 0) {
-                    btn.disabled = false;
-                    btn.className = "bet-btn cash";
-                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
+                    btn.disabled = false; btn.className = "bet-btn cash";
                 } else {
                     btn.disabled = true;
                 }
@@ -1158,18 +885,12 @@
                     triggerCrashEvent();
                 } else {
                     document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2) + "x";
-                    
                     for (let i = 1; i <= 2; i++) {
                         if (activePanelBets[i] > 0 && !cashoutStates[i]) {
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                            const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
-                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
-
-                            const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
-                            const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
-                            
-                            if (isAutoCheck && currentMultiplier >= targetVal) {
-                                executeCashOut(i);
+                            btn.innerHTML = `<span>Cash Out</span><span style="font-size:11px;">${(activePanelBets[i] * currentMultiplier).toFixed(2)} KES</span>`;
+                            if (document.getElementById(`autoCashoutToggle${i}`).checked) {
+                                if (currentMultiplier >= parseFloat(document.getElementById(`autoCashoutTarget${i}`).value)) executeCashOut(i);
                             }
                         }
                     }
@@ -1181,16 +902,8 @@
 
         function triggerCrashEvent() {
             gameStatus = "crashed";
-            
-            // Explicit volume/pause steps
-            if (audioOpen) audioOpen.pause();
-            if (audioMiddle) audioMiddle.pause();
-
-            if (audioFinal) {
-                audioFinal.currentTime = 0;
-                audioFinal.volume = 0.6;
-                playSafeMedia(audioFinal);
-            }
+            if (audioOpen) audioOpen.pause(); if (audioMiddle) audioMiddle.pause();
+            if (audioFinal) { audioFinal.currentTime = 0; playSafeMedia(audioFinal); }
 
             document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
@@ -1201,42 +914,21 @@
             item.className = `history-pill ${crashCeiling >= 2.0 ? 'high' : ''}`;
             item.innerText = crashCeiling.toFixed(2) + "x";
             pastLine.prepend(item);
-
-            if (pastLine.children.length > 8) {
-                pastLine.removeChild(pastLine.lastChild);
-            }
-
-            for (let i = 1; i <= 2; i++) {
-                const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                btn.disabled = true;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Crashed</span>`;
-            }
+            if (pastLine.children.length > 8) pastLine.removeChild(pastLine.lastChild);
 
             setTimeout(triggerGameLoopEngine, 3500);
         }
 
         async function processWager(panel) {
             if (!authenticatedUser) return openAuthModal('signin');
-
             const stakeValue = parseFloat(document.getElementById(`wagerInput${panel}`).value) || 0;
-            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-
             if (gameStatus === "waiting") {
-                if (stakeValue < 50) return alert("System Alert: Minimum bet allowed is KES 50.00.");
-                if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
-
+                if (stakeValue > clientUserBalance) return alert("Insufficient funds.");
                 activePanelBets[panel] = stakeValue;
                 await updateDatabaseBalance(clientUserBalance - stakeValue);
-
-                if (isNewAccountDepositProfile) {
-                    activeAccountBetCount++;
-                    localStorage.setItem(`bet_count_${authenticatedUser.id}`, activeAccountBetCount);
-                }
-
-                btn.disabled = true;
-                btn.innerHTML = `<span>Locked...</span>`;
-            } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
+                document.getElementById(`wagerSubmitBtn${panel}`).disabled = true;
+                document.getElementById(`wagerSubmitBtn${panel}`).innerHTML = `<span>Locked...</span>`;
+            } else if (gameStatus === "flying" && activePanelBets[panel] > 0) {
                 executeCashOut(panel);
             }
         }
@@ -1244,106 +936,56 @@
         async function executeCashOut(panel) {
             cashoutStates[panel] = true;
             const netReturns = activePanelBets[panel] * currentMultiplier;
-            
-            if (winSfx) {
-                winSfx.currentTime = 0;
-                winSfx.volume = 0.6;
-                playSafeMedia(winSfx);
-            }
-
+            if (winSfx) { winSfx.currentTime = 0; playSafeMedia(winSfx); }
             activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-            btn.disabled = true;
-            btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Cashed Out</span>`;
-
+            btn.disabled = true; btn.className = "bet-btn place"; btn.innerHTML = `<span>Cashed Out</span>`;
             await updateDatabaseBalance(clientUserBalance + netReturns);
-
-            // Display Top Notification Bar and withdraw after 2.5s
-            const bannerNode = document.getElementById('cashoutSuccessBar');
-            bannerNode.innerHTML = `<span>Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}</span>`;
-            bannerNode.classList.add('active');
-
-            setTimeout(() => {
-                bannerNode.classList.remove('active');
-            }, 2500);
+            const banner = document.getElementById('cashoutSuccessBar');
+            banner.innerHTML = `<span>Won KES ${netReturns.toFixed(2)} at ${currentMultiplier}x</span>`;
+            banner.classList.add('active');
+            setTimeout(() => banner.classList.remove('active'), 2500);
         }
 
         function setFundsMode(mode) {
             currentFundsMode = mode;
-            document.getElementById('depAmt').value = "200.00";
             const submitBtn = document.getElementById('fundsSubmit');
-
             if (mode === 'withdraw') {
                 document.getElementById('tabWithdraw').classList.add('active');
                 document.getElementById('tabDeposit').classList.remove('active');
                 document.getElementById('withdrawalFields').classList.remove('hidden');
                 document.getElementById('depositFormFields').classList.add('hidden');
-                submitBtn.style.background = "var(--no-red)";
                 submitBtn.innerText = "Confirm Payout";
-                document.getElementById('fundsDesc').innerText = "Withdraw directly to M-Pesa";
             } else {
                 document.getElementById('tabDeposit').classList.add('active');
                 document.getElementById('tabWithdraw').classList.remove('active');
                 document.getElementById('withdrawalFields').classList.add('hidden');
                 document.getElementById('depositFormFields').classList.remove('hidden');
-                submitBtn.style.background = "var(--yes-blue)";
                 submitBtn.innerText = "Confirm Action";
-                document.getElementById('fundsDesc').innerText = "Pay Hero Checkout via Lipwa";
             }
         }
 
-        function setAmt(v) { 
-            document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
-        }
-
-        function openFundsModal() {
-            if (!authenticatedUser) return openAuthModal('signin');
-            setFundsMode('deposit');
-            document.getElementById('depositModal').style.display = 'flex';
-        }
+        function setAmt(v) { document.getElementById('depAmt').value = parseFloat(v).toFixed(2); }
+        function openFundsModal() { if (!authenticatedUser) return openAuthModal('signin'); setFundsMode('deposit'); document.getElementById('depositModal').style.display = 'flex'; }
 
         async function handleFundsAction() {
-            if (!authenticatedUser) return openAuthModal('signin');
-
             const amt = Number(document.getElementById('depAmt').value);
-
-            const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
-
             if (currentFundsMode === 'withdraw') {
-                if (isNaN(amt) || amt < 500) return alert("Minimum withdrawal amount required is Ksh 500.00.");
-                const wPhone = document.getElementById('withPhone').value.trim();
-                const wName = document.getElementById('withName').value.trim();
-                if (!wPhone || !wName) return alert("Fill in the withdrawal M-Pesa phone number and name.");
-
-                if (amt > clientUserBalance) return alert("Insufficient available balance.");
-
+                if (amt < 500 || amt > clientUserBalance) return alert("Invalid amount.");
                 await updateDatabaseBalance(clientUserBalance - amt);
                 closeModal('depositModal');
-                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
+                alert("Withdrawal initiated.");
             } else {
-                if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
+                if (amt < 200) return alert("Min 200.");
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
-                if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
-
-                if (isNewAccountDepositProfile) {
-                    localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
-                }
-
-                closeModal('depositModal');
-
                 const currentUrl = window.location.origin + window.location.pathname;
-                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
-                
-                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
+                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}`);
+                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&success_url=${returnUrl}`;
             }
         }
 
-        function closeModal(id) { 
-            const node = document.getElementById(id);
-            if (node) node.style.display = 'none'; 
-        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
 </html>
