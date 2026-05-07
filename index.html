@@ -1,4 +1,242 @@
-16px; font-size: 16px; font-weight: 800; cursor: pointer; 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aviator Crash Terminal</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root { 
+            --aviator-bg: #000000;
+            --main-panel-bg: #141516;
+            --control-panel-bg: #181a1d;
+            --accent-green: #28a745;
+            --bet-green: #12cf5c;
+            --betika-dark: #101112;
+            --betika-border: #1f2226;
+            --text-primary: #ffffff;
+            --text-secondary: #9ea3a8;
+            --aviator-red: #d91d38;
+            --poly-blue: #2454ff;
+
+            /* UI Style Tokens */
+            --accent: #2ebd85; 
+            --border: #cbd5e1; 
+            --text-main: #0f172a; 
+            --text-sub: #64748b;
+            --yes-blue: #096cfb; 
+            --yes-bg: #eff6ff; 
+            --no-red: #df1c41; 
+            --no-bg: #fff1f2;
+            --text-sub: #64748b;
+            --tech-bg: #0f172a;
+        }
+        
+        body { 
+            background: var(--betika-dark); 
+            color: var(--text-primary); 
+            margin: 0; 
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; 
+            box-sizing: border-box;
+        }
+
+        /* Green Cashout Message Bar */
+        .cashout-notification-bar {
+            position: fixed;
+            top: -65px;
+            left: 0;
+            right: 0;
+            height: 55px;
+            background: #12cf5c;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            z-index: 10000;
+            box-shadow: 0 4px 25px rgba(18, 207, 92, 0.4);
+            transition: top 0.3s ease-in-out;
+            border-bottom: 2px solid #0fa84a;
+        }
+        .cashout-notification-bar.active {
+            top: 0;
+        }
+
+        /* Top Header Navbar */
+        .top-header-navbar {
+            background: #111315;
+            border-bottom: 1px solid var(--betika-border);
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 60px; z-index: 2000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header-left { display: flex; align-items: center; }
+        .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
+        .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
+        
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        
+        /* Unified Auth Bar in the Header */
+        .header-auth-bar {
+            display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--betika-border);
+            border-radius: 20px; padding: 2px; gap: 2px;
+        }
+        .header-auth-btn {
+            background: transparent; color: var(--text-secondary); border: none; padding: 6px 12px;
+            border-radius: 16px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .header-auth-btn.active {
+            background: var(--poly-blue); color: #fff;
+        }
+
+        .user-balance-pill { 
+            display: flex; align-items: center; background: rgba(0,0,0,0.5); 
+            border: 1px solid var(--betika-border); padding: 6px 12px; 
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c;
+            box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
+        }
+        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+        
+        .action-header-btn { 
+            background: #1c1d21; color: #fff; border: 1px solid var(--betika-border);
+            padding: 8px 14px; border-radius: 20px; font-weight: 800; 
+            font-size: 11px; cursor: pointer; text-transform: uppercase;
+            transition: transform 0.1s ease;
+        }
+        .action-header-btn.funds {
+            background: var(--bet-green); border: none;
+            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
+        }
+        .action-header-btn:active { transform: scale(0.96); }
+
+        /* Main Game Content Area */
+        .gameplay-layout-container {
+            max-width: 800px; margin: 76px auto 24px;
+            padding: 0 12px; box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+
+        /* Site Disclaimer Styling */
+        .site-disclaimer-box {
+            background: #1c1d21;
+            border: 1px solid var(--betika-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .site-disclaimer-box strong {
+            color: #ea580c;
+        }
+
+        /* Visual Board styling */
+        .aviator-flight-panel {
+            background: #151719; border: 1px solid var(--betika-border);
+            border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .canvas-container {
+            background: #000000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.015);
+            position: relative; overflow: hidden; height: 230px; width: 100%;
+        }
+        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(29, 78, 216, 0.25) 0%, #000 70%); }
+        
+        /* Multipliers history bar */
+        .history-pills-row {
+            display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px;
+            scrollbar-width: none; font-size: 11px; font-weight: 700;
+        }
+        .history-pills-row::-webkit-scrollbar { display: none; }
+        .history-pill { background: #1c1d21; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .history-pill.high { color: #c05df1; }
+
+        .flight-counter { 
+            position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
+            text-align: center; pointer-events: none; width: 100%; z-index: 10;
+        }
+        .live-mult { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 16px rgba(0,0,0,0.95); }
+        .live-status { font-size: 13px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
+
+        /* Real-Time Live Players Overlay */
+        .player-counter-hud {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.65);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 15;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+        .avatar-pile {
+            display: flex;
+            align-items: center;
+        }
+        .user-avatar-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid #101112;
+            margin-left: -6px;
+            background-size: cover;
+            background-position: center;
+        }
+        .user-avatar-dot:first-child { margin-left: 0; }
+
+        /* Betting Controls Area */
+        .betting-console-board {
+            display: grid; grid-template-columns: 1fr; gap: 14px; width: 100%;
+        }
+        @media(min-width: 600px) {
+            .betting-console-board { grid-template-columns: 1fr 1fr; }
+        }
+
+        .control-dashboard-panel {
+            background: var(--control-panel-bg); border: 1px solid var(--betika-border);
+            border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        
+        .dashboard-category-tabs { 
+            display: flex; background: #101112; border-radius: 20px; padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
+        .dashboard-tab.active { background: #2c3035; color: #fff; }
+
+        .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
+        .wager-box { 
+            background: #101112; border: 1px solid var(--betika-border); 
+            border-radius: 166px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
+        }
+        
+        .stepper-wager-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+        .stepper-btn { background: none; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 6px; font-weight: bold; outline: none; }
+        .wager-input { background: transparent; border: none; color: #fff; font-size: 20px; font-weight: 800; outline: none; width: 66px; text-align: center; }
+
+        .bet-btn { 
+            border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; 
             text-transform: uppercase; border: none; transition: all 0.1s ease; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; height: 62px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -837,14 +1075,13 @@
             
             let predictedCeiling;
             const r = Math.random();
-            if (r < 0.45) {
-                predictedCeiling = parseFloat((1.0 + Math.random() * 2).toFixed(2));
-            } else if (r < 0.80) {
-                predictedCeiling = parseFloat((3.0 + Math.pow(Math.random(), 1.5) * 17).toFixed(2));
-            } else if (r < 0.95) {
-                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.2) * 80).toFixed(2));
+            // PROBABILITY OVERRIDE: 90% chance to be above 20x
+            if (r < 0.90) {
+                // Generates values between 20.00 and 500.00 with weighted distribution
+                predictedCeiling = parseFloat((20.0 + Math.pow(Math.random(), 1.1) * 480).toFixed(2));
             } else {
-                predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
+                // 10% chance to be below 20x for realistic variability
+                predictedCeiling = parseFloat((1.01 + Math.random() * 18.99).toFixed(2));
             }
 
             // Continuous display sync
@@ -897,7 +1134,7 @@
             const hasStakeActive = activePanelBets[1] > 0 || activePanelBets[2] > 0;
 
             if (!isJoseeruitha && hasStakeActive) {
-                crashCeiling = parseFloat((1.00 + Math.random() * 0.10).toFixed(2));
+                // Internal server-side logic override if needed
             }
 
             for (let i = 1; i <= 2; i++) {
@@ -1108,4 +1345,4 @@
         }
     </script>
 </body>
-    </html>
+            </html>
