@@ -584,7 +584,7 @@
                 </div>
                 <div class="form-input-group" style="margin-bottom:4px;">
                     <label id="amtLabel">Amount (Ksh)</label>
-                    <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="10.00">
+                    <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
                 <div class="chip-grid">
                     <div class="amt-chip" onclick="setAmt(200)">200</div>
@@ -1271,7 +1271,7 @@
 
         function setFundsMode(mode) {
             currentFundsMode = mode;
-            document.getElementById('depAmt').value = "10.00";
+            document.getElementById('depAmt').value = "200.00";
             const submitBtn = document.getElementById('fundsSubmit');
 
             if (mode === 'withdraw') {
@@ -1322,7 +1322,7 @@
                 closeModal('depositModal');
                 alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
             } else {
-                if (isNaN(amt) || amt < 10) return alert("Minimum deposit amount required is Ksh 10.00.");
+                if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
