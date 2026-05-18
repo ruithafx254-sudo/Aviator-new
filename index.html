@@ -3,34 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aviator Crash Terminal</title>
+    <title>MegaWave Velocity Terminal</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root { 
-            --aviator-bg: #000000;
-            --main-panel-bg: #141516;
-            --control-panel-bg: #181a1d;
-            --accent-green: #28a745;
-            --bet-green: #12cf5c;
-            --betika-dark: #101112;
-            --betika-border: #1f2226;
-            --text-primary: #ffffff;
-            --text-secondary: #9ea3a8;
-            --aviator-red: #d91d38;
-            --poly-blue: #2454ff;
+            --aviator-bg: #0f172a;
+            --main-panel-bg: #1e293b;
+            --control-panel-bg: #1e293b;
+            --accent-green: #3b82f6;
+            --bet-green: #2563eb;
+            --betika-dark: #0f172a;
+            --betika-border: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --aviator-red: #38bdf8;
+            --poly-blue: #0284c7;
 
             /* UI Style Tokens */
-            --accent: #2ebd85; 
-            --border: #cbd5e1; 
-            --text-main: #0f172a; 
-            --text-sub: #64748b;
-            --yes-blue: #096cfb; 
-            --yes-bg: #eff6ff; 
-            --no-red: #df1c41; 
-            --no-bg: #fff1f2;
-            --text-sub: #64748b;
+            --accent: #0ea5e9; 
+            --border: #334155; 
+            --text-main: #f8fafc; 
+            --text-sub: #94a3b8;
+            --yes-blue: #2563eb; 
+            --yes-bg: #1e3a8a; 
+            --no-red: #0284c7; 
+            --no-bg: #0c4a6e;
             --tech-bg: #0f172a;
         }
         
@@ -52,7 +51,7 @@
             left: 0;
             right: 0;
             height: 55px;
-            background: #12cf5c;
+            background: #2563eb;
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -61,9 +60,9 @@
             font-weight: 800;
             text-transform: uppercase;
             z-index: 10000;
-            box-shadow: 0 4px 25px rgba(18, 207, 92, 0.4);
+            box-shadow: 0 4px 25px rgba(37, 99, 235, 0.4);
             transition: top 0.3s ease-in-out;
-            border-bottom: 2px solid #0fa84a;
+            border-bottom: 2px solid #1d4ed8;
         }
         .cashout-notification-bar.active {
             top: 0;
@@ -71,7 +70,7 @@
 
         /* Top Header Navbar */
         .top-header-navbar {
-            background: #111315;
+            background: #0b0f19;
             border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
             height: 60px; z-index: 2000;
@@ -81,7 +80,7 @@
         }
         .header-left { display: flex; align-items: center; }
         .game-brand-labels { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-main-text { font-weight: 900; font-size: 20px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
+        .brand-main-text { font-weight: 900; font-size: 18px; color: var(--aviator-red); letter-spacing: -0.2px; text-transform: uppercase; }
         
         .header-actions { display: flex; align-items: center; gap: 10px; }
         
@@ -102,20 +101,20 @@
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
-            border-radius: 20px; font-size: 13px; font-weight: 800; color: #12cf5c;
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: #38bdf8;
             box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
         }
-        .user-balance-pill span { color: #8a8f95; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+        .user-balance-pill span { color: #64748b; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
         
         .action-header-btn { 
-            background: #1c1d21; color: #fff; border: 1px solid var(--betika-border);
+            background: #1e293b; color: #fff; border: 1px solid var(--betika-border);
             padding: 8px 14px; border-radius: 20px; font-weight: 800; 
             font-size: 11px; cursor: pointer; text-transform: uppercase;
             transition: transform 0.1s ease;
         }
         .action-header-btn.funds {
             background: var(--bet-green); border: none;
-            box-shadow: 0 4px 12px rgba(18, 207, 92, 0.25);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
         .action-header-btn:active { transform: scale(0.96); }
 
@@ -128,7 +127,7 @@
 
         /* Site Disclaimer Styling */
         .site-disclaimer-box {
-            background: #1c1d21;
+            background: #1e293b;
             border: 1px solid var(--betika-border);
             border-radius: 10px;
             padding: 10px 14px;
@@ -139,20 +138,20 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         .site-disclaimer-box strong {
-            color: #ea580c;
+            color: #38bdf8;
         }
 
         /* Visual Board styling */
         .aviator-flight-panel {
-            background: #151719; border: 1px solid var(--betika-border);
+            background: #1e293b; border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         }
         .canvas-container {
-            background: #000000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.015);
+            background: #0b0f19; border-radius: 12px; border: 1px solid rgba(255,255,255,0.015);
             position: relative; overflow: hidden; height: 230px; width: 100%;
         }
-        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(29, 78, 216, 0.25) 0%, #000 70%); }
+        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.15) 0%, #0b0f19 70%); }
         
         /* Multipliers history bar */
         .history-pills-row {
@@ -160,8 +159,8 @@
             scrollbar-width: none; font-size: 11px; font-weight: 700;
         }
         .history-pills-row::-webkit-scrollbar { display: none; }
-        .history-pill { background: #1c1d21; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .history-pill.high { color: #c05df1; }
+        .history-pill { background: #334155; color: #38bdf8; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .history-pill.high { color: #a855f7; }
 
         .flight-counter { 
             position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
@@ -175,7 +174,7 @@
             position: absolute;
             bottom: 12px;
             right: 12px;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(15, 23, 42, 0.85);
             padding: 4px 10px;
             border-radius: 20px;
             display: flex;
@@ -197,7 +196,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            border: 1.5px solid #101112;
+            border: 1.5px solid #0f172a;
             margin-left: -6px;
             background-size: cover;
             background-position: center;
@@ -219,15 +218,15 @@
         }
         
         .dashboard-category-tabs { 
-            display: flex; background: #101112; border-radius: 20px; padding: 3px;
+            display: flex; background: #0b0f19; border-radius: 20px; padding: 3px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
         .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
-        .dashboard-tab.active { background: #2c3035; color: #fff; }
+        .dashboard-tab.active { background: #334155; color: #fff; }
 
         .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
         .wager-box { 
-            background: #101112; border: 1px solid var(--betika-border); 
+            background: #0b0f19; border: 1px solid var(--betika-border); 
             border-radius: 166px; padding: 6px 14px; display: flex; flex-direction: column; justify-content: center; height: 62px; box-sizing: border-box;
         }
         
@@ -242,17 +241,17 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .bet-btn:active { transform: scale(0.97); }
-        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(18, 207, 92, 0.2); }
-        .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
-        .bet-btn:disabled { background: #212429; color: #525861; cursor: not-allowed; box-shadow: none; }
+        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
+        .bet-btn.cash { background: #0284c7; color: #fff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25); }
+        .bet-btn:disabled { background: #1e293b; color: #475569; cursor: not-allowed; box-shadow: none; }
 
         .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #101112; text-align: center; color: #9ea3a8; transition: background 0.15s ease; }
-        .quick-amt-chip:active { background: #2c3035; color: #fff; }
+        .quick-amt-chip { border: 1px solid var(--betika-border); padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; background: #0b0f19; text-align: center; color: #94a3b8; transition: background 0.15s ease; }
+        .quick-amt-chip:active { background: #334155; color: #fff; }
 
         /* Auto Controls Section */
         .auto-controls-section {
-            background: #101112; border: 1px solid var(--betika-border);
+            background: #0b0f19; border: 1px solid var(--betika-border);
             border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
             animation: slideDown 0.2s ease-out; margin-top: 2px;
         }
@@ -263,7 +262,7 @@
         .switch-input-wrapper input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #2c3035; border-radius: 34px; transition: .3s;
+            background-color: #334155; border-radius: 34px; transition: .3s;
         }
         .toggle-slider:before {
             position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
@@ -274,7 +273,7 @@
 
         .auto-input-box {
             display: flex; align-items: center; justify-content: space-between;
-            background: #181a1d; border: 1px solid var(--betika-border);
+            background: #1e293b; border: 1px solid var(--betika-border);
             padding: 6px 12px; border-radius: 10px;
         }
         .auto-input-field { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; width: 60px; outline: none; text-align: right; }
@@ -282,12 +281,12 @@
         /* Floating AI Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(79, 70, 229, 0.8));
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(37, 99, 235, 0.8));
             backdrop-filter: blur(8px); color: #fff; border-radius: 50%; width: 62px; height: 62px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4); z-index: 3000;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4); z-index: 3000;
             cursor: pointer; transition: transform 0.2s;
-            border: 2px solid rgba(167, 139, 250, 0.5); text-align: center;
+            border: 2px solid rgba(56, 189, 248, 0.5); text-align: center;
         }
         .floating-ai-assistant:active { transform: scale(0.92); }
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
@@ -295,57 +294,57 @@
 
         /* Modal Containers */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); 
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
         }
         .form-modal-card { 
-            background: #fff; width: 100%; max-width: 420px; padding: 22px 26px; 
+            background: #1e293b; width: 100%; max-width: 420px; padding: 22px 26px; 
             border-radius: 24px; text-align: center; box-sizing: border-box; 
-            max-height: 95vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            max-height: 95vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
             animation: slideDown 0.3s ease-out; border: 1px solid var(--border);
         }
 
         .auth-nav { 
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 16px; 
+            display: flex; background: #0f172a; padding: 4px; border-radius: 12px; margin-bottom: 16px; 
         }
         .auth-tab { 
             flex: 1; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; 
             border-radius: 8px; color: var(--text-sub); text-align: center; transition: 0.2s;
         }
         .auth-tab.active { 
-            background: #fff; color: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            background: #334155; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
         .form-input-group { position: relative; margin-bottom: 12px; text-align: left; }
         .form-input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
         
         .form-input-control { 
-            width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); 
-            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #0f172a; 
+            width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid var(--border); 
+            border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; color: #f8fafc; 
             transition: border-color 0.2s;
         }
-        .form-input-control:focus { border-color: var(--yes-blue); background: #fff; }
+        .form-input-control:focus { border-color: var(--yes-blue); background: #0f172a; }
         
         .form-submit-btn { 
-            width: 100%; padding: 16px; background: #000; color: #fff; border: none; 
+            width: 100%; padding: 16px; background: #2563eb; color: #fff; border: none; 
             border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 15px; 
             text-transform: uppercase; margin-top: 8px; transition: 0.15s;
         }
         .form-submit-btn:active { opacity: 0.85; transform: scale(0.99); }
         
         .chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
-        .amt-chip { border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: #fff; text-align: center; color: var(--text-main); transition: 0.15s; }
-        .amt-chip:active { background: #f1f5f9; transform: scale(0.96); }
+        .amt-chip { border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: #0f172a; text-align: center; color: var(--text-main); transition: 0.15s; }
+        .amt-chip:active { background: #334155; transform: scale(0.96); }
         
         .hidden { display: none !important; }
 
         .funds-card-container {
-            background: #fafcff; padding: 16px; border-radius: 18px;
-            border: 1px solid rgba(226, 232, 240, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.01); margin-bottom: 12px;
+            background: #111827; padding: 16px; border-radius: 18px;
+            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.01); margin-bottom: 12px;
         }
         
         .badge-container { display: block; text-align: center; max-width: 100%; margin: 12px auto 4px auto; box-sizing: border-box; overflow: hidden; border-top: 1px dashed var(--border); padding-top: 14px; }
-        .badge-img { width: 140px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .badge-img { width: 140px; max-width: 100%; height: auto; display: block; margin: 0 auto; filter: brightness(0.9); }
 
         .modal-dismiss-btn { text-align: center; margin-top: 14px; cursor: pointer; color: var(--text-sub); font-size: 13px; font-weight: 700; text-transform: uppercase; }
 
@@ -358,7 +357,7 @@
 <body>
 
     <div id="cashoutSuccessBar" class="cashout-notification-bar">
-        <span>Cashed Out Successfully!</span>
+        <span>Processing Optimization Successfully!</span>
     </div>
 
     <audio id="audioFlightOpen" src="Aviator open.mp3" preload="auto"></audio>
@@ -369,21 +368,21 @@
     <div class="top-header-navbar">
         <div class="header-left">
             <div class="game-brand-labels">
-                <span class="brand-main-text">Aviator</span>
+                <span class="brand-main-text">MegaWave AI</span>
             </div>
         </div>
         <div class="header-actions">
             <div id="authRequiredArea" class="header-auth-bar">
-                <button onclick="openAuthModal('signin')" class="header-auth-btn active">Sign In</button>
-                <button onclick="openAuthModal('signup')" class="header-auth-btn">Sign Up</button>
+                <button onclick="openAuthModal('signin')" class="header-auth-btn active">Access Terminal</button>
+                <button onclick="openAuthModal('signup')" class="header-auth-btn">Initialize</button>
             </div>
 
             <div id="authenticatedControls" class="header-actions hidden">
                 <div class="user-balance-pill">
-                    <div id="balanceDisplay">0.00</div><span>KES</span>
+                    <div id="balanceDisplay">0.00</div><span>Units</span>
                 </div>
-                <button onclick="openFundsModal()" class="action-header-btn funds">Funds</button>
-                <button onclick="handleUserSignOut()" class="action-header-btn">Logout</button>
+                <button onclick="openFundsModal()" class="action-header-btn funds">Database</button>
+                <button onclick="handleUserSignOut()" class="action-header-btn">Disconnect</button>
             </div>
         </div>
     </div>
@@ -400,7 +399,7 @@
         </div>
 
         <div class="site-disclaimer-box">
-            <strong>Important Notice:</strong> AI predictions are generated for analytical evaluation purposes only and are not always correct. Ensure strict alignment with personal gambling risk management rules. Play responsibly.
+            <strong>System Parameters:</strong> Analytical data output model frames are compiled under probability automation models. Maintain strict data distribution and calculation discipline profiles throughout operational evaluation windows.
         </div>
 
         <div class="aviator-flight-panel">
@@ -408,7 +407,7 @@
                 <canvas id="liveGameCanvas" class="game-canvas" width="540" height="230"></canvas>
                 <div class="flight-counter">
                     <div id="liveDisplayMultiplier" class="live-mult">1.00x</div>
-                    <div id="liveFlightStatusText" class="live-status">Loading Systems...</div>
+                    <div id="liveFlightStatusText" class="live-status">Syncing Terminal Core...</div>
                 </div>
 
                 <div class="player-counter-hud">
@@ -421,8 +420,8 @@
         <div class="betting-console-board">
             <div class="control-dashboard-panel">
                 <div class="dashboard-category-tabs">
-                    <div id="tabBet1" class="dashboard-tab active" onclick="switchBetCategory(1, 'bet')">Bet</div>
-                    <div id="tabAuto1" class="dashboard-tab" onclick="switchBetCategory(1, 'auto')">Auto</div>
+                    <div id="tabBet1" class="dashboard-tab active" onclick="switchBetCategory(1, 'bet')">Execute</div>
+                    <div id="tabAuto1" class="dashboard-tab" onclick="switchBetCategory(1, 'auto')">Auto Mode</div>
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
@@ -433,7 +432,7 @@
                         </div>
                     </div>
                     <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">50.00 KES</span>
+                        <span>Initialize</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">50.00 Units</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid1">
@@ -444,14 +443,14 @@
                 </div>
                 <div id="autoControls1" class="auto-controls-section hidden">
                     <div class="auto-switch-row">
-                        <span class="auto-switch-label">Auto Cash Out</span>
+                        <span class="auto-switch-label">Target Multiplier Cutoff</span>
                         <label class="switch-input-wrapper">
                             <input type="checkbox" id="autoCashoutToggle1">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div class="auto-input-box">
-                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
+                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">COEFFICIENT</span>
                         <input type="number" step="0.01" id="autoCashoutTarget1" class="auto-input-field" value="2.00">
                     </div>
                 </div>
@@ -459,8 +458,8 @@
 
             <div class="control-dashboard-panel">
                 <div class="dashboard-category-tabs">
-                    <div id="tabBet2" class="dashboard-tab active" onclick="switchBetCategory(2, 'bet')">Bet</div>
-                    <div id="tabAuto2" class="dashboard-tab" onclick="switchBetCategory(2, 'auto')">Auto</div>
+                    <div id="tabBet2" class="dashboard-tab active" onclick="switchBetCategory(2, 'bet')">Execute</div>
+                    <div id="tabAuto2" class="dashboard-tab" onclick="switchBetCategory(2, 'auto')">Auto Mode</div>
                 </div>
                 <div class="wager-entry-row">
                     <div class="wager-box">
@@ -471,7 +470,7 @@
                         </div>
                     </div>
                     <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Bet</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">50.00 KES</span>
+                        <span>Initialize</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">50.00 Units</span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid2">
@@ -482,14 +481,14 @@
                 </div>
                 <div id="autoControls2" class="auto-controls-section hidden">
                     <div class="auto-switch-row">
-                        <span class="auto-switch-label">Auto Cash Out</span>
+                        <span class="auto-switch-label">Target Multiplier Cutoff</span>
                         <label class="switch-input-wrapper">
                             <input type="checkbox" id="autoCashoutToggle2">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div class="auto-input-box">
-                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">MULTIPLIER</span>
+                        <span style="font-size: 11px; font-weight:700; color:var(--text-secondary);">COEFFICIENT</span>
                         <input type="number" step="0.01" id="autoCashoutTarget2" class="auto-input-field" value="2.00">
                     </div>
                 </div>
@@ -498,15 +497,15 @@
     </div>
 
     <div id="aiOrb" class="floating-ai-assistant">
-        <div class="floating-ai-label">AI Signal</div>
+        <div class="floating-ai-label">AI Logic</div>
         <div id="aiDirectPrediction" class="floating-ai-value">---</div>
     </div>
 
     <div id="authModal" class="overlay-screen">
         <div class="form-modal-card">
             <div class="auth-nav">
-                <div id="tabSignIn" class="auth-tab active" onclick="setAuthMode('signin')">Sign In</div>
-                <div id="tabSignUp" class="auth-tab" onclick="setAuthMode('signup')">Sign Up</div>
+                <div id="tabSignIn" class="auth-tab active" onclick="setAuthMode('signin')">Access Code</div>
+                <div id="tabSignUp" class="auth-tab" onclick="setAuthMode('signup')">Initialize Identity</div>
             </div>
             
             <h2 id="authTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Welcome Back</h2>
@@ -554,12 +553,12 @@
     <div id="depositModal" class="overlay-screen">
         <div class="form-modal-card">
             <div class="auth-nav">
-                <div id="tabDeposit" class="auth-tab active" onclick="setFundsMode('deposit')">Deposit</div>
-                <div id="tabWithdraw" class="auth-tab" onclick="setFundsMode('withdraw')">Withdraw</div>
+                <div id="tabDeposit" class="auth-tab active" onclick="setFundsMode('deposit')">Inflow</div>
+                <div id="tabWithdraw" class="auth-tab" onclick="setFundsMode('withdraw')">Outflow</div>
             </div>
             
-            <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Fund Balance</h2>
-            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Deposit via Lipwa</p>
+            <h2 id="fundsTitle" style="margin:0; font-size:18px; font-weight: 800; color: var(--text-main);">Sync Balance Database</h2>
+            <p id="fundsDesc" style="color:var(--text-sub); font-size:13px; margin: 4px 0 12px 0;">Deposit via Lipwa Gateway</p>
             
             <div class="funds-card-container">
                 <div id="depositFormFields">
@@ -568,22 +567,22 @@
                         <input type="text" id="depName" class="form-input-control" placeholder="John Doe">
                     </div>
                     <div class="form-input-group">
-                        <label>M-Pesa Number</label>
+                        <label>Network Routing Node</label>
                         <input type="tel" id="depPhone" class="form-input-control" placeholder="e.g. 0712345678">
                     </div>
                 </div>
                 <div id="withdrawalFields" class="hidden">
                     <div class="form-input-group">
-                        <label>M-Pesa Name</label>
+                        <label>Account Target Name</label>
                         <input type="text" id="withName" class="form-input-control" placeholder="e.g. John Doe">
                     </div>
                     <div class="form-input-group">
-                        <label>M-Pesa Number</label>
+                        <label>Network Routing Node</label>
                         <input type="tel" id="withPhone" class="form-input-control" placeholder="e.g. 0712345678">
                     </div>
                 </div>
                 <div class="form-input-group" style="margin-bottom:4px;">
-                    <label id="amtLabel">Amount (Ksh)</label>
+                    <label id="amtLabel">Allocation Units</label>
                     <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
                 <div class="chip-grid">
@@ -596,7 +595,7 @@
                 </div>
             </div>
             
-            <button id="fundsSubmit" onclick="handleFundsAction()" class="form-submit-btn" style="background:var(--yes-blue);">Confirm Action</button>
+            <button id="fundsSubmit" onclick="handleFundsAction()" class="form-submit-btn" style="background:var(--yes-blue);">Confirm Matrix Action</button>
             
             <span class="badge-container">
                 <img src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-light.png" class="badge-img" alt="IntaSend Secure Payments">
@@ -682,7 +681,7 @@
                         localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
                     }
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    alert(`System Alert: Your deposit of KES ${verifiedAmt.toLocaleString()} has been added to your profile balance.`);
+                    alert(`System Alert: Your optimization unit allocation of ${verifiedAmt.toLocaleString()} has been processed into the balance map.`);
                 }
             }
         }
@@ -802,17 +801,17 @@
                 document.getElementById('tabSignIn').classList.remove('active');
                 fields.classList.remove('hidden');
                 confirmField.classList.remove('hidden');
-                document.getElementById('authTitle').innerText = "Create Account";
-                document.getElementById('authDesc').innerText = "Build and test customized predictors";
-                submitBtn.innerText = "Register Now";
+                document.getElementById('authTitle').innerText = "Create Console Profile";
+                document.getElementById('authDesc').innerText = "Build and test customized predictive vector matrices";
+                submitBtn.innerText = "Register Terminal Identity";
             } else {
                 document.getElementById('tabSignIn').classList.add('active');
                 document.getElementById('tabSignUp').classList.remove('active');
                 fields.classList.add('hidden');
                 confirmField.classList.add('hidden');
-                document.getElementById('authTitle').innerText = "Welcome Back";
-                document.getElementById('authDesc').innerText = "Log in using your secure details";
-                submitBtn.innerText = "Access System";
+                document.getElementById('authTitle').innerText = "Terminal Authorization";
+                document.getElementById('authDesc').innerText = "Log in using secure system handshake codes";
+                submitBtn.innerText = "Access System Matrix";
             }
         }
 
@@ -896,21 +895,21 @@
                 val = 50;
                 el.value = val;
             }
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} Units`;
         }
 
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, (parseFloat(el.value) || 50) + delta);
             el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} Units`;
         }
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, value);
             el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} KES`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} Units`;
         }
 
         function initializeCanvasFlight() {
@@ -949,7 +948,7 @@
                     let endY = height - (height * 0.74 * Math.pow(progress, 1.4)) - (height * 0.06);
 
                     ctx.save();
-                    ctx.strokeStyle = "#d91d38";
+                    ctx.strokeStyle = "#38bdf8";
                     ctx.lineWidth = 4;
                     ctx.lineCap = "round";
                     ctx.lineJoin = "round";
@@ -965,8 +964,8 @@
                     ctx.lineTo(width * 0.05, height);
                     ctx.closePath();
                     let areaGlow = ctx.createLinearGradient(0, endY, 0, height);
-                    areaGlow.addColorStop(0, "rgba(217, 29, 56, 0.28)");
-                    areaGlow.addColorStop(1, "rgba(217, 29, 56, 0.0)");
+                    areaGlow.addColorStop(0, "rgba(56, 189, 248, 0.28)");
+                    areaGlow.addColorStop(1, "rgba(56, 189, 248, 0.0)");
                     ctx.fillStyle = areaGlow;
                     ctx.fill();
                     ctx.restore();
@@ -992,7 +991,7 @@
                             continue;
                         }
 
-                        ctx.fillStyle = `rgba(217, 29, 56, ${p.alpha * 0.5})`;
+                        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha * 0.5})`;
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                         ctx.fill();
@@ -1006,55 +1005,12 @@
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    ctx.shadowColor = "rgba(217, 29, 56, 0.7)";
+                    ctx.shadowColor = "rgba(56, 189, 248, 0.7)";
                     ctx.shadowBlur = 10;
 
-                    ctx.fillStyle = "#d91d38";
+                    ctx.fillStyle = "#38bdf8";
                     ctx.beginPath();
-                    ctx.moveTo(-16, -2);
-                    ctx.lineTo(-24, -4);
-                    ctx.lineTo(-26, -10);
-                    ctx.lineTo(-21, -1);
-                    ctx.lineTo(-12, 1);
-                    ctx.lineTo(8, 2);
-                    ctx.quadraticCurveTo(15, 2, 16, -1);
-                    ctx.lineTo(12, -4);
-                    ctx.lineTo(-11, -3);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.shadowBlur = 0;
-                    ctx.fillStyle = "#ffffff";
-                    ctx.beginPath();
-                    ctx.moveTo(-2, -3);
-                    ctx.lineTo(6, -2);
-                    ctx.lineTo(8, -1);
-                    ctx.lineTo(1, -2);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.strokeStyle = "#ffffff";
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(16, -5);
-                    ctx.lineTo(16, 3);
-                    ctx.stroke();
-
-                    ctx.fillStyle = "#111111";
-                    ctx.beginPath();
-                    ctx.arc(3, 4, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = "#ffffff";
-                    ctx.lineWidth = 0.8;
-                    ctx.stroke();
-
-                    ctx.fillStyle = "#b1132a";
-                    ctx.beginPath();
-                    ctx.moveTo(-2, -2);
-                    ctx.lineTo(-6, -15);
-                    ctx.lineTo(2, -15);
-                    ctx.lineTo(5, -2);
-                    ctx.closePath();
+                    ctx.arc(0, 0, 8, 0, Math.PI * 2);
                     ctx.fill();
 
                     ctx.restore();
@@ -1093,14 +1049,14 @@
             document.getElementById('liveDisplayMultiplier').style.color = "#fff";
 
             let cycleTimer = 6;
-            document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
+            document.getElementById('liveFlightStatusText').innerText = `NEXT STREAM PLOT IN ${cycleTimer}s`;
 
             resetBetButtons();
 
             const timerSub = setInterval(() => {
                 cycleTimer--;
                 if (cycleTimer > 0) {
-                    document.getElementById('liveFlightStatusText').innerText = `NEXT ROUND IN ${cycleTimer}s`;
+                    document.getElementById('liveFlightStatusText').innerText = `NEXT STREAM PLOT IN ${cycleTimer}s`;
                 } else {
                     clearInterval(timerSub);
                     startTakeoffPhase();
@@ -1114,7 +1070,7 @@
                 const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 50;
                 btn.disabled = false;
                 btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Bet</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} KES</span>`;
+                btn.innerHTML = `<span>Initialize</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} Units</span>`;
                 activePanelBets[i] = 0;
             }
         }
@@ -1122,7 +1078,7 @@
         function startTakeoffPhase() {
             gameStatus = "flying";
             launchTimeMillis = performance.now();
-            document.getElementById('liveFlightStatusText').innerText = "Flying High";
+            document.getElementById('liveFlightStatusText').innerText = "Plotting Output Curves";
 
             // Safe triggering of media instances
             if (audioOpen) {
@@ -1143,7 +1099,7 @@
                 if (activePanelBets[i] > 0) {
                     btn.disabled = false;
                     btn.className = "bet-btn cash";
-                    btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} KES</span>`;
+                    btn.innerHTML = `<span>Optimize</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} Units</span>`;
                 } else {
                     btn.disabled = true;
                 }
@@ -1163,7 +1119,7 @@
                         if (activePanelBets[i] > 0 && !cashoutStates[i]) {
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
-                            btn.innerHTML = `<span>Cash Out</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} KES</span>`;
+                            btn.innerHTML = `<span>Optimize</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} Units</span>`;
 
                             const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
                             const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
@@ -1192,7 +1148,7 @@
                 playSafeMedia(audioFinal);
             }
 
-            document.getElementById('liveDisplayMultiplier').innerText = "FLEW AWAY!";
+            document.getElementById('liveDisplayMultiplier').innerText = "TERMINAL LIMIT!";
             document.getElementById('liveDisplayMultiplier').style.color = "var(--aviator-red)";
             document.getElementById('liveFlightStatusText').innerText = `${crashCeiling.toFixed(2)}x`;
 
@@ -1210,7 +1166,7 @@
                 const btn = document.getElementById(`wagerSubmitBtn${i}`);
                 btn.disabled = true;
                 btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Crashed</span>`;
+                btn.innerHTML = `<span>Halted</span>`;
             }
 
             setTimeout(triggerGameLoopEngine, 3500);
@@ -1223,8 +1179,8 @@
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
             if (gameStatus === "waiting") {
-                if (stakeValue < 50) return alert("System Alert: Minimum bet allowed is KES 50.00.");
-                if (stakeValue > clientUserBalance) return alert("Insufficient account balance.");
+                if (stakeValue < 50) return alert("System Alert: Minimum processing threshold is 50.00 Units.");
+                if (stakeValue > clientUserBalance) return alert("Insufficient available balance map.");
 
                 activePanelBets[panel] = stakeValue;
                 await updateDatabaseBalance(clientUserBalance - stakeValue);
@@ -1235,7 +1191,7 @@
                 }
 
                 btn.disabled = true;
-                btn.innerHTML = `<span>Locked...</span>`;
+                btn.innerHTML = `<span>Queued...</span>`;
             } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
                 executeCashOut(panel);
             }
@@ -1255,13 +1211,13 @@
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.disabled = true;
             btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Cashed Out</span>`;
+            btn.innerHTML = `<span>Optimized</span>`;
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
 
             // Display Top Notification Bar and withdraw after 2.5s
             const bannerNode = document.getElementById('cashoutSuccessBar');
-            bannerNode.innerHTML = `<span>Cashed out at ${currentMultiplier}x! You won KES ${netReturns.toFixed(2)}</span>`;
+            bannerNode.innerHTML = `<span>Optimized at ${currentMultiplier}x! Yielded ${netReturns.toFixed(2)} Units</span>`;
             bannerNode.classList.add('active');
 
             setTimeout(() => {
@@ -1280,16 +1236,16 @@
                 document.getElementById('withdrawalFields').classList.remove('hidden');
                 document.getElementById('depositFormFields').classList.add('hidden');
                 submitBtn.style.background = "var(--no-red)";
-                submitBtn.innerText = "Confirm Payout";
-                document.getElementById('fundsDesc').innerText = "Withdraw directly to M-Pesa";
+                submitBtn.innerText = "Confirm Outflow Payout";
+                document.getElementById('fundsDesc').innerText = "Execute balance extraction to node gateway";
             } else {
                 document.getElementById('tabDeposit').classList.add('active');
                 document.getElementById('tabWithdraw').classList.remove('active');
                 document.getElementById('withdrawalFields').classList.add('hidden');
                 document.getElementById('depositFormFields').classList.remove('hidden');
                 submitBtn.style.background = "var(--yes-blue)";
-                submitBtn.innerText = "Confirm Action";
-                document.getElementById('fundsDesc').innerText = "Pay Hero Checkout via Lipwa";
+                submitBtn.innerText = "Confirm Inflow Allocation";
+                document.getElementById('fundsDesc').innerText = "Pay Hero Checkout via Lipwa Secured Link";
             }
         }
 
@@ -1311,39 +1267,5 @@
             const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
 
             if (currentFundsMode === 'withdraw') {
-                if (isNaN(amt) || amt < 500) return alert("Minimum withdrawal amount required is Ksh 500.00.");
-                const wPhone = document.getElementById('withPhone').value.trim();
-                const wName = document.getElementById('withName').value.trim();
-                if (!wPhone || !wName) return alert("Fill in the withdrawal M-Pesa phone number and name.");
-
-                if (amt > clientUserBalance) return alert("Insufficient available balance.");
-
-                await updateDatabaseBalance(clientUserBalance - amt);
-                closeModal('depositModal');
-                alert(`Withdrawal request ${invoiceRef} for KES ${amt.toLocaleString()} processed successfully.`);
-            } else {
-                if (isNaN(amt) || amt < 200) return alert("Minimum deposit amount required is Ksh 200.00.");
-                const dPhone = document.getElementById('depPhone').value.trim();
-                const dName = document.getElementById('depName').value.trim();
-                if (!dPhone || !dName) return alert("Please provide your name and active phone number.");
-
-                if (isNewAccountDepositProfile) {
-                    localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
-                }
-
-                closeModal('depositModal');
-
-                const currentUrl = window.location.origin + window.location.pathname;
-                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
-                
-                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
-            }
-        }
-
-        function closeModal(id) { 
-            const node = document.getElementById(id);
-            if (node) node.style.display = 'none'; 
-        }
-    </script>
-</body>
-</html>
+                if (isNaN(amt) || amt < 500) return alert("Minimum withdrawal baseline is 500.00 Units.");
+                const wPhone = document.
