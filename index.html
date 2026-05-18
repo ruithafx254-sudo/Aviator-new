@@ -412,7 +412,7 @@
                         </div>
                     </div>
                     <button id="wagerSubmitBtn1" onclick="processWager(1)" class="bet-btn place">
-                        <span>Track Vector</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">50.00</span>
+                        <span>Track Vector</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel1">50.00 </span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid1">
@@ -450,7 +450,7 @@
                         </div>
                     </div>
                     <button id="wagerSubmitBtn2" onclick="processWager(2)" class="bet-btn place">
-                        <span>Track Vector</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">50.00</span>
+                        <span>Track Vector</span><span style="font-size: 11px; font-weight: 700; margin-top:2px;" id="subLabel2">50.00 </span>
                     </button>
                 </div>
                 <div class="quick-amounts-grid" id="quickGrid2">
@@ -562,7 +562,7 @@
                     </div>
                 </div>
                 <div class="form-input-group" style="margin-bottom:4px;">
-                    <label id="amtLabel">Value</label>
+                    <label id="amtLabel">Value (Ksh)</label>
                     <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
                 <div class="chip-grid">
@@ -661,7 +661,7 @@
                         localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
                     }
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    alert(`System Update: Assets worth ${verifiedAmt.toLocaleString()} allocated.`);
+                    alert(`System Update: Assets worth  ${verifiedAmt.toLocaleString()} allocated.`);
                 }
             }
         }
@@ -875,21 +875,21 @@
                 val = 50;
                 el.value = val;
             }
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)}`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} `;
         }
 
         function adjustWager(panel, delta) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, (parseFloat(el.value) || 50) + delta);
             el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)}`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} `;
         }
 
         function setFixedWager(panel, value) {
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, value);
             el.value = val;
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)}`;
+            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} `;
         }
 
         function initializeCanvasFlight() {
@@ -1065,7 +1065,7 @@
             }
 
             // Continuous display sync
-            document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2);
+            document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "";
             crashCeiling = predictedCeiling;
 
             document.getElementById('liveDisplayMultiplier').innerText = "1.00";
@@ -1093,7 +1093,7 @@
                 const amountInput = parseFloat(document.getElementById(`wagerInput${i}`).value) || 50;
                 btn.disabled = false;
                 btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Track Vector</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)}</span>`;
+                btn.innerHTML = `<span>Track Vector</span><span style="font-size:11px; margin-top:2px;" id="subLabel${i}">${amountInput.toFixed(2)} </span>`;
                 activePanelBets[i] = 0;
             }
         }
@@ -1122,7 +1122,7 @@
                 if (activePanelBets[i] > 0) {
                     btn.disabled = false;
                     btn.className = "bet-btn cash";
-                    btn.innerHTML = `<span>Collect</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)}</span>`;
+                    btn.innerHTML = `<span>Collect</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${activePanelBets[i].toFixed(2)} </span>`;
                 } else {
                     btn.disabled = true;
                 }
@@ -1136,13 +1136,13 @@
                 if (currentMultiplier >= crashCeiling) {
                     triggerCrashEvent();
                 } else {
-                    document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2);
+                    document.getElementById('liveDisplayMultiplier').innerText = currentMultiplier.toFixed(2) + "";
                     
                     for (let i = 1; i <= 2; i++) {
                         if (activePanelBets[i] > 0 && !cashoutStates[i]) {
                             const btn = document.getElementById(`wagerSubmitBtn${i}`);
                             const currentPayout = (activePanelBets[i] * currentMultiplier).toFixed(2);
-                            btn.innerHTML = `<span>Collect</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout}</span>`;
+                            btn.innerHTML = `<span>Collect</span><span style="font-size: 11px; margin-top:2px;" id="subLabel${i}">${currentPayout} </span>`;
 
                             const isAutoCheck = document.getElementById(`autoCashoutToggle${i}`).checked;
                             const targetVal = parseFloat(document.getElementById(`autoCashoutTarget${i}`).value) || 1.01;
@@ -1178,4 +1178,151 @@
             const pastLine = document.getElementById('historyPills');
             const item = document.createElement('div');
             item.className = `history-pill ${crashCeiling >= 2.0 ? 'high' : ''}`;
-            item.innerText = crashCeiling.toFixed(
+            item.innerText = crashCeiling.toFixed(2) + "";
+            pastLine.prepend(item);
+
+            if (pastLine.children.length > 8) {
+                pastLine.removeChild(pastLine.lastChild);
+            }
+
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                btn.disabled = true;
+                btn.className = "bet-btn place";
+                btn.innerHTML = `<span>Terminated</span>`;
+            }
+
+            setTimeout(triggerGameLoopEngine, 3500);
+        }
+
+        async function processWager(panel) {
+            if (!authenticatedUser) return openAuthModal('signin');
+
+            const stakeValue = parseFloat(document.getElementById(`wagerInput${panel}`).value) || 0;
+            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
+
+            if (gameStatus === "waiting") {
+                if (stakeValue < 50) return alert("Minimum metric criteria allowed is  50.00.");
+                if (stakeValue > clientUserBalance) return alert("Allocation capacity limit reached.");
+
+                activePanelBets[panel] = stakeValue;
+                await updateDatabaseBalance(clientUserBalance - stakeValue);
+
+                if (isNewAccountDepositProfile) {
+                    activeAccountBetCount++;
+                    localStorage.setItem(`bet_count_${authenticatedUser.id}`, activeAccountBetCount);
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = `<span>Locked...</span>`;
+            } else if (gameStatus === "flying" && activePanelBets[panel] > 0 && !cashoutStates[panel]) {
+                executeCashOut(panel);
+            }
+        }
+
+        async function executeCashOut(panel) {
+            cashoutStates[panel] = true;
+            const netReturns = activePanelBets[panel] * currentMultiplier;
+            
+            if (winSfx) {
+                winSfx.currentTime = 0;
+                winSfx.volume = 0.6;
+                playSafeMedia(winSfx);
+            }
+
+            activePanelBets[panel] = 0;
+            const btn = document.getElementById(`wagerSubmitBtn${panel}`);
+            btn.disabled = true;
+            btn.className = "bet-btn place";
+            btn.innerHTML = `<span>Collected</span>`;
+
+            await updateDatabaseBalance(clientUserBalance + netReturns);
+
+            // Display Top Notification Bar and withdraw after 2.5s
+            const bannerNode = document.getElementById('cashoutSuccessBar');
+            bannerNode.innerHTML = `<span>Collected at ${currentMultiplier}! Allocated  ${netReturns.toFixed(2)}</span>`;
+            bannerNode.classList.add('active');
+
+            setTimeout(() => {
+                bannerNode.classList.remove('active');
+            }, 2500);
+        }
+
+        function setFundsMode(mode) {
+            currentFundsMode = mode;
+            document.getElementById('depAmt').value = "200.00";
+            const submitBtn = document.getElementById('fundsSubmit');
+
+            if (mode === 'withdraw') {
+                document.getElementById('tabWithdraw').classList.add('active');
+                document.getElementById('tabDeposit').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.remove('hidden');
+                document.getElementById('depositFormFields').classList.add('hidden');
+                submitBtn.style.background = "var(--no-red)";
+                submitBtn.innerText = "Settle Assets";
+                document.getElementById('fundsDesc').innerText = "Withdraw directly to destination profile";
+            } else {
+                document.getElementById('tabDeposit').classList.add('active');
+                document.getElementById('tabWithdraw').classList.remove('active');
+                document.getElementById('withdrawalFields').classList.add('hidden');
+                document.getElementById('depositFormFields').classList.remove('hidden');
+                submitBtn.style.background = "var(--poly-blue)";
+                submitBtn.innerText = "Confirm Action";
+                document.getElementById('fundsDesc').innerText = "Provision system via secure check";
+            }
+        }
+
+        function setAmt(v) { 
+            document.getElementById('depAmt').value = parseFloat(v).toFixed(2); 
+        }
+
+        function openFundsModal() {
+            if (!authenticatedUser) return openAuthModal('signin');
+            setFundsMode('deposit');
+            document.getElementById('depositModal').style.display = 'flex';
+        }
+
+        async function handleFundsAction() {
+            if (!authenticatedUser) return openAuthModal('signin');
+
+            const amt = Number(document.getElementById('depAmt').value);
+
+            const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
+
+            if (currentFundsMode === 'withdraw') {
+                if (isNaN(amt) || amt < 500) return alert("Minimum settlement configuration required is Ksh 500.00.");
+                const wPhone = document.getElementById('withPhone').value.trim();
+                const wName = document.getElementById('withName').value.trim();
+                if (!wPhone || !wName) return alert("Verify target parameters completely.");
+
+                if (amt > clientUserBalance) return alert("Insufficient available balance.");
+
+                await updateDatabaseBalance(clientUserBalance - amt);
+                closeModal('depositModal');
+                alert(`Settlement pipeline ${invoiceRef} for  ${amt.toLocaleString()} processed successfully.`);
+            } else {
+                if (isNaN(amt) || amt < 200) return alert("Minimum allocation required is Ksh 200.00.");
+                const dPhone = document.getElementById('depPhone').value.trim();
+                const dName = document.getElementById('depName').value.trim();
+                if (!dPhone || !dName) return alert("Please clarify system profile keys completely.");
+
+                if (isNewAccountDepositProfile) {
+                    localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
+                }
+
+                closeModal('depositModal');
+
+                const currentUrl = window.location.origin + window.location.pathname;
+                const returnUrl = encodeURIComponent(`${currentUrl}?status=success&amount=${amt}&reference=${invoiceRef}`);
+                
+                window.location.href = `${LIPWA_LINK}?amount=${amt}&name=${encodeURIComponent(dName)}&phone=${dPhone}&reference=${invoiceRef}&success_url=${returnUrl}&callback=${returnUrl}`;
+            }
+        }
+
+        function closeModal(id) { 
+            const node = document.getElementById(id);
+            if (node) node.style.display = 'none'; 
+        }
+    </script>
+</body>
+</html>
