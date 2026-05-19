@@ -462,10 +462,6 @@
 </head>
 <body>
 
-    <div id="cashoutSuccessBar" class="cashout-notification-bar">
-        <span>Allocation Finalized Successfully!</span>
-    </div>
-
     <audio id="audioFlightOpen" src="Aviator open.mp3" preload="auto"></audio>
     <audio id="audioFlightMiddle" src="Aviator middle.mp3" preload="auto" loop></audio>
     <audio id="audioFlightFinal" src="Aviator final.mp3" preload="auto"></audio>
@@ -1397,15 +1393,6 @@
             btn.innerHTML = `<span>Collected</span>`;
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
-
-            // Display Top Notification Bar and withdraw after 2.5s
-            const bannerNode = document.getElementById('cashoutSuccessBar');
-            bannerNode.innerHTML = `<span>Collected at ${currentMultiplier}! Allocated  ${netReturns.toFixed(2)}</span>`;
-            bannerNode.classList.add('active');
-
-            setTimeout(() => {
-                bannerNode.classList.remove('active');
-            }, 2500);
         }
 
         function setFundsMode(mode) {
@@ -1492,13 +1479,7 @@
                 submitBtn.innerText = "Transaction Settled";
                 submitBtn.disabled = true;
 
-                // Fire custom short success visual sequence banner notification
-                const bannerNode = document.getElementById('cashoutSuccessBar');
-                bannerNode.innerHTML = `<span>Withdrawal Pipeline Executed Successfully!</span>`;
-                bannerNode.classList.add('active');
-
                 setTimeout(() => {
-                    bannerNode.classList.remove('active');
                     closeModal('depositModal');
                     // Reset standard button state configuration matrices for next user operations
                     submitBtn.disabled = false;
