@@ -336,6 +336,56 @@
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Replicated Layout from Screenshot 308dc314-d985-4c8f-a9e1-4f79adb9f4a2 */
+        .sc-form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+        }
+        .sc-input-wrapper {
+            position: relative;
+            background: #171d29;
+            border: 1px solid #29354a;
+            border-radius: 14px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+        }
+        .sc-input-wrapper .sc-icon {
+            color: #4b5d7c;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sc-input-field-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .sc-input-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #4b5d7c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .sc-input-element {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 0;
+            width: 100%;
+        }
+        .sc-input-element::placeholder {
+            color: #38465e;
+        }
     </style>
 </head>
 <body>
@@ -552,16 +602,28 @@
                     </div>
                 </div>
                 <div id="withdrawalFields" class="hidden">
-                    <div class="form-input-group">
-                        <label>Mobile Name</label>
-                        <input type="text" id="withName" class="form-input-control" placeholder="e.g. John Doe">
-                    </div>
-                    <div class="form-input-group">
-                        <label>Mobile Number</label>
-                        <input type="tel" id="withPhone" class="form-input-control" placeholder="e.g. 0712345678">
+                    <div class="sc-form-container">
+                        <div class="sc-input-wrapper">
+                            <div class="sc-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            <div class="sc-input-field-container">
+                                <span class="sc-input-label">M-Pesa Full Name</span>
+                                <input type="text" id="withName" class="sc-input-element" placeholder="e.g. John Doe">
+                            </div>
+                        </div>
+                        <div class="sc-input-wrapper">
+                            <div class="sc-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            </div>
+                            <div class="sc-input-field-container">
+                                <span class="sc-input-label">Phone Number</span>
+                                <input type="tel" id="withPhone" class="sc-input-element" placeholder="e.g. 0712345678">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-input-group" style="margin-bottom:4px;">
+                <div class="form-input-group" style="margin-top:14px; margin-bottom:4px;">
                     <label id="amtLabel">Value (Ksh)</label>
                     <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
