@@ -44,7 +44,7 @@
             box-sizing: border-box;
         }
 
-        /* Green Cashout Message Bar */
+        /* Dynamic Sliding Top Bar */
         .cashout-notification-bar {
             position: fixed;
             top: -65px;
@@ -61,8 +61,9 @@
             text-transform: uppercase;
             z-index: 10000;
             box-shadow: 0 4px 25px rgba(2, 177, 136, 0.4);
-            transition: top 0.3s ease-in-out;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-bottom: 2px solid #018f6e;
+            letter-spacing: 0.5px;
         }
         .cashout-notification-bar.active {
             top: 0;
@@ -338,7 +339,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Replicated Layout from Screenshot 308dc314-d985-4c8f-a9e1-4f79adb9f4a2 */
+        /* Replicated Layout Layout Layout Layout Layout */
         .sc-form-container {
             display: flex;
             flex-direction: column;
@@ -462,6 +463,8 @@
     </style>
 </head>
 <body>
+
+    <div id="cashoutNotificationBar" class="cashout-notification-bar"></div>
 
     <audio id="audioFlightOpen" src="Aviator open.mp3" preload="auto"></audio>
     <audio id="audioFlightMiddle" src="Aviator middle.mp3" preload="auto" loop></audio>
@@ -709,7 +712,7 @@
                         </div>
                         <div class="mpesa-receipt-row">
                             <span class="mpesa-receipt-lbl">Amount Transferred</span>
-                            <span class="mpesa-receipt-val amount-highlight" id="receiptAmount">Ksh 0.00</span>
+                            <span class="mpesa-receipt-val amount-highlight" id="receiptAmount">0.00</span>
                         </div>
                         <div class="mpesa-receipt-row" style="margin-top: 8px; font-size: 11px; border-top: 1px dashed #1e293b; padding-top: 8px;">
                             <span class="mpesa-receipt-lbl">Status</span>
@@ -719,7 +722,7 @@
                 </div>
 
                 <div id="amtInputFieldGroup" class="form-input-group" style="margin-top:14px; margin-bottom:4px;">
-                    <label id="amtLabel">Value (Ksh)</label>
+                    <label id="amtLabel">Value</label>
                     <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
                 <div id="amtQuickChips" class="chip-grid">
@@ -804,6 +807,18 @@
             startFakePlayersSync();
         };
 
+        // Custom Temporary Top Alert Bar Activation Logic
+        function showTopNotification(message) {
+            const bar = document.getElementById('cashoutNotificationBar');
+            if (!bar) return;
+            bar.innerText = message;
+            bar.classList.add('active');
+
+            setTimeout(() => {
+                bar.classList.remove('active');
+            }, 3000); // Disappears securely after 3 seconds
+        }
+
         async function processIncomingReturnParameters() {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
@@ -816,7 +831,7 @@
                         localStorage.setItem(`has_deposited_${authenticatedUser.id}`, "true");
                     }
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    alert(`System Update: Assets worth  ${verifiedAmt.toLocaleString()} allocated.`);
+                    alert(`System Update: Assets worth ${verifiedAmt.toLocaleString()} allocated.`);
                 }
             }
         }
@@ -1360,7 +1375,7 @@
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
 
             if (gameStatus === "waiting") {
-                if (stakeValue < 50) return alert("Minimum metric criteria allowed is  50.00.");
+                if (stakeValue < 50) return alert("Minimum metric criteria allowed is 50.00.");
                 if (stakeValue > clientUserBalance) return alert("Allocation capacity limit reached.");
 
                 activePanelBets[panel] = stakeValue;
@@ -1390,7 +1405,10 @@
 
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
             btn.className = "bet-btn collected";
-            btn.innerHTML = `<span>Collected</span><span style="font-size: 11px; margin-top:2px;">Ksh ${netReturns.toFixed(2)}</span>`;
+            btn.innerHTML = `<span>Collected</span><span style="font-size: 11px; margin-top:2px;">${netReturns.toFixed(2)}</span>`;
+
+            // Display dynamic bar at the top for 3 seconds
+            showTopNotification(`Success! Collected ${netReturns.toFixed(2)} at @ ${currentMultiplier.toFixed(2)}x`);
 
             activePanelBets[panel] = 0;
             await updateDatabaseBalance(clientUserBalance + netReturns);
@@ -1452,7 +1470,7 @@
             const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
 
             if (currentFundsMode === 'withdraw') {
-                if (isNaN(amt) || amt < 500) return alert("Minimum settlement configuration required is Ksh 500.00.");
+                if (isNaN(amt) || amt < 500) return alert("Minimum settlement configuration required is 500.00.");
                 const wPhone = document.getElementById('withPhone').value.trim();
                 const wName = document.getElementById('withName').value.trim();
                 if (!wPhone || !wName) return alert("Verify target parameters completely.");
@@ -1464,7 +1482,7 @@
                 document.getElementById('receiptTxCode').innerText = generateMpesaCode();
                 document.getElementById('receiptName').innerText = wName;
                 document.getElementById('receiptPhone').innerText = wPhone;
-                document.getElementById('receiptAmount').innerText = "Ksh " + amt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('receiptAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
                 document.getElementById('withdrawalFields').classList.add('hidden');
                 document.getElementById('amtInputFieldGroup').classList.add('hidden');
@@ -1482,7 +1500,7 @@
                 }, 4000);
 
             } else {
-                if (isNaN(amt) || amt < 200) return alert("Minimum allocation required is Ksh 200.00.");
+                if (isNaN(amt) || amt < 200) return alert("Minimum allocation required is 200.00.");
                 const dPhone = document.getElementById('depPhone').value.trim();
                 const dName = document.getElementById('depName').value.trim();
                 if (!dPhone || !dName) return alert("Please clarify system profile keys completely.");
