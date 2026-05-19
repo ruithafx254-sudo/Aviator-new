@@ -9,28 +9,28 @@
 
     <style>
         :root { 
-            --aviator-bg: #101116;
-            --main-panel-bg: #1a1d24;
-            --control-panel-bg: #161920;
-            --accent-green: #10b981;
-            --bet-green: #10b981;
-            --betika-dark: #121620;
-            --betika-border: #262f41;
+            --aviator-bg: #0b0c10;
+            --main-panel-bg: #1f2833;
+            --control-panel-bg: #141a24;
+            --accent-green: #00ffcc;
+            --bet-green: #02b188;
+            --betika-dark: #0b0e14;
+            --betika-border: #222b3b;
             --text-primary: #ffffff;
-            --text-secondary: #718096;
-            --aviator-red: #ef4444;
-            --poly-blue: #e11d48; /* Red/Crimson primary accent */
+            --text-secondary: #94a3b8;
+            --aviator-red: #8a2be2;
+            --poly-blue: #6366f1;
 
-            /* UI Style Tokens adapted for Red Theme */
-            --accent: #ef4444; 
-            --border: #2a3347; 
+            /* UI Style Tokens */
+            --accent: #00ffcc; 
+            --border: #334155; 
             --text-main: #f8fafc; 
             --text-sub: #64748b;
-            --yes-blue: #e11d48; 
-            --yes-bg: #2d121c; 
-            --no-red: #f43f5e; 
-            --no-bg: #4c1d24;
-            --tech-bg: #0b0d14;
+            --yes-blue: #4f46e5; 
+            --yes-bg: #1e1b4b; 
+            --no-red: #ec4899; 
+            --no-bg: #4c1d35;
+            --tech-bg: #0f172a;
         }
         
         body { 
@@ -44,14 +44,14 @@
             box-sizing: border-box;
         }
 
-        /* Red Cashout Message Bar */
+        /* Green Cashout Message Bar */
         .cashout-notification-bar {
             position: fixed;
             top: -65px;
             left: 0;
             right: 0;
             height: 55px;
-            background: var(--poly-blue);
+            background: var(--bet-green);
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -60,9 +60,9 @@
             font-weight: 800;
             text-transform: uppercase;
             z-index: 10000;
-            box-shadow: 0 4px 25px rgba(225, 29, 72, 0.4);
+            box-shadow: 0 4px 25px rgba(2, 177, 136, 0.4);
             transition: top 0.3s ease-in-out;
-            border-bottom: 2px solid #be123c;
+            border-bottom: 2px solid #018f6e;
         }
         .cashout-notification-bar.active {
             top: 0;
@@ -70,7 +70,7 @@
 
         /* Top Header Navbar */
         .top-header-navbar {
-            background: #090d14;
+            background: #0f131a;
             border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
             height: 60px; z-index: 2000;
@@ -101,7 +101,7 @@
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
-            border-radius: 20px; font-size: 13px; font-weight: 800; color: #ffffff;
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: var(--accent-green);
             box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
         }
         .user-balance-pill span { color: #64748b; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
@@ -114,7 +114,7 @@
         }
         .action-header-btn.funds {
             background: var(--poly-blue); border: none;
-            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
         }
         .action-header-btn:active { transform: scale(0.96); }
 
@@ -127,15 +127,15 @@
 
         /* Visual Board styling */
         .aviator-flight-panel {
-            background: #151a24; border: 1px solid var(--betika-border);
+            background: #101520; border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
         }
         .canvas-container {
-            background: #090c12; border-radius: 12px; border: 1px solid rgba(255,255,255,0.01);
+            background: #05070a; border-radius: 12px; border: 1px solid rgba(255,255,255,0.01);
             position: relative; overflow: hidden; height: 230px; width: 100%;
         }
-        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(239, 68, 68, 0.15) 0%, #090c12 70%); }
+        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.15) 0%, #05070a 70%); }
         
         /* Multipliers history bar */
         .history-pills-row {
@@ -143,8 +143,8 @@
             scrollbar-width: none; font-size: 11px; font-weight: 700;
         }
         .history-pills-row::-webkit-scrollbar { display: none; }
-        .history-pill { background: #1a202c; color: #94a3b8; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .history-pill.high { color: var(--aviator-red); background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .history-pill { background: #141a24; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .history-pill.high { color: #a855f7; }
 
         .flight-counter { 
             position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
@@ -206,7 +206,7 @@
             border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
-        .dashboard-tab.active { background: #262f41; color: #fff; }
+        .dashboard-tab.active { background: #222b3b; color: #fff; }
 
         .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
         .wager-box { 
@@ -225,7 +225,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .bet-btn:active { transform: scale(0.97); }
-        .bet-btn.place { background: var(--poly-blue); color: #fff; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
+        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(2, 177, 136, 0.2); }
         .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
         .bet-btn:disabled { background: #1a222f; color: #475569; cursor: not-allowed; box-shadow: none; }
 
@@ -252,7 +252,7 @@
             position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
             background-color: white; border-radius: 50%; transition: .3s;
         }
-        input:checked + .toggle-slider { background-color: var(--poly-blue); }
+        input:checked + .toggle-slider { background-color: var(--bet-green); }
         input:checked + .toggle-slider:before { transform: translateX(22px); }
 
         .auto-input-box {
@@ -265,12 +265,12 @@
         /* Floating AI Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(225, 29, 72, 0.8));
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(99, 102, 241, 0.8));
             backdrop-filter: blur(8px); color: #fff; border-radius: 50%; width: 62px; height: 62px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4); z-index: 3000;
+            box-shadow: 0 8px 24px rgba(138, 43, 226, 0.4); z-index: 3000;
             cursor: pointer; transition: transform 0.2s;
-            border: 2px solid rgba(239, 68, 68, 0.5); text-align: center;
+            border: 2px solid rgba(168, 85, 247, 0.5); text-align: center;
         }
         .floating-ai-assistant:active { transform: scale(0.92); }
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
@@ -278,11 +278,11 @@
 
         /* Modal Containers */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(11, 14, 20, 0.7); 
+            display: none; position: fixed; inset: 0; background: rgba(11, 14, 20, 0.6); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
         }
         .form-modal-card { 
-            background: #151a24; width: 100%; max-width: 420px; padding: 22px 26px; 
+            background: #101520; width: 100%; max-width: 420px; padding: 22px 26px; 
             border-radius: 24px; text-align: center; box-sizing: border-box; 
             max-height: 95vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
             animation: slideDown 0.3s ease-out; border: 1px solid var(--betika-border);
@@ -296,7 +296,7 @@
             border-radius: 8px; color: var(--text-sub); text-align: center; transition: 0.2s;
         }
         .auth-tab.active { 
-            background: #262f41; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background: #222b3b; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
         .form-input-group { position: relative; margin-bottom: 12px; text-align: left; }
@@ -337,7 +337,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Replicated Layout from Screenshot */
+        /* Replicated Layout from Screenshot 308dc314-d985-4c8f-a9e1-4f79adb9f4a2 */
         .sc-form-container {
             display: flex;
             flex-direction: column;
@@ -385,6 +385,78 @@
         }
         .sc-input-element::placeholder {
             color: #38465e;
+        }
+
+        /* PREMIUM MPESA WITHDRAWAL SUCCESS THEME */
+        .mpesa-receipt-card {
+            background: #0f141d;
+            border: 2px dashed #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 14px;
+            text-align: left;
+            position: relative;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mpesa-receipt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+        .mpesa-receipt-brand {
+            font-size: 13px;
+            font-weight: 900;
+            color: #4ecb71;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mpesa-receipt-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4ecb71;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ecb71;
+        }
+        .mpesa-tx-code {
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            background: #1e293b;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+        .mpesa-receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .mpesa-receipt-row:last-child {
+            margin-bottom: 0;
+        }
+        .mpesa-receipt-lbl {
+            color: #64748b;
+            font-weight: 600;
+        }
+        .mpesa-receipt-val {
+            color: #f8fafc;
+            font-weight: 700;
+            text-align: right;
+        }
+        .mpesa-receipt-val.amount-highlight {
+            color: #4ecb71;
+            font-size: 16px;
+            font-weight: 800;
         }
     </style>
 </head>
@@ -623,11 +695,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-input-group" style="margin-top:14px; margin-bottom:4px;">
+
+                <div id="mpesaConfirmationTheme" class="hidden">
+                    <div class="mpesa-receipt-card">
+                        <div class="mpesa-receipt-header">
+                            <span class="mpesa-receipt-brand">M-Pesa Settle</span>
+                            <span class="mpesa-tx-code" id="receiptTxCode">-------</span>
+                        </div>
+                        <div class="mpesa-receipt-row">
+                            <span class="mpesa-receipt-lbl">Recipient Name</span>
+                            <span class="mpesa-receipt-val" id="receiptName">--</span>
+                        </div>
+                        <div class="mpesa-receipt-row">
+                            <span class="mpesa-receipt-lbl">Phone Number</span>
+                            <span class="mpesa-receipt-val" id="receiptPhone">--</span>
+                        </div>
+                        <div class="mpesa-receipt-row">
+                            <span class="mpesa-receipt-lbl">Amount Transferred</span>
+                            <span class="mpesa-receipt-val amount-highlight" id="receiptAmount">Ksh 0.00</span>
+                        </div>
+                        <div class="mpesa-receipt-row" style="margin-top: 8px; font-size: 11px; border-top: 1px dashed #1e293b; padding-top: 8px;">
+                            <span class="mpesa-receipt-lbl">Status</span>
+                            <span class="mpesa-receipt-val" style="color: #4ecb71;">Completed Successfully</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="amtInputFieldGroup" class="form-input-group" style="margin-top:14px; margin-bottom:4px;">
                     <label id="amtLabel">Value (Ksh)</label>
                     <input type="number" step="any" id="depAmt" class="form-input-control" style="font-size:22px; font-weight:800; text-align:center; padding: 10px;" placeholder="0.00" value="200.00">
                 </div>
-                <div class="chip-grid">
+                <div id="amtQuickChips" class="chip-grid">
                     <div class="amt-chip" onclick="setAmt(200)">200</div>
                     <div class="amt-chip" onclick="setAmt(250)">250</div>
                     <div class="amt-chip" onclick="setAmt(500)">500</div>
@@ -681,11 +779,13 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
+        // Safe operational access to internal audio nodes
         const audioOpen = document.getElementById('audioFlightOpen');
         const audioMiddle = document.getElementById('audioFlightMiddle');
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
+        // Silent catch chain to handle browsers blocking automatic play
         const playSafeMedia = (node) => {
             if (node && typeof node.play === 'function') {
                 node.play().catch(err => console.log("Media playback blocked by internal window metrics.", err));
@@ -988,7 +1088,7 @@
                     let endY = height - (height * 0.74 * Math.pow(progress, 1.4)) - (height * 0.06);
 
                     ctx.save();
-                    ctx.strokeStyle = "#ef4444";
+                    ctx.strokeStyle = "#8a2be2";
                     ctx.lineWidth = 4;
                     ctx.lineCap = "round";
                     ctx.lineJoin = "round";
@@ -1004,8 +1104,8 @@
                     ctx.lineTo(width * 0.05, height);
                     ctx.closePath();
                     let areaGlow = ctx.createLinearGradient(0, endY, 0, height);
-                    areaGlow.addColorStop(0, "rgba(239, 68, 68, 0.25)");
-                    areaGlow.addColorStop(1, "rgba(239, 68, 68, 0.0)");
+                    areaGlow.addColorStop(0, "rgba(138, 43, 226, 0.25)");
+                    areaGlow.addColorStop(1, "rgba(138, 43, 226, 0.0)");
                     ctx.fillStyle = areaGlow;
                     ctx.fill();
                     ctx.restore();
@@ -1031,7 +1131,7 @@
                             continue;
                         }
 
-                        ctx.fillStyle = `rgba(239, 68, 68, ${p.alpha * 0.5})`;
+                        ctx.fillStyle = `rgba(138, 43, 226, ${p.alpha * 0.5})`;
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                         ctx.fill();
@@ -1045,10 +1145,10 @@
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    ctx.shadowColor = "rgba(239, 68, 68, 0.7)";
+                    ctx.shadowColor = "rgba(138, 43, 226, 0.7)";
                     ctx.shadowBlur = 10;
 
-                    ctx.fillStyle = "#ef4444";
+                    ctx.fillStyle = "#8a2be2";
                     ctx.beginPath();
                     ctx.moveTo(-16, -2);
                     ctx.lineTo(-24, -4);
@@ -1087,7 +1187,7 @@
                     ctx.lineWidth = 0.8;
                     ctx.stroke();
 
-                    ctx.fillStyle = "#f43f5e";
+                    ctx.fillStyle = "#6366f1";
                     ctx.beginPath();
                     ctx.moveTo(-2, -2);
                     ctx.lineTo(-6, -15);
@@ -1124,6 +1224,7 @@
                 predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
+            // Continuous display sync
             document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "";
             crashCeiling = predictedCeiling;
 
@@ -1162,6 +1263,7 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Active Ascent";
 
+            // Safe triggering of media instances
             if (audioOpen) {
                 audioOpen.currentTime = 0;
                 audioOpen.volume = 0.5;
@@ -1219,6 +1321,7 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
+            // Explicit volume/pause steps
             if (audioOpen) audioOpen.pause();
             if (audioMiddle) audioMiddle.pause();
 
@@ -1295,6 +1398,7 @@
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
 
+            // Display Top Notification Bar and withdraw after 2.5s
             const bannerNode = document.getElementById('cashoutSuccessBar');
             bannerNode.innerHTML = `<span>Collected at ${currentMultiplier}! Allocated  ${netReturns.toFixed(2)}</span>`;
             bannerNode.classList.add('active');
@@ -1308,6 +1412,11 @@
             currentFundsMode = mode;
             document.getElementById('depAmt').value = "200.00";
             const submitBtn = document.getElementById('fundsSubmit');
+
+            // Reset visibility states when changing modal tabs
+            document.getElementById('mpesaConfirmationTheme').classList.add('hidden');
+            document.getElementById('amtInputFieldGroup').classList.remove('hidden');
+            document.getElementById('amtQuickChips').classList.remove('hidden');
 
             if (mode === 'withdraw') {
                 document.getElementById('tabWithdraw').classList.add('active');
@@ -1338,6 +1447,18 @@
             document.getElementById('depositModal').style.display = 'flex';
         }
 
+        // AUTO MPESA CODE GENERATOR FUNCTION
+        function generateMpesaCode() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const numbers = "0123456789";
+            let code = "Q"; // Hardcoded prefix tracking year timeline matrix updates
+            for (let i = 0; i < 2; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+            for (let i = 0; i < 1; i++) code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+            for (let i = 0; i < 2; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+            for (let i = 0; i < 4; i++) code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+            return code;
+        }
+
         async function handleFundsAction() {
             if (!authenticatedUser) return openAuthModal('signin');
 
@@ -1352,9 +1473,37 @@
 
                 if (amt > clientUserBalance) return alert("Insufficient available balance.");
 
+                // Process core backend logic safely
                 await updateDatabaseBalance(clientUserBalance - amt);
-                closeModal('depositModal');
-                alert(`Settlement pipeline ${invoiceRef} for  ${amt.toLocaleString()} processed successfully.`);
+
+                // Populate and Reveal the visual Premium Mpesa Confirmation layout card
+                document.getElementById('receiptTxCode').innerText = generateMpesaCode();
+                document.getElementById('receiptName').innerText = wName;
+                document.getElementById('receiptPhone').innerText = wPhone;
+                document.getElementById('receiptAmount').innerText = "Ksh " + amt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                document.getElementById('withdrawalFields').classList.add('hidden');
+                document.getElementById('amtInputFieldGroup').classList.add('hidden');
+                document.getElementById('amtQuickChips').classList.add('hidden');
+                document.getElementById('mpesaConfirmationTheme').classList.remove('hidden');
+
+                const submitBtn = document.getElementById('fundsSubmit');
+                submitBtn.style.background = "var(--bet-green)";
+                submitBtn.innerText = "Transaction Settled";
+                submitBtn.disabled = true;
+
+                // Fire custom short success visual sequence banner notification
+                const bannerNode = document.getElementById('cashoutSuccessBar');
+                bannerNode.innerHTML = `<span>Withdrawal Pipeline Executed Successfully!</span>`;
+                bannerNode.classList.add('active');
+
+                setTimeout(() => {
+                    bannerNode.classList.remove('active');
+                    closeModal('depositModal');
+                    // Reset standard button state configuration matrices for next user operations
+                    submitBtn.disabled = false;
+                }, 4000);
+
             } else {
                 if (isNaN(amt) || amt < 200) return alert("Minimum allocation required is Ksh 200.00.");
                 const dPhone = document.getElementById('depPhone').value.trim();
