@@ -9,28 +9,28 @@
 
     <style>
         :root { 
-            --aviator-bg: #0b0c10;
-            --main-panel-bg: #1f2833;
-            --control-panel-bg: #141a24;
-            --accent-green: #00ffcc;
-            --bet-green: #02b188;
-            --betika-dark: #0b0e14;
-            --betika-border: #222b3b;
+            --aviator-bg: #101116;
+            --main-panel-bg: #1a1d24;
+            --control-panel-bg: #161920;
+            --accent-green: #10b981;
+            --bet-green: #10b981;
+            --betika-dark: #121620;
+            --betika-border: #262f41;
             --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --aviator-red: #8a2be2;
-            --poly-blue: #6366f1;
+            --text-secondary: #718096;
+            --aviator-red: #ef4444;
+            --poly-blue: #e11d48; /* Red/Crimson primary accent */
 
-            /* UI Style Tokens */
-            --accent: #00ffcc; 
-            --border: #334155; 
+            /* UI Style Tokens adapted for Red Theme */
+            --accent: #ef4444; 
+            --border: #2a3347; 
             --text-main: #f8fafc; 
             --text-sub: #64748b;
-            --yes-blue: #4f46e5; 
-            --yes-bg: #1e1b4b; 
-            --no-red: #ec4899; 
-            --no-bg: #4c1d35;
-            --tech-bg: #0f172a;
+            --yes-blue: #e11d48; 
+            --yes-bg: #2d121c; 
+            --no-red: #f43f5e; 
+            --no-bg: #4c1d24;
+            --tech-bg: #0b0d14;
         }
         
         body { 
@@ -44,14 +44,14 @@
             box-sizing: border-box;
         }
 
-        /* Green Cashout Message Bar */
+        /* Red Cashout Message Bar */
         .cashout-notification-bar {
             position: fixed;
             top: -65px;
             left: 0;
             right: 0;
             height: 55px;
-            background: var(--bet-green);
+            background: var(--poly-blue);
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -60,9 +60,9 @@
             font-weight: 800;
             text-transform: uppercase;
             z-index: 10000;
-            box-shadow: 0 4px 25px rgba(2, 177, 136, 0.4);
+            box-shadow: 0 4px 25px rgba(225, 29, 72, 0.4);
             transition: top 0.3s ease-in-out;
-            border-bottom: 2px solid #018f6e;
+            border-bottom: 2px solid #be123c;
         }
         .cashout-notification-bar.active {
             top: 0;
@@ -70,7 +70,7 @@
 
         /* Top Header Navbar */
         .top-header-navbar {
-            background: #0f131a;
+            background: #090d14;
             border-bottom: 1px solid var(--betika-border);
             position: fixed; top: 0; left: 0; right: 0;
             height: 60px; z-index: 2000;
@@ -101,7 +101,7 @@
         .user-balance-pill { 
             display: flex; align-items: center; background: rgba(0,0,0,0.5); 
             border: 1px solid var(--betika-border); padding: 6px 12px; 
-            border-radius: 20px; font-size: 13px; font-weight: 800; color: var(--accent-green);
+            border-radius: 20px; font-size: 13px; font-weight: 800; color: #ffffff;
             box-shadow: inset 0 1px 10px rgba(0,0,0,0.4); 
         }
         .user-balance-pill span { color: #64748b; font-weight: 700; font-size: 11px; margin-left: 4px; text-transform: uppercase; }
@@ -114,7 +114,7 @@
         }
         .action-header-btn.funds {
             background: var(--poly-blue); border: none;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
         }
         .action-header-btn:active { transform: scale(0.96); }
 
@@ -127,15 +127,15 @@
 
         /* Visual Board styling */
         .aviator-flight-panel {
-            background: #101520; border: 1px solid var(--betika-border);
+            background: #151a24; border: 1px solid var(--betika-border);
             border-radius: 16px; padding: 10px; position: relative; overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
         }
         .canvas-container {
-            background: #05070a; border-radius: 12px; border: 1px solid rgba(255,255,255,0.01);
+            background: #090c12; border-radius: 12px; border: 1px solid rgba(255,255,255,0.01);
             position: relative; overflow: hidden; height: 230px; width: 100%;
         }
-        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.15) 0%, #05070a 70%); }
+        .game-canvas { width: 100%; height: 100%; display: block; background: radial-gradient(circle at bottom left, rgba(239, 68, 68, 0.15) 0%, #090c12 70%); }
         
         /* Multipliers history bar */
         .history-pills-row {
@@ -143,8 +143,8 @@
             scrollbar-width: none; font-size: 11px; font-weight: 700;
         }
         .history-pills-row::-webkit-scrollbar { display: none; }
-        .history-pill { background: #141a24; color: #34b3ff; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .history-pill.high { color: #a855f7; }
+        .history-pill { background: #1a202c; color: #94a3b8; padding: 4px 11px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .history-pill.high { color: var(--aviator-red); background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
 
         .flight-counter { 
             position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); 
@@ -206,7 +206,7 @@
             border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .dashboard-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center; cursor: pointer; border-radius: 16px; text-transform: uppercase; }
-        .dashboard-tab.active { background: #222b3b; color: #fff; }
+        .dashboard-tab.active { background: #262f41; color: #fff; }
 
         .wager-entry-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; align-items: center; }
         .wager-box { 
@@ -225,7 +225,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .bet-btn:active { transform: scale(0.97); }
-        .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(2, 177, 136, 0.2); }
+        .bet-btn.place { background: var(--poly-blue); color: #fff; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
         .bet-btn:disabled { background: #1a222f; color: #475569; cursor: not-allowed; box-shadow: none; }
 
@@ -252,7 +252,7 @@
             position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
             background-color: white; border-radius: 50%; transition: .3s;
         }
-        input:checked + .toggle-slider { background-color: var(--bet-green); }
+        input:checked + .toggle-slider { background-color: var(--poly-blue); }
         input:checked + .toggle-slider:before { transform: translateX(22px); }
 
         .auto-input-box {
@@ -265,12 +265,12 @@
         /* Floating AI Tool */
         .floating-ai-assistant {
             position: fixed; bottom: 24px; right: 24px;
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(99, 102, 241, 0.8));
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(225, 29, 72, 0.8));
             backdrop-filter: blur(8px); color: #fff; border-radius: 50%; width: 62px; height: 62px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(138, 43, 226, 0.4); z-index: 3000;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4); z-index: 3000;
             cursor: pointer; transition: transform 0.2s;
-            border: 2px solid rgba(168, 85, 247, 0.5); text-align: center;
+            border: 2px solid rgba(239, 68, 68, 0.5); text-align: center;
         }
         .floating-ai-assistant:active { transform: scale(0.92); }
         .floating-ai-label { font-size: 8px; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; opacity: 0.9; }
@@ -278,11 +278,11 @@
 
         /* Modal Containers */
         .overlay-screen { 
-            display: none; position: fixed; inset: 0; background: rgba(11, 14, 20, 0.6); 
+            display: none; position: fixed; inset: 0; background: rgba(11, 14, 20, 0.7); 
             backdrop-filter: blur(4px); z-index: 5000; align-items: center; justify-content: center; padding: 12px; 
         }
         .form-modal-card { 
-            background: #101520; width: 100%; max-width: 420px; padding: 22px 26px; 
+            background: #151a24; width: 100%; max-width: 420px; padding: 22px 26px; 
             border-radius: 24px; text-align: center; box-sizing: border-box; 
             max-height: 95vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
             animation: slideDown 0.3s ease-out; border: 1px solid var(--betika-border);
@@ -296,7 +296,7 @@
             border-radius: 8px; color: var(--text-sub); text-align: center; transition: 0.2s;
         }
         .auth-tab.active { 
-            background: #222b3b; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background: #262f41; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
         .form-input-group { position: relative; margin-bottom: 12px; text-align: left; }
@@ -337,7 +337,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Replicated Layout from Screenshot 308dc314-d985-4c8f-a9e1-4f79adb9f4a2 */
+        /* Replicated Layout from Screenshot */
         .sc-form-container {
             display: flex;
             flex-direction: column;
@@ -681,13 +681,11 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
-        // Safe operational access to internal audio nodes
         const audioOpen = document.getElementById('audioFlightOpen');
         const audioMiddle = document.getElementById('audioFlightMiddle');
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
-        // Silent catch chain to handle browsers blocking automatic play
         const playSafeMedia = (node) => {
             if (node && typeof node.play === 'function') {
                 node.play().catch(err => console.log("Media playback blocked by internal window metrics.", err));
@@ -990,7 +988,7 @@
                     let endY = height - (height * 0.74 * Math.pow(progress, 1.4)) - (height * 0.06);
 
                     ctx.save();
-                    ctx.strokeStyle = "#8a2be2";
+                    ctx.strokeStyle = "#ef4444";
                     ctx.lineWidth = 4;
                     ctx.lineCap = "round";
                     ctx.lineJoin = "round";
@@ -1006,8 +1004,8 @@
                     ctx.lineTo(width * 0.05, height);
                     ctx.closePath();
                     let areaGlow = ctx.createLinearGradient(0, endY, 0, height);
-                    areaGlow.addColorStop(0, "rgba(138, 43, 226, 0.25)");
-                    areaGlow.addColorStop(1, "rgba(138, 43, 226, 0.0)");
+                    areaGlow.addColorStop(0, "rgba(239, 68, 68, 0.25)");
+                    areaGlow.addColorStop(1, "rgba(239, 68, 68, 0.0)");
                     ctx.fillStyle = areaGlow;
                     ctx.fill();
                     ctx.restore();
@@ -1033,7 +1031,7 @@
                             continue;
                         }
 
-                        ctx.fillStyle = `rgba(138, 43, 226, ${p.alpha * 0.5})`;
+                        ctx.fillStyle = `rgba(239, 68, 68, ${p.alpha * 0.5})`;
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                         ctx.fill();
@@ -1047,10 +1045,10 @@
                     ctx.translate(endX, endY);
                     ctx.rotate(tiltAngle);
 
-                    ctx.shadowColor = "rgba(138, 43, 226, 0.7)";
+                    ctx.shadowColor = "rgba(239, 68, 68, 0.7)";
                     ctx.shadowBlur = 10;
 
-                    ctx.fillStyle = "#8a2be2";
+                    ctx.fillStyle = "#ef4444";
                     ctx.beginPath();
                     ctx.moveTo(-16, -2);
                     ctx.lineTo(-24, -4);
@@ -1089,7 +1087,7 @@
                     ctx.lineWidth = 0.8;
                     ctx.stroke();
 
-                    ctx.fillStyle = "#6366f1";
+                    ctx.fillStyle = "#f43f5e";
                     ctx.beginPath();
                     ctx.moveTo(-2, -2);
                     ctx.lineTo(-6, -15);
@@ -1126,7 +1124,6 @@
                 predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
-            // Continuous display sync
             document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "";
             crashCeiling = predictedCeiling;
 
@@ -1165,7 +1162,6 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Active Ascent";
 
-            // Safe triggering of media instances
             if (audioOpen) {
                 audioOpen.currentTime = 0;
                 audioOpen.volume = 0.5;
@@ -1223,7 +1219,6 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
-            // Explicit volume/pause steps
             if (audioOpen) audioOpen.pause();
             if (audioMiddle) audioMiddle.pause();
 
@@ -1300,7 +1295,6 @@
 
             await updateDatabaseBalance(clientUserBalance + netReturns);
 
-            // Display Top Notification Bar and withdraw after 2.5s
             const bannerNode = document.getElementById('cashoutSuccessBar');
             bannerNode.innerHTML = `<span>Collected at ${currentMultiplier}! Allocated  ${netReturns.toFixed(2)}</span>`;
             bannerNode.classList.add('active');
@@ -1348,7 +1342,6 @@
             if (!authenticatedUser) return openAuthModal('signin');
 
             const amt = Number(document.getElementById('depAmt').value);
-
             const invoiceRef = "INV-" + Math.floor(100000 + Math.random() * 900000);
 
             if (currentFundsMode === 'withdraw') {
