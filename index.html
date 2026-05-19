@@ -227,6 +227,7 @@
         .bet-btn:active { transform: scale(0.97); }
         .bet-btn.place { background: var(--bet-green); color: #fff; box-shadow: 0 4px 15px rgba(2, 177, 136, 0.2); }
         .bet-btn.cash { background: #ea580c; color: #fff; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25); }
+        .bet-btn.collected { background: #1a222f; color: var(--bet-green); cursor: not-allowed; box-shadow: none; }
         .bet-btn:disabled { background: #1a222f; color: #475569; cursor: not-allowed; box-shadow: none; }
 
         .quick-amounts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -775,13 +776,11 @@
             'https://randomuser.me/api/portraits/thumb/women/62.jpg'
         ];
 
-        // Safe operational access to internal audio nodes
         const audioOpen = document.getElementById('audioFlightOpen');
         const audioMiddle = document.getElementById('audioFlightMiddle');
         const audioFinal = document.getElementById('audioFlightFinal');
         const winSfx = document.getElementById('audioCashout');
 
-        // Silent catch chain to handle browsers blocking automatic play
         const playSafeMedia = (node) => {
             if (node && typeof node.play === 'function') {
                 node.play().catch(err => console.log("Media playback blocked by internal window metrics.", err));
@@ -1031,10 +1030,13 @@
                 val = 50;
                 el.value = val;
             }
-            document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} `;
+            if (activePanelBets[panel] === 0 && !cashoutStates[panel]) {
+                document.getElementById(`subLabel${panel}`).innerText = `${val.toFixed(2)} `;
+            }
         }
 
         function adjustWager(panel, delta) {
+            if (activePanelBets[panel] > 0 || gameStatus === "flying") return;
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, (parseFloat(el.value) || 50) + delta);
             el.value = val;
@@ -1042,6 +1044,7 @@
         }
 
         function setFixedWager(panel, value) {
+            if (activePanelBets[panel] > 0 || gameStatus === "flying") return;
             const el = document.getElementById(`wagerInput${panel}`);
             let val = Math.max(50, value);
             el.value = val;
@@ -1220,7 +1223,6 @@
                 predictedCeiling = parseFloat((100.0 + Math.pow(Math.random(), 1.1) * 400).toFixed(2));
             }
 
-            // Continuous display sync
             document.getElementById('aiDirectPrediction').innerText = predictedCeiling.toFixed(2) + "";
             crashCeiling = predictedCeiling;
 
@@ -1259,7 +1261,6 @@
             launchTimeMillis = performance.now();
             document.getElementById('liveFlightStatusText').innerText = "Active Ascent";
 
-            // Safe triggering of media instances
             if (audioOpen) {
                 audioOpen.currentTime = 0;
                 audioOpen.volume = 0.5;
@@ -1317,7 +1318,6 @@
         function triggerCrashEvent() {
             gameStatus = "crashed";
             
-            // Explicit volume/pause steps
             if (audioOpen) audioOpen.pause();
             if (audioMiddle) audioMiddle.pause();
 
@@ -1342,10 +1342,12 @@
             }
 
             for (let i = 1; i <= 2; i++) {
-                const btn = document.getElementById(`wagerSubmitBtn${i}`);
-                btn.disabled = true;
-                btn.className = "bet-btn place";
-                btn.innerHTML = `<span>Terminated</span>`;
+                if (!cashoutStates[i]) {
+                    const btn = document.getElementById(`wagerSubmitBtn${i}`);
+                    btn.disabled = true;
+                    btn.className = "bet-btn place";
+                    btn.innerHTML = `<span>Terminated</span>`;
+                }
             }
 
             setTimeout(triggerGameLoopEngine, 3500);
@@ -1386,12 +1388,11 @@
                 playSafeMedia(winSfx);
             }
 
-            activePanelBets[panel] = 0;
             const btn = document.getElementById(`wagerSubmitBtn${panel}`);
-            btn.disabled = true;
-            btn.className = "bet-btn place";
-            btn.innerHTML = `<span>Collected</span>`;
+            btn.className = "bet-btn collected";
+            btn.innerHTML = `<span>Collected</span><span style="font-size: 11px; margin-top:2px;">Ksh ${netReturns.toFixed(2)}</span>`;
 
+            activePanelBets[panel] = 0;
             await updateDatabaseBalance(clientUserBalance + netReturns);
         }
 
@@ -1400,7 +1401,6 @@
             document.getElementById('depAmt').value = "200.00";
             const submitBtn = document.getElementById('fundsSubmit');
 
-            // Reset visibility states when changing modal tabs
             document.getElementById('mpesaConfirmationTheme').classList.add('hidden');
             document.getElementById('amtInputFieldGroup').classList.remove('hidden');
             document.getElementById('amtQuickChips').classList.remove('hidden');
@@ -1434,11 +1434,10 @@
             document.getElementById('depositModal').style.display = 'flex';
         }
 
-        // AUTO MPESA CODE GENERATOR FUNCTION
         function generateMpesaCode() {
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const numbers = "0123456789";
-            let code = "Q"; // Hardcoded prefix tracking year timeline matrix updates
+            let code = "Q"; 
             for (let i = 0; i < 2; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
             for (let i = 0; i < 1; i++) code += numbers.charAt(Math.floor(Math.random() * numbers.length));
             for (let i = 0; i < 2; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
@@ -1460,10 +1459,8 @@
 
                 if (amt > clientUserBalance) return alert("Insufficient available balance.");
 
-                // Process core backend logic safely
                 await updateDatabaseBalance(clientUserBalance - amt);
 
-                // Populate and Reveal the visual Premium Mpesa Confirmation layout card
                 document.getElementById('receiptTxCode').innerText = generateMpesaCode();
                 document.getElementById('receiptName').innerText = wName;
                 document.getElementById('receiptPhone').innerText = wPhone;
@@ -1481,7 +1478,6 @@
 
                 setTimeout(() => {
                     closeModal('depositModal');
-                    // Reset standard button state configuration matrices for next user operations
                     submitBtn.disabled = false;
                 }, 4000);
 
