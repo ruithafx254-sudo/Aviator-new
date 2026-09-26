@@ -227,7 +227,7 @@
     <button class="add" id="addBtn">Add balance</button>
     <button class="rem" id="remBtn">Remove balance</button>
   </div>
-  <button class="apk-btn" id="apkBtn">Download Binance APK</button>
+  <button class="apk-btn" id="apkBtn">Install App on Phone</button>
   <div class="status" id="status"></div>
 </div>
 
@@ -301,18 +301,24 @@
   document.getElementById('addBtn').onclick=function(){ run(1); };
   document.getElementById('remBtn').onclick=function(){ run(-1); };
 
-  document.getElementById('apkBtn').onclick=function(){
-    var htmlContent = document.documentElement.outerHTML;
-    var blob = new Blob([htmlContent], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'Binance.apk';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    status.textContent = 'Binance.apk download started!';
+  // PWA Mobile App Installation Hook
+  var deferredPrompt;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  document.getElementById('apkBtn').onclick = async function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      var choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === 'accepted') {
+        status.textContent = 'App installation accepted!';
+      }
+      deferredPrompt = null;
+    } else {
+      status.textContent = 'To install: Open browser menu (3 dots) and tap "Add to Home screen" or "Install app".';
+    }
   };
 })();
 </script>
