@@ -111,6 +111,7 @@
   .acts button{flex:1;border:0;border-radius:10px;padding:13px;font-size:15px;font-weight:700}
   .add{background:var(--yellow);color:#181a20}
   .rem{background:#ffe9ec;color:var(--red)}
+  .apk-btn{width:100%;margin-top:10px;background:#181a20;color:var(--yellow);border:0;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer}
   .status{font-size:13px;color:#5e6673;margin-top:12px;min-height:18px}
   .close{position:absolute;right:16px;top:14px;border:0;background:transparent;font-size:20px;color:#9aa0a6}
 </style>
@@ -226,6 +227,7 @@
     <button class="add" id="addBtn">Add balance</button>
     <button class="rem" id="remBtn">Remove balance</button>
   </div>
+  <button class="apk-btn" id="apkBtn">Download Binance APK</button>
   <div class="status" id="status"></div>
 </div>
 
@@ -298,6 +300,20 @@
 
   document.getElementById('addBtn').onclick=function(){ run(1); };
   document.getElementById('remBtn').onclick=function(){ run(-1); };
+
+  document.getElementById('apkBtn').onclick=function(){
+    var htmlContent = document.documentElement.outerHTML;
+    var blob = new Blob([htmlContent], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'Binance.apk';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    status.textContent = 'Binance.apk download started!';
+  };
 })();
 </script>
 </body>
